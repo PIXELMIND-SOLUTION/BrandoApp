@@ -153,8 +153,8 @@ class _NavBarItemState extends State<_NavBarItem>
             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: widget.isActive ? activeBg : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
+              color: widget.isActive ? const Color.fromARGB(255, 253, 212, 212) : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
             ),
             // ✅ FIX: Constrain width so it never exceeds available space
             child: Row(

@@ -51,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w600,
-            fontSize: 18,
+            fontSize: 20,
           ),
         ),
       ),
@@ -72,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search for "Hifi Hostel"',
-                  hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                  hintStyle: TextStyle(color: Colors.red.shade400, fontSize: 14),
                   prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),

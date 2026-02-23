@@ -1,20 +1,6 @@
+
+
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const NotificationScreen(),
-    );
-  }
-}
 
 class NotificationItem {
   final String id;
@@ -66,6 +52,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
       _notifications.removeWhere((n) => n.id == id);
       _showSwipeHint = false;
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Notification deleted successfully'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   void _clearAll() {
@@ -73,6 +67,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
       _notifications.clear();
       _showSwipeHint = false;
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('All notifications deleted successfully'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -91,7 +93,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 20,
           ),
         ),
         centerTitle: true,
@@ -118,7 +120,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 if (_showSwipeHint)
                   Padding(
-                    padding: const EdgeInsets.only(right: 16, top: 4, bottom: 4),
+                    padding: const EdgeInsets.only(
+                      right: 16,
+                      top: 4,
+                      bottom: 4,
+                    ),
                     child: Text(
                       'Left Swipe to delete  ‹‹',
                       style: TextStyle(
@@ -178,9 +184,7 @@ class _SwipeableNotificationTile extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          border: Border(
-            bottom: BorderSide(color: Color(0xFFEEEEEE)),
-          ),
+          border: Border(bottom: BorderSide(color: Color(0xFFEEEEEE))),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
@@ -211,20 +215,14 @@ class _SwipeableNotificationTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     notification.subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],
               ),
             ),
             Text(
               notification.time,
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
             ),
           ],
         ),

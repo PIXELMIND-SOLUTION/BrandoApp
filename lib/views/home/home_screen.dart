@@ -92,6 +92,47 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Widget _buildTopBar() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  //     child: Row(
+  //       children: [
+  //         const Icon(Icons.location_on, color: Colors.red, size: 18),
+  //         const SizedBox(width: 4),
+  //         Expanded(
+  //           child: Row(
+  //             children: [
+  //               const Text(
+  //                 'Kphb Hyderabad Kukatpally ...',
+  //                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //               const Icon(Icons.arrow_drop_down, size: 20),
+  //             ],
+  //           ),
+  //         ),
+  //         Row(
+  //           children: [
+  //             _topIconButton(Icons.toggle_on_outlined),
+  //             const SizedBox(width: 8),
+  //             GestureDetector(
+  //               onTap: () {
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => NotificationScreen(),
+  //                   ),
+  //                 );
+  //               },
+  //               child: _topIconButton(Icons.notifications_none),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildTopBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -99,18 +140,38 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const Icon(Icons.location_on, color: Colors.red, size: 18),
           const SizedBox(width: 4),
+
           Expanded(
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Kphb Hyderabad Kukatpally ...',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                  overflow: TextOverflow.ellipsis,
+                Text(
+                  'Location',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 46, 46, 46),
+                  ),
                 ),
-                const Icon(Icons.arrow_drop_down, size: 20),
+                Row(
+                  children: const [
+                    Expanded(
+                      child: Text(
+                        'Kphb Hyderabad Kukatpally ...',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Icon(Icons.arrow_drop_down, size: 20),
+                  ],
+                ),
               ],
             ),
           ),
+
           Row(
             children: [
               _topIconButton(Icons.toggle_on_outlined),
@@ -395,7 +456,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
                 ),
                 child: Image.asset(
                   'assets/hotelimage.png',
@@ -423,14 +486,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            hostel['name'],
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: hostel['name'].split(' ')[0] + ' ',
+                                  style: const TextStyle(
+                                    color: Color(0xFFF80500), // HIFI color
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: hostel['name'].split(' ').length > 1
+                                      ? hostel['name'].split(' ')[1]
+                                      : '',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
                             ),
                           ),
+
+                          // Text(
+                          //   hostel['name'],
+                          //   style: const TextStyle(
+                          //     color: Colors.red,
+                          //     fontWeight: FontWeight.bold,
+                          //     fontSize: 14,
+                          //   ),
+                          // ),
                           // Icon(
                           //   hostel['isFavorite']
                           //       ? Icons.favorite
@@ -584,8 +670,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {},
                     icon: Image.asset(
                       'assets/whatsapp.png',
-                      width: 14,
-                      height: 14,
+                      width: 18,
+                      height: 18,
                       errorBuilder: (context, error, stackTrace) =>
                           const Icon(Icons.chat, size: 14, color: Colors.green),
                     ),
