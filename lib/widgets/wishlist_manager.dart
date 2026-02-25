@@ -11,10 +11,14 @@ class WishlistManager {
   final ValueNotifier<List<Map<String, dynamic>>> wishlist =
       ValueNotifier([]);
 
-  /// Returns true if the hostel (matched by 'name') is in the wishlist.
+  // /// Returns true if the hostel (matched by 'name') is in the wishlist.
+  // bool isFavourite(Map<String, dynamic> hostel) {
+  //   return wishlist.value.any((h) => h['name'] == hostel['name']);
+  // }
+
   bool isFavourite(Map<String, dynamic> hostel) {
-    return wishlist.value.any((h) => h['name'] == hostel['name']);
-  }
+  return wishlist.value.any((h) => h['id'] == hostel['id']); // 👈 match by id
+}
 
   /// Adds or removes the hostel from the wishlist (toggle) and shows a SnackBar.
   void toggle(BuildContext context, Map<String, dynamic> hostel) {
@@ -22,7 +26,10 @@ class WishlistManager {
     final bool alreadyFavourite = isFavourite(hostel);
 
     if (alreadyFavourite) {
-      current.removeWhere((h) => h['name'] == hostel['name']);
+      // current.removeWhere((h) => h['name'] == hostel['name']);
+
+
+         current.removeWhere((h) => h['id'] == hostel['id']); 
     } else {
       current.add(hostel);
     }

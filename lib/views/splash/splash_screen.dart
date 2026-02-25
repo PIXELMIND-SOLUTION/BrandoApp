@@ -1,6 +1,5 @@
-
 import 'dart:async';
-
+import 'dart:ui';
 import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +38,9 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
+
+    
+
     _mainController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1800),
@@ -55,63 +57,107 @@ class _SplashScreenState extends State<SplashScreen>
     )..repeat(reverse: true);
 
     _topImageOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.0, 0.4, curve: Curves.easeOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
+      ),
+    );
     _topImageScale = Tween<double>(begin: 0.5, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.0, 0.4, curve: Curves.elasticOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.4, curve: Curves.elasticOut),
+      ),
+    );
 
     _bottomLeftImageOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.1, 0.5, curve: Curves.easeOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.1, 0.5, curve: Curves.easeOut),
+      ),
+    );
     _bottomLeftImageScale = Tween<double>(begin: 0.5, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.1, 0.5, curve: Curves.elasticOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.1, 0.5, curve: Curves.elasticOut),
+      ),
+    );
 
     _centerImageOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.2, 0.6, curve: Curves.easeOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 0.6, curve: Curves.easeOut),
+      ),
+    );
     _centerImageScale = Tween<double>(begin: 0.7, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.2, 0.6, curve: Curves.easeOutBack)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 0.6, curve: Curves.easeOutBack),
+      ),
+    );
 
-    _fabSlide =
-        Tween<Offset>(begin: const Offset(0.5, 0.5), end: Offset.zero).animate(
-          CurvedAnimation(parent: _mainController,
-              curve: const Interval(0.5, 0.75, curve: Curves.easeOutBack)));
+    _fabSlide = Tween<Offset>(begin: const Offset(0.5, 0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.5, 0.75, curve: Curves.easeOutBack),
+          ),
+        );
     _fabScale = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.5, 0.75, curve: Curves.elasticOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.5, 0.75, curve: Curves.elasticOut),
+      ),
+    );
 
-    _textSlide =
-        Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
-          CurvedAnimation(parent: _mainController,
-              curve: const Interval(0.55, 0.8, curve: Curves.easeOut)));
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.55, 0.8, curve: Curves.easeOut),
+          ),
+        );
     _textOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.55, 0.8, curve: Curves.easeOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.55, 0.8, curve: Curves.easeOut),
+      ),
+    );
 
     _subtitleSlide =
         Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
-          CurvedAnimation(parent: _mainController,
-              curve: const Interval(0.65, 0.85, curve: Curves.easeOut)));
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.65, 0.85, curve: Curves.easeOut),
+          ),
+        );
     _subtitleOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.65, 0.85, curve: Curves.easeOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.65, 0.85, curve: Curves.easeOut),
+      ),
+    );
 
-    _buttonSlide =
-        Tween<Offset>(begin: const Offset(0, 0.6), end: Offset.zero).animate(
-          CurvedAnimation(parent: _mainController,
-              curve: const Interval(0.75, 1.0, curve: Curves.easeOut)));
+    _buttonSlide = Tween<Offset>(begin: const Offset(0, 0.6), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.75, 1.0, curve: Curves.easeOut),
+          ),
+        );
     _buttonOpacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _mainController,
-          curve: const Interval(0.75, 1.0, curve: Curves.easeOut)));
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.75, 1.0, curve: Curves.easeOut),
+      ),
+    );
 
     _floatY = Tween<double>(begin: -8, end: 8).animate(
-      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut));
+      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
+    );
 
     _pulse = Tween<double>(begin: 1.0, end: 1.12).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut));
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) _mainController.forward();
@@ -130,14 +176,16 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-        const LoginScreen(),
+            const LoginScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 1),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(parent: animation,
-                curve: Curves.easeOutCubic)),
+            position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+                .animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  ),
+                ),
             child: child,
           );
         },
@@ -148,9 +196,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -162,15 +208,19 @@ class _SplashScreenState extends State<SplashScreen>
               top: -10,
               right: -20,
               child: AnimatedBuilder(
-                animation: Listenable.merge(
-                    [_mainController, _floatController]),
+                animation: Listenable.merge([
+                  _mainController,
+                  _floatController,
+                ]),
                 builder: (context, child) {
                   return Transform.translate(
                     offset: Offset(0, _floatY.value * 0.6),
                     child: Opacity(
                       opacity: _topImageOpacity.value,
                       child: Transform.scale(
-                          scale: _topImageScale.value, child: child),
+                        scale: _topImageScale.value,
+                        child: child,
+                      ),
                     ),
                   );
                 },
@@ -189,15 +239,19 @@ class _SplashScreenState extends State<SplashScreen>
               top: size.height * 0.28,
               left: -25,
               child: AnimatedBuilder(
-                animation: Listenable.merge(
-                    [_mainController, _floatController]),
+                animation: Listenable.merge([
+                  _mainController,
+                  _floatController,
+                ]),
                 builder: (context, child) {
                   return Transform.translate(
                     offset: Offset(0, -_floatY.value * 0.8),
                     child: Opacity(
                       opacity: _bottomLeftImageOpacity.value,
                       child: Transform.scale(
-                          scale: _bottomLeftImageScale.value, child: child),
+                        scale: _bottomLeftImageScale.value,
+                        child: child,
+                      ),
                     ),
                   );
                 },
@@ -217,15 +271,19 @@ class _SplashScreenState extends State<SplashScreen>
               left: size.width * 0.08,
               right: size.width * 0.08,
               child: AnimatedBuilder(
-                animation: Listenable.merge(
-                    [_mainController, _floatController]),
+                animation: Listenable.merge([
+                  _mainController,
+                  _floatController,
+                ]),
                 builder: (context, child) {
                   return Transform.translate(
                     offset: Offset(0, _floatY.value * 0.4),
                     child: Opacity(
                       opacity: _centerImageOpacity.value,
                       child: Transform.scale(
-                          scale: _centerImageScale.value, child: child),
+                        scale: _centerImageScale.value,
+                        child: child,
+                      ),
                     ),
                   );
                 },
@@ -244,13 +302,17 @@ class _SplashScreenState extends State<SplashScreen>
               top: size.height * 0.33,
               right: size.width * 0.12,
               child: AnimatedBuilder(
-                animation: Listenable.merge(
-                    [_mainController, _pulseController]),
+                animation: Listenable.merge([
+                  _mainController,
+                  _pulseController,
+                ]),
                 builder: (context, child) {
                   return SlideTransition(
                     position: _fabSlide,
                     child: Transform.scale(
-                        scale: _fabScale.value * _pulse.value, child: child),
+                      scale: _fabScale.value * _pulse.value,
+                      child: child,
+                    ),
                   );
                 },
                 child: Container(
@@ -269,8 +331,10 @@ class _SplashScreenState extends State<SplashScreen>
                     ],
                   ),
                   child: const Icon(
-                      Icons.arrow_outward_rounded, color: Colors.white,
-                      size: 26),
+                    Icons.arrow_outward_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
                 ),
               ),
             ),
@@ -292,16 +356,19 @@ class _SplashScreenState extends State<SplashScreen>
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: const TextSpan(
-                            style: TextStyle(fontSize: 28,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1A1A2E),
-                                height: 1.25,
-                                letterSpacing: -0.3),
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1A1A2E),
+                              height: 1.25,
+                              letterSpacing: -0.3,
+                            ),
                             children: [
                               TextSpan(text: 'Redefining Your\n'),
-                              TextSpan(text: 'Hostel Booking ',
-                                  style: TextStyle(
-                                      color: Color(0xFFF80500))),
+                              TextSpan(
+                                text: 'Hostel Booking ',
+                                style: TextStyle(color: Color(0xFFF80500)),
+                              ),
                               TextSpan(text: 'Experience'),
                             ],
                           ),
@@ -316,10 +383,12 @@ class _SplashScreenState extends State<SplashScreen>
                         child: const Text(
                           'A hostel booking app should feature quick user registration, searchable listings with filters',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14,
-                              color: Color(0xFF7A7A8C),
-                              height: 1.6,
-                              fontWeight: FontWeight.w400),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF7A7A8C),
+                            height: 1.6,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
@@ -387,28 +456,39 @@ class _LoginScreenState extends State<LoginScreen>
     super.initState();
 
     _sheetController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
     _otpController2 = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 450));
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
     _floatController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3200))
-      ..repeat(reverse: true);
+      vsync: this,
+      duration: const Duration(milliseconds: 3200),
+    )..repeat(reverse: true);
 
-    _sheetSlide =
-        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-          CurvedAnimation(parent: _sheetController,
-              curve: Curves.easeOutCubic));
-    _sheetOpacity = Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: _sheetController, curve: Curves.easeOut));
+    _sheetSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _sheetController, curve: Curves.easeOutCubic),
+        );
+    _sheetOpacity = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _sheetController, curve: Curves.easeOut));
 
-    _otpSlide =
-        Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
-          CurvedAnimation(parent: _otpController2, curve: Curves.easeOutBack));
-    _otpFieldAnim = Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: _otpController2, curve: Curves.easeOut));
+    _otpSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _otpController2, curve: Curves.easeOutBack),
+        );
+    _otpFieldAnim = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _otpController2, curve: Curves.easeOut));
 
     _floatY = Tween<double>(begin: -10, end: 10).animate(
-        CurvedAnimation(parent: _floatController, curve: Curves.easeInOut));
+      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
+    );
 
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) _sheetController.forward();
@@ -462,26 +542,27 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
+  /// Called when user taps "Login" button after entering OTP
   void _handleLogin() async {
     if (_otpController.text.length < 4) return;
     _otpFocus.unfocus();
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 800));
     if (mounted) {
       setState(() => _isLoading = false);
-      // Navigate to home or show success
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Login Successful! 🎉'),
-          backgroundColor: const Color.fromARGB(255, 107, 241, 97),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>NavbarScreen()));
+      // Show the stay-selection modal
+      _showStaySelectionModal();
     }
+  }
+
+  /// Shows the "Select Your Perfect Stay" bottom sheet modal
+  void _showStaySelectionModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _StaySelectionModal(),
+    );
   }
 
   void _resendOtp() {
@@ -498,9 +579,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -513,11 +592,10 @@ class _LoginScreenState extends State<LoginScreen>
             right: -20,
             child: AnimatedBuilder(
               animation: _floatController,
-              builder: (context, child) =>
-                  Transform.translate(
-                    offset: Offset(0, _floatY.value * 0.5),
-                    child: child,
-                  ),
+              builder: (context, child) => Transform.translate(
+                offset: Offset(0, _floatY.value * 0.5),
+                child: child,
+              ),
               child: const _OvalImage(
                 imagePath: 'assets/splashimage.png',
                 width: 130,
@@ -534,11 +612,10 @@ class _LoginScreenState extends State<LoginScreen>
             left: -30,
             child: AnimatedBuilder(
               animation: _floatController,
-              builder: (context, child) =>
-                  Transform.translate(
-                    offset: Offset(0, -_floatY.value * 0.7),
-                    child: child,
-                  ),
+              builder: (context, child) => Transform.translate(
+                offset: Offset(0, -_floatY.value * 0.7),
+                child: child,
+              ),
               child: const _OvalImage(
                 imagePath: 'assets/splashimage.png',
                 width: 120,
@@ -556,11 +633,10 @@ class _LoginScreenState extends State<LoginScreen>
             right: size.width * 0.08,
             child: AnimatedBuilder(
               animation: _floatController,
-              builder: (context, child) =>
-                  Transform.translate(
-                    offset: Offset(0, _floatY.value * 0.35),
-                    child: child,
-                  ),
+              builder: (context, child) => Transform.translate(
+                offset: Offset(0, _floatY.value * 0.35),
+                child: child,
+              ),
               child: _OvalImage(
                 imagePath: 'assets/splashimage.png',
                 width: double.infinity,
@@ -591,7 +667,10 @@ class _LoginScreenState extends State<LoginScreen>
                 ],
               ),
               child: const Icon(
-                  Icons.arrow_outward_rounded, color: Colors.white, size: 24),
+                Icons.arrow_outward_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
           ),
 
@@ -624,10 +703,7 @@ class _LoginScreenState extends State<LoginScreen>
                         left: 24,
                         right: 24,
                         top: 32,
-                        bottom: MediaQuery
-                            .of(context)
-                            .viewInsets
-                            .bottom + 36,
+                        bottom: MediaQuery.of(context).viewInsets.bottom + 36,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -678,8 +754,10 @@ class _LoginScreenState extends State<LoginScreen>
                               LengthLimitingTextInputFormatter(10),
                             ],
                             prefixIcon: const Icon(
-                                Icons.phone_outlined, color: Color(0xFF9E9E9E),
-                                size: 20),
+                              Icons.phone_outlined,
+                              color: Color(0xFF9E9E9E),
+                              size: 20,
+                            ),
                             onChanged: (_) => setState(() {}),
                           ),
 
@@ -703,8 +781,10 @@ class _LoginScreenState extends State<LoginScreen>
                                         LengthLimitingTextInputFormatter(6),
                                       ],
                                       prefixIcon: const Icon(
-                                          Icons.lock_outline,
-                                          color: Color(0xFF9E9E9E), size: 20),
+                                        Icons.lock_outline,
+                                        color: Color(0xFF9E9E9E),
+                                        size: 20,
+                                      ),
                                       onChanged: (_) => setState(() {}),
                                     ),
                                     const SizedBox(height: 8),
@@ -770,6 +850,231 @@ class _LoginScreenState extends State<LoginScreen>
 }
 
 // ═══════════════════════════════════════════════════════
+// STAY SELECTION MODAL
+// ═══════════════════════════════════════════════════════
+
+class _StaySelectionModal extends StatefulWidget {
+  const _StaySelectionModal();
+
+  @override
+  State<_StaySelectionModal> createState() => _StaySelectionModalState();
+}
+
+class _StaySelectionModalState extends State<_StaySelectionModal>
+    with SingleTickerProviderStateMixin {
+  String? _selectedStay;
+  bool _isLoading = false;
+
+  late AnimationController _animController;
+  late List<Animation<Offset>> _itemSlides;
+  late List<Animation<double>> _itemOpacities;
+
+  final List<Map<String, dynamic>> _stayOptions = [
+    {'label': "Men's Pg", 'icon': Icons.male_rounded},
+    {'label': "Women's Pg", 'icon': Icons.female_rounded},
+    {'label': "Coliving Pg", 'icon': Icons.people_alt_rounded},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _itemSlides = List.generate(
+      _stayOptions.length,
+      (i) =>
+          Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+            CurvedAnimation(
+              parent: _animController,
+              curve: Interval(
+                0.1 + i * 0.15,
+                0.5 + i * 0.15,
+                curve: Curves.easeOutBack,
+              ),
+            ),
+          ),
+    );
+
+    _itemOpacities = List.generate(
+      _stayOptions.length,
+      (i) => Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(
+          parent: _animController,
+          curve: Interval(
+            0.1 + i * 0.15,
+            0.5 + i * 0.15,
+            curve: Curves.easeOut,
+          ),
+        ),
+      ),
+    );
+
+    Future.microtask(() => _animController.forward());
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  void _handleConfirm() async {
+    if (_selectedStay == null) return;
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) {
+      setState(() => _isLoading = false);
+      Navigator.pop(context); // close modal
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => NavbarScreen()),
+        (route) => false,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 30,
+            offset: Offset(0, -8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Drag handle
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 24),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
+          // Title
+          RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF1A1A2E),
+              ),
+              children: [
+                TextSpan(text: 'Select Your '),
+                TextSpan(
+                  text: 'Perfect',
+                  style: TextStyle(color: Color(0xFFE53935)),
+                ),
+                TextSpan(text: ' Stay'),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Stay options
+          ...List.generate(_stayOptions.length, (i) {
+            final option = _stayOptions[i];
+            final isSelected = _selectedStay == option['label'];
+            return SlideTransition(
+              position: _itemSlides[i],
+              child: FadeTransition(
+                opacity: _itemOpacities[i],
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedStay = option['label']),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOut,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFFF80500)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFFF80500)
+                            : const Color(0xFFE0E0E0),
+                        width: isSelected ? 0 : 1.4,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFFE53935,
+                                ).withOpacity(0.35),
+                                blurRadius: 14,
+                                offset: const Offset(0, 5),
+                              ),
+                            ]
+                          : [],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            option['icon'] as IconData,
+                            key: ValueKey(isSelected),
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF9E9E9E),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          option['label'] as String,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF1A1A2E),
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+
+          const SizedBox(height: 8),
+
+          // Login / Confirm button
+          _RedButton(
+            label: _isLoading ? '' : 'Login',
+            isLoading: _isLoading,
+            onTap: _handleConfirm,
+            enabled: _selectedStay != null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════
 // SHARED WIDGETS
 // ═══════════════════════════════════════════════════════
 
@@ -812,7 +1117,9 @@ class _OvalImage extends StatelessWidget {
           child: ColorFiltered(
             colorFilter: blur
                 ? ColorFilter.mode(
-                Colors.white.withOpacity(0.18), BlendMode.lighten)
+                    Colors.white.withOpacity(0.18),
+                    BlendMode.lighten,
+                  )
                 : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
             child: Image.asset(
               imagePath,
@@ -865,12 +1172,12 @@ class _InputField extends StatelessWidget {
             color: Colors.white,
             boxShadow: isFocused
                 ? [
-              BoxShadow(
-                color: const Color(0xFFE53935).withOpacity(0.1),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
-              )
-            ]
+                    BoxShadow(
+                      color: const Color(0xFFE53935).withOpacity(0.1),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
                 : [],
           ),
           child: TextFormField(
@@ -894,7 +1201,9 @@ class _InputField extends StatelessWidget {
               prefixIcon: prefixIcon,
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 16),
+                horizontal: 16,
+                vertical: 16,
+              ),
             ),
           ),
         );
@@ -933,7 +1242,8 @@ class _RedButtonState extends State<_RedButton>
       duration: const Duration(milliseconds: 100),
     );
     _pressScale = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _pressController, curve: Curves.easeInOut));
+      CurvedAnimation(parent: _pressController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -950,9 +1260,9 @@ class _RedButtonState extends State<_RedButton>
       onTapDown: isActive ? (_) => _pressController.forward() : null,
       onTapUp: isActive
           ? (_) {
-        _pressController.reverse();
-        widget.onTap();
-      }
+              _pressController.reverse();
+              widget.onTap();
+            }
           : null,
       onTapCancel: isActive ? () => _pressController.reverse() : null,
       child: AnimatedBuilder(
@@ -966,42 +1276,42 @@ class _RedButtonState extends State<_RedButton>
           decoration: BoxDecoration(
             gradient: isActive
                 ? const LinearGradient(
-              colors: [Color(0xFFF80500), Color(0xFFF80500)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            )
+                    colors: [Color(0xFFF80500), Color(0xFFF80500)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  )
                 : null,
             color: isActive ? null : const Color(0xFFBDBDBD),
             borderRadius: BorderRadius.circular(13),
             boxShadow: isActive
                 ? [
-              BoxShadow(
-                color: const Color(0xFFE53935).withOpacity(0.4),
-                blurRadius: 18,
-                offset: const Offset(0, 7),
-              )
-            ]
+                    BoxShadow(
+                      color: const Color(0xFFE53935).withOpacity(0.4),
+                      blurRadius: 18,
+                      offset: const Offset(0, 7),
+                    ),
+                  ]
                 : [],
           ),
           child: Center(
             child: widget.isLoading
                 ? const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2.5,
-              ),
-            )
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
                 : Text(
-              widget.label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.3,
-              ),
-            ),
+                    widget.label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
           ),
         ),
       ),

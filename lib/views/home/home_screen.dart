@@ -1,9 +1,11 @@
+import 'package:brando_app/views/details/detail_screen.dart';
 import 'package:brando_app/views/notifications/notification_screen.dart';
 import 'package:brando_app/views/search/search_screen.dart';
 import 'package:brando_app/views/seeall/see_all_screen.dart';
 import 'package:brando_app/widgets/wishlist_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentCarouselIndex = 0;
+
+  bool _isAC = false;
+
   final CarouselSliderController _carouselController =
       CarouselSliderController();
 
@@ -25,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Map<String, dynamic>> _hostels = [
     {
+      'id': '1',
       'name': 'HIFI HOSTELS',
       'rating': '4.5',
       'isNew': true,
@@ -40,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     },
     {
+      'id': '2',
       'name': 'HIFI HOSTELS',
       'rating': '3.5',
       'isNew': false,
@@ -55,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     },
     {
+      'id': '3',
       'name': 'HIFI HOSTELS',
       'rating': '1.5',
       'isNew': false,
@@ -175,7 +183,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
           Row(
             children: [
-              _topIconButton(Icons.toggle_on_outlined),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FlutterSwitch(
+                    width: 80,
+                    height: 30,
+                    valueFontSize: 10,
+                    toggleSize: 24,
+                    value: _isAC,
+                    borderRadius: 20,
+                    activeText: 'AC',
+                    inactiveText: 'Non-AC',
+                    showOnOff: true,
+                    activeColor: Colors.red,
+                    inactiveColor: Colors.grey.shade400,
+                    onToggle: (val) {
+                      setState(() {
+                        _isAC = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              // _topIconButton(Icons.toggle_on_outlined),
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
@@ -445,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SeeAllScreen()),
+          MaterialPageRoute(builder: (context) => DetailScreen()),
         );
       },
       child: Container(

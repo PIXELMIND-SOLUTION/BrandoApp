@@ -42,7 +42,7 @@ class CustomBottomNavbar extends StatelessWidget {
     _NavItem(
       icon: Icons.menu_rounded,
       activeIcon: Icons.menu_rounded,
-      label: 'Menu',
+      label: 'Discover',
     ),
   ];
 
@@ -259,3 +259,245 @@ class _PlaceholderPage extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:brando_app/provider/navbar/navbar_provider.dart';
+// import 'package:brando_app/views/home/booking_screen.dart';
+// import 'package:brando_app/views/home/home_screen.dart';
+// import 'package:brando_app/views/home/menu_screen.dart';
+// import 'package:brando_app/views/home/wishlist_screen.dart';
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+
+// class _NavItem {
+//   final IconData icon;
+//   final IconData activeIcon;
+//   final String label;
+
+//   const _NavItem({
+//     required this.icon,
+//     required this.activeIcon,
+//     required this.label,
+//   });
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // Bottom Navbar
+// // ─────────────────────────────────────────────────────────────
+
+// class CustomBottomNavbar extends StatelessWidget {
+//   const CustomBottomNavbar({super.key});
+
+//   static const _items = [
+//     _NavItem(
+//       icon: Icons.home_outlined,
+//       activeIcon: Icons.home_rounded,
+//       label: 'Home',
+//     ),
+//     _NavItem(
+//       icon: Icons.favorite_border_rounded,
+//       activeIcon: Icons.favorite_rounded,
+//       label: 'Wishlist',
+//     ),
+//     _NavItem(
+//       icon: Icons.king_bed_outlined,
+//       activeIcon: Icons.king_bed_rounded,
+//       label: 'Bookings',
+//     ),
+//     _NavItem(
+//       icon: Icons.menu_rounded,
+//       activeIcon: Icons.menu_rounded,
+//       label: 'Discover',
+//     ),
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final provider = context.watch<BottomNavbarProvider>();
+//     final currentIndex = provider.currentIndex;
+
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.08),
+//             blurRadius: 20,
+//             offset: const Offset(0, -4),
+//           ),
+//         ],
+//       ),
+//       child: SafeArea(
+//         top: false,
+//         child: SizedBox(
+//           height: 64,
+//           child: Row(
+//             children: List.generate(_items.length, (index) {
+//               final item = _items[index];
+//               final isActive = index == currentIndex;
+
+//               // ✅ All items equal width (No flex change)
+//               return Expanded(
+//                 child: _NavBarItem(
+//                   item: item,
+//                   isActive: isActive,
+//                   onTap: () => provider.setIndex(index),
+//                 ),
+//               );
+//             }),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // Individual Nav Item
+// // ─────────────────────────────────────────────────────────────
+
+// class _NavBarItem extends StatefulWidget {
+//   final _NavItem item;
+//   final bool isActive;
+//   final VoidCallback onTap;
+
+//   const _NavBarItem({
+//     required this.item,
+//     required this.isActive,
+//     required this.onTap,
+//   });
+
+//   @override
+//   State<_NavBarItem> createState() => _NavBarItemState();
+// }
+
+// class _NavBarItemState extends State<_NavBarItem>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _controller;
+//   late final Animation<double> _scaleAnim;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 150),
+//     );
+//     _scaleAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
+//       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+//     );
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   void _handleTap() {
+//     _controller.forward().then((_) => _controller.reverse());
+//     widget.onTap();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     const activeColor = Color(0xFFE84A4A);
+//     const inactiveColor = Color(0xFFB0B0B0);
+
+//     return GestureDetector(
+//       onTap: _handleTap,
+//       behavior: HitTestBehavior.opaque,
+//       child: ScaleTransition(
+//         scale: _scaleAnim,
+//         child: Center(
+//           child: AnimatedContainer(
+//             duration: const Duration(milliseconds: 250),
+//             curve: Curves.easeInOut,
+//             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+//             decoration: BoxDecoration(
+//               color: widget.isActive
+//                   ? const Color(0xFFFFE5E5)
+//                   : Colors.transparent,
+//               borderRadius: BorderRadius.circular(8),
+//             ),
+//             // ✅ Constrain max width so it never overflows
+//             constraints: const BoxConstraints(
+//               maxWidth: 120,
+//             ),
+//             child: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Icon(
+//                   widget.isActive
+//                       ? widget.item.activeIcon
+//                       : widget.item.icon,
+//                   color: widget.isActive ? activeColor : inactiveColor,
+//                   size: 22,
+//                 ),
+//                 if (widget.isActive) ...[
+//                   const SizedBox(width: 4),
+//                   Flexible(
+//                     child: Text(
+//                       widget.item.label,
+//                       overflow: TextOverflow.ellipsis,
+//                       maxLines: 1,
+//                       style: const TextStyle(
+//                         color: activeColor,
+//                         fontSize: 13,
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                     ),
+//                   ),
+//                 ]
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // Navbar Screen
+// // ─────────────────────────────────────────────────────────────
+
+// class NavbarScreen extends StatelessWidget {
+//   const NavbarScreen({super.key});
+
+//   static const _pages = [
+//     HomeScreen(),
+//     WishlistScreen(),
+//     BookingScreen(),
+//     MenuScreen(),
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final currentIndex = context.watch<BottomNavbarProvider>().currentIndex;
+
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFF8F8F8),
+//       body: IndexedStack(
+//         index: currentIndex,
+//         children: _pages,
+//       ),
+//       bottomNavigationBar: const CustomBottomNavbar(),
+//     );
+//   }
+// }

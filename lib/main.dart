@@ -1,6 +1,5 @@
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
-// import other providers as needed
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,10 +15,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
-        // Add more providers below as your app grows:
-        // ChangeNotifierProvider(create: (_) => AuthProvider()),
-        // ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        // ChangeNotifierProvider(create: (_) => CartProvider()),
+    
       ],
       child: MaterialApp(
         title: 'BRANDO APP',
