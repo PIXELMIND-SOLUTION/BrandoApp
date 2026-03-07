@@ -6,6 +6,7 @@ import 'package:brando_app/widgets/wishlist_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,6 +80,16 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      throw 'Could not launch $phoneUri';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,47 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // Widget _buildTopBar() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-  //     child: Row(
-  //       children: [
-  //         const Icon(Icons.location_on, color: Colors.red, size: 18),
-  //         const SizedBox(width: 4),
-  //         Expanded(
-  //           child: Row(
-  //             children: [
-  //               const Text(
-  //                 'Kphb Hyderabad Kukatpally ...',
-  //                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-  //                 overflow: TextOverflow.ellipsis,
-  //               ),
-  //               const Icon(Icons.arrow_drop_down, size: 20),
-  //             ],
-  //           ),
-  //         ),
-  //         Row(
-  //           children: [
-  //             _topIconButton(Icons.toggle_on_outlined),
-  //             const SizedBox(width: 8),
-  //             GestureDetector(
-  //               onTap: () {
-  //                 Navigator.push(
-  //                   context,
-  //                   MaterialPageRoute(
-  //                     builder: (context) => NotificationScreen(),
-  //                   ),
-  //                 );
-  //               },
-  //               child: _topIconButton(Icons.notifications_none),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildTopBar() {
     return Padding(
@@ -202,6 +172,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() {
                         _isAC = val;
                       });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Text(
+                            val
+                                ? "Room preference updated to AC successfully."
+                                : "Room preference updated to Non-AC successfully.",
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -236,32 +218,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Icon(icon, size: 20, color: Colors.black87),
     );
   }
-
-  // Widget _buildSearchBar() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //         color: Colors.grey.shade100,
-  //         borderRadius: BorderRadius.circular(10),
-  //         border: Border.all(color: Colors.grey.shade300),
-  //       ),
-  //       child: TextField(
-  //         decoration: InputDecoration(
-  //           hintText: 'Search for "HiFi Hostel"',
-  //           hintStyle: TextStyle(
-  //             color: Colors.red.shade400,
-  //             fontSize: 14,
-  //             fontStyle: FontStyle.italic,
-  //           ),
-  //           prefixIcon: const Icon(Icons.search, color: Colors.grey),
-  //           border: InputBorder.none,
-  //           contentPadding: const EdgeInsets.symmetric(vertical: 12),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildSearchBar(BuildContext context) {
     return Padding(
@@ -555,26 +511,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-
-                            // Text(
-                            //   hostel['name'],
-                            //   style: const TextStyle(
-                            //     color: Colors.red,
-                            //     fontWeight: FontWeight.bold,
-                            //     fontSize: 14,
-                            //   ),
-                            // ),
-                            // Icon(
-                            //   hostel['isFavorite']
-                            //       ? Icons.favorite
-                            //       : Icons.favorite_border,
-                            //   color: hostel['isFavorite']
-                            //       ? Colors.red
-                            //       : Colors.grey,
-                            //   size: 20,
-                            // ),
-
-                            // In _buildHostelCard(), replace the static heart icon with:
                             ValueListenableBuilder<List<Map<String, dynamic>>>(
                               valueListenable: WishlistManager().wishlist,
                               builder: (context, _, __) {
@@ -694,7 +630,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        _makePhoneCall(
+                          "9961593179",
+                        ); 
+                      },
                       icon: const Icon(
                         Icons.call,
                         size: 14,
@@ -707,7 +647,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.red,
-                        // side: const BorderSide(color: Colors.green),
                         padding: const EdgeInsets.symmetric(vertical: 6),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
@@ -715,6 +654,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  // Expanded(
+                  //   child: OutlinedButton.icon(
+                  //     onPressed: () {},
+                  //     icon: const Icon(
+                  //       Icons.call,
+                  //       size: 14,
+                  //       color: Colors.white,
+                  //     ),
+                  //     label: const Text(
+                  //       'Call',
+                  //       style: TextStyle(fontSize: 12, color: Colors.white),
+                  //     ),
+                  //     style: OutlinedButton.styleFrom(
+                  //       backgroundColor: Colors.red,
+                  //       foregroundColor: Colors.red,
+                  //       // side: const BorderSide(color: Colors.green),
+                  //       padding: const EdgeInsets.symmetric(vertical: 6),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(6),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: OutlinedButton.icon(

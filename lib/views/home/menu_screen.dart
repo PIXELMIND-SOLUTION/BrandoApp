@@ -1,9 +1,103 @@
+import 'package:brando_app/provider/auth/auth_provider.dart';
 import 'package:brando_app/views/history/booking_history.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
+import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
+
+
+
+
+  Future<void> _handleLogout(BuildContext context) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text(
+        'Logout',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: const Text('Are you sure you want to logout?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: const Text('Cancel', style: TextStyle(color: Colors.black54)),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: const Text(
+            'Logout',
+            style: TextStyle(
+              color: Color(0xFFE53935),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmed == true && context.mounted) {
+    await context.read<AuthProvider>().logout();
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Logged out successfully'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const SplashScreen()),
+        (route) => false,
+      );
+    }
+  }
+}
+
+  // Future<void> _handleLogout(BuildContext context) async {
+  //   final confirmed = await showDialog<bool>(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  //       title: const Text(
+  //         'Logout',
+  //         style: TextStyle(fontWeight: FontWeight.bold),
+  //       ),
+  //       content: const Text('Are you sure you want to logout?'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(ctx, false),
+  //           child: const Text('Cancel', style: TextStyle(color: Colors.black54)),
+  //         ),
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(ctx, true),
+  //           child: const Text(
+  //             'Logout',
+  //             style: TextStyle(color: Color(0xFFE53935), fontWeight: FontWeight.bold),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+
+  //   if (confirmed == true && context.mounted) {
+  //     await context.read<AuthProvider>().logout();
+  //     if (context.mounted) {
+  //       Navigator.pushAndRemoveUntil(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => const SplashScreen()),
+  //         (route) => false,
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +133,6 @@ class MenuScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => ProfileScreen()),
               );
             },
-
             child: _buildMenuItem(
               icon: Icons.person_outline,
               title: 'Personal Information',
@@ -61,7 +154,14 @@ class MenuScreen extends StatelessWidget {
           _buildMenuItem(icon: Icons.phone_outlined, title: 'Contact Us'),
           _buildMenuItem(icon: Icons.help_outline, title: 'Terms & Conditions'),
           _buildMenuItem(icon: Icons.phone_outlined, title: 'Privacy Policy'),
-          _buildMenuItem(icon: Icons.logout, title: 'Logout', isLogout: true),
+          GestureDetector(
+            onTap: () => _handleLogout(context),
+            child: _buildMenuItem(
+              icon: Icons.logout,
+              title: 'Logout',
+              isLogout: true,
+            ),
+          ),
         ],
       ),
     );
@@ -96,7 +196,6 @@ class MenuScreen extends StatelessWidget {
           color: isLogout ? const Color(0xFFE53935) : Colors.black54,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-        // onTap: () {},
       ),
     );
   }
