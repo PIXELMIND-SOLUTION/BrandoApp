@@ -9,8 +9,6 @@ class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
 
 
-
-
   Future<void> _handleLogout(BuildContext context) async {
   final confirmed = await showDialog<bool>(
     context: context,

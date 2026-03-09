@@ -1,5 +1,7 @@
 import 'package:brando_app/helper/shared_preference.dart';
 import 'package:brando_app/provider/auth/auth_provider.dart';
+import 'package:brando_app/provider/auth/profile_provider.dart';
+import 'package:brando_app/provider/location/location_provider.dart';
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => BottomNavbarProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => HostelProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
       ],
       child: MaterialApp(
         title: 'BRANDO APP',
