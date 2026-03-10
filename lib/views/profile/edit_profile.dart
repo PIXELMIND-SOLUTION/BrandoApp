@@ -267,6 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final success = await provider.updateProfile(
       name: nameChanged ? newName : null,
       profileImage: imageChanged ? _pickedImage : null,
+      
     );
 
     if (!mounted) return;

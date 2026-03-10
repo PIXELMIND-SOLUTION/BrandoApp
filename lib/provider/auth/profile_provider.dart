@@ -6,7 +6,6 @@ import 'package:brando_app/models/profile_model.dart';
 import 'package:brando_app/services/auth/profile_service.dart';
 import 'package:flutter/foundation.dart';
 
-
 enum ProfileStatus { idle, loading, success, error }
 
 class ProfileProvider extends ChangeNotifier {
@@ -58,14 +57,18 @@ class ProfileProvider extends ChangeNotifier {
 
     _setLoading();
     try {
+      print("UPDATE PROFILE CALLED");
       _profile = await _service.updateProfile(
         userId: userId,
         name: name?.trim(),
         profileImage: profileImage,
       );
+
+      print("API RESPONSE RECEIVED");
       _setSuccess();
       return true;
     } catch (e) {
+      print("UPDATE ERROR: $e");
       _setError(e.toString().replaceFirst('Exception: ', ''));
       return false;
     }

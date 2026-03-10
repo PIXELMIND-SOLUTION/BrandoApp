@@ -7,9 +7,7 @@ class SendOtpRequest {
 
   const SendOtpRequest({required this.mobileNumber});
 
-  Map<String, dynamic> toJson() => {
-        'mobileNumber': mobileNumber,
-      };
+  Map<String, dynamic> toJson() => {'mobileNumber': mobileNumber};
 }
 
 class VerifyOtpRequest {
@@ -18,10 +16,7 @@ class VerifyOtpRequest {
 
   const VerifyOtpRequest({required this.token, required this.otp});
 
-  Map<String, dynamic> toJson() => {
-        'token': token,
-        'otp': otp,
-      };
+  Map<String, dynamic> toJson() => {'token': token, 'otp': otp};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -31,8 +26,8 @@ class VerifyOtpRequest {
 class SendOtpResponse {
   final bool success;
   final String message;
-  final String? otp;       // Provided by server in dev/test mode
-  final String token;      // Pre-OTP token for verify step
+  final String? otp; // Provided by server in dev/test mode
+  final String token; // Pre-OTP token for verify step
 
   const SendOtpResponse({
     required this.success,
@@ -51,11 +46,11 @@ class SendOtpResponse {
   }
 
   Map<String, dynamic> toJson() => {
-        'success': success,
-        'message': message,
-        if (otp != null) 'otp': otp,
-        'token': token,
-      };
+    'success': success,
+    'message': message,
+    if (otp != null) 'otp': otp,
+    'token': token,
+  };
 
   @override
   String toString() =>
@@ -68,27 +63,30 @@ class UserModel {
 
   const UserModel({required this.id, required this.mobileNumber});
 
+  // factory UserModel.fromJson(Map<String, dynamic> json) {
+  //   return UserModel(
+  //     id: json['id'] as String,
+  //     mobileNumber: json['mobileNumber'] as String,
+  //   );
+  // }
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] as String,
-      mobileNumber: json['mobileNumber'] as String,
+      mobileNumber: json['mobileNumber'].toString(),
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'mobileNumber': mobileNumber,
-      };
+  Map<String, dynamic> toJson() => {'id': id, 'mobileNumber': mobileNumber};
 
   @override
-  String toString() =>
-      'UserModel(id: $id, mobileNumber: $mobileNumber)';
+  String toString() => 'UserModel(id: $id, mobileNumber: $mobileNumber)';
 }
 
 class VerifyOtpResponse {
   final bool success;
   final String message;
-  final String token;      // Verified auth token
+  final String token; // Verified auth token
   final UserModel user;
 
   const VerifyOtpResponse({
@@ -108,11 +106,11 @@ class VerifyOtpResponse {
   }
 
   Map<String, dynamic> toJson() => {
-        'success': success,
-        'message': message,
-        'token': token,
-        'user': user.toJson(),
-      };
+    'success': success,
+    'message': message,
+    'token': token,
+    'user': user.toJson(),
+  };
 
   @override
   String toString() =>

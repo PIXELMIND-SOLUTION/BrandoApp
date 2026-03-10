@@ -127,7 +127,6 @@ class _LocationScreenState extends State<LocationScreen>
     );
   }
 
-  /// Gets GPS coordinates using Geolocator directly (no LocationProvider)
   Future<Position?> _getCurrentPosition() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -157,10 +156,6 @@ class _LocationScreenState extends State<LocationScreen>
     );
   }
 
-  /// Handles "Use Current Location" button tap.
-  /// 1. Gets GPS via Geolocator
-  /// 2. Calls HostelProvider.updateLocationAndFetch
-  /// 3. Navigates back with result
   Future<void> _handleCurrentLocation() async {
     if (userId == null) {
       _showSnackBar('User ID not found. Please login again.', isError: true);
@@ -222,11 +217,6 @@ class _LocationScreenState extends State<LocationScreen>
       if (mounted) setState(() => _isLoadingCurrentLocation = false);
     }
   }
-
-  /// Handles selection from Google Places autocomplete.
-  /// 1. Parses lat/lng from prediction
-  /// 2. Calls HostelProvider.updateLocationAndFetch
-  /// 3. Navigates back with result
   Future<void> _handleLocationSelection(Prediction prediction) async {
     try {
       final latitude = double.tryParse(prediction.lat ?? '0') ?? 0.0;

@@ -3,6 +3,7 @@ import 'package:brando_app/provider/auth/auth_provider.dart';
 import 'package:brando_app/provider/auth/profile_provider.dart';
 import 'package:brando_app/provider/location/location_provider.dart';
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
+import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HostelProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
       ],
       child: MaterialApp(
         title: 'BRANDO APP',

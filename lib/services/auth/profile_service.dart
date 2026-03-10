@@ -19,16 +19,26 @@ class ProfileService {
   /// Fetch user profile by userId
   Future<UserProfileModel> getUserProfile(String userId) async {
     try {
-      final response = await _dio.get(
-        ApiConstants.getUserProfileUrl(userId),
-      );
-
+      final response = await _dio.get(ApiConstants.getUserProfileUrl(userId));
 
       print('Response status code for get user profile ${response.statusCode}');
-            print('Response bodyyyyyyyyyyyyyyy for get user profile ${response.headers}');
+      print(
+        'Response bodyyyyyyyyyyyyyyy for get user profile ${response.headers}',
+      );
 
+      // if (response.statusCode == 200 && response.data['success'] == true) {
+      //   return UserProfileModel.fromJson(response.data['user']);
+      // }
 
       if (response.statusCode == 200 && response.data['success'] == true) {
+        // ADD THIS
+        print('RAW USER JSON: ${response.data['user']}');
+        print('USER JSON TYPE: ${response.data['user'].runtimeType}');
+        print(
+          'LOCATION TYPE: ${response.data['user']['location'].runtimeType}',
+        );
+        print('LOCATION DATA: ${response.data['user']['location']}');
+
         return UserProfileModel.fromJson(response.data['user']);
       }
 
@@ -38,13 +48,13 @@ class ProfileService {
     }
   }
 
-  /// Update user profile (name and/or profile image)
   Future<UserProfileModel> updateProfile({
     required String userId,
     String? name,
     File? profileImage,
   }) async {
     try {
+      print('uaerrrrrrrrrrrrrrrr iddddddddddddd $userId');
       final formData = FormData.fromMap({
         'userId': userId,
         if (name != null && name.isNotEmpty) 'name': name,
@@ -55,13 +65,17 @@ class ProfileService {
           ),
       });
 
-      final response = await _dio.post(
+
+      final response = await _dio.put(
         ApiConstants.updateProfileUrl,
         data: formData,
       );
-
-            print('Response status code for updateeeeeeeeeee profile ${response.statusCode}');
-            print('Response bodyyyyyyyyyyyyyyy for get user profile ${response.headers}');
+      print(
+        'Response status code for updateeeeeeeeeee profile ${response.statusCode}',
+      );
+      print(
+        'Response bodyyyyyyyyyyyyyyy for get user profile ${response.data}',
+      );
 
       if (response.statusCode == 200 && response.data['success'] == true) {
         return UserProfileModel.fromJson(response.data['user']);

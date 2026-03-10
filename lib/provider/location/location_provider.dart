@@ -16,7 +16,7 @@ class HostelProvider extends ChangeNotifier {
   List<HostelModel> _hostels = [];
   String? _errorMessage;
   int _totalCount = 0;
-
+String _selectedCategory = 'ALL'; 
   // ─── Filtered State ───────────────────────────────────────────────────────
   String _selectedType = 'ALL'; // 'ALL', 'AC', 'NON-AC'
 
@@ -30,10 +30,18 @@ class HostelProvider extends ChangeNotifier {
   bool get hasError => _state == HostelState.error;
   String get selectedType => _selectedType;
 
+  String get selectedCategory => _selectedCategory;
+
+
+  // List<HostelModel> get _filteredHostels {
+  //   if (_selectedType == 'ALL') return _hostels;
+  //   return _hostels.where((h) => h.type == _selectedType).toList();
+  // }
+
   List<HostelModel> get _filteredHostels {
-    if (_selectedType == 'ALL') return _hostels;
-    return _hostels.where((h) => h.type == _selectedType).toList();
-  }
+  if (_selectedCategory == 'ALL') return _hostels;
+  return _hostels.where((h) => h.categoryId.name == _selectedCategory).toList();
+}
 
   // ─── Filter by Type ───────────────────────────────────────────────────────
   void setTypeFilter(String type) {
