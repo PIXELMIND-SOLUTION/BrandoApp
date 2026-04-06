@@ -905,8 +905,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               final label = isHostelModel
                                   ? share.shareType
                                   : share['label'];
+                              // final price = isHostelModel
+                              //     ? '₹${_isAC ? share.acMonthlyPrice : share.nonAcMonthlyPrice}/-'
+                              //     : share['price'];
+
                               final price = isHostelModel
-                                  ? '₹${_isAC ? share.acMonthlyPrice : share.nonAcMonthlyPrice}/-'
+                                  ? '₹${share.monthlyPrice}/-' // ← was using acMonthlyPrice/nonAcMonthlyPrice
                                   : share['price'];
                               return Padding(
                                 padding: const EdgeInsets.only(right: 6),

@@ -290,37 +290,70 @@ class HostelCategory {
       };
 }
 
+// class SharingOption {
+//   final String shareType;
+//   final int acMonthlyPrice;
+//   final int acDailyPrice;
+//   final int nonAcMonthlyPrice;
+//   final int nonAcDailyPrice;
+
+//   SharingOption({
+//     required this.shareType,
+//     required this.acMonthlyPrice,
+//     required this.acDailyPrice,
+//     required this.nonAcMonthlyPrice,
+//     required this.nonAcDailyPrice,
+//   });
+
+//   factory SharingOption.fromJson(Map<String, dynamic> json) {
+//     return SharingOption(
+//       shareType: json['shareType'] ?? '',
+//       acMonthlyPrice: json['acMonthlyPrice'] ?? 0,
+//       acDailyPrice: json['acDailyPrice'] ?? 0,
+//       nonAcMonthlyPrice: json['nonAcMonthlyPrice'] ?? 0,
+//       nonAcDailyPrice: json['nonAcDailyPrice'] ?? 0,
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() => {
+//         'shareType': shareType,
+//         'acMonthlyPrice': acMonthlyPrice,
+//         'acDailyPrice': acDailyPrice,
+//         'nonAcMonthlyPrice': nonAcMonthlyPrice,
+//         'nonAcDailyPrice': nonAcDailyPrice,
+//       };
+// }
+
+
+
+
 class SharingOption {
+  final String type;        // "AC" or "Non-AC"
   final String shareType;
-  final int acMonthlyPrice;
-  final int acDailyPrice;
-  final int nonAcMonthlyPrice;
-  final int nonAcDailyPrice;
+  final int monthlyPrice;
+  final int dailyPrice;
 
   SharingOption({
+    required this.type,
     required this.shareType,
-    required this.acMonthlyPrice,
-    required this.acDailyPrice,
-    required this.nonAcMonthlyPrice,
-    required this.nonAcDailyPrice,
+    required this.monthlyPrice,
+    required this.dailyPrice,
   });
 
   factory SharingOption.fromJson(Map<String, dynamic> json) {
     return SharingOption(
+      type: json['type'] ?? '',
       shareType: json['shareType'] ?? '',
-      acMonthlyPrice: json['acMonthlyPrice'] ?? 0,
-      acDailyPrice: json['acDailyPrice'] ?? 0,
-      nonAcMonthlyPrice: json['nonAcMonthlyPrice'] ?? 0,
-      nonAcDailyPrice: json['nonAcDailyPrice'] ?? 0,
+      monthlyPrice: json['monthlyPrice'] ?? 0,
+      dailyPrice: json['dailyPrice'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
+        'type': type,
         'shareType': shareType,
-        'acMonthlyPrice': acMonthlyPrice,
-        'acDailyPrice': acDailyPrice,
-        'nonAcMonthlyPrice': nonAcMonthlyPrice,
-        'nonAcDailyPrice': nonAcDailyPrice,
+        'monthlyPrice': monthlyPrice,
+        'dailyPrice': dailyPrice,
       };
 }
 

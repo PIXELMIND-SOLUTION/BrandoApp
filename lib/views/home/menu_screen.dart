@@ -1,4 +1,5 @@
 import 'package:brando_app/provider/auth/auth_provider.dart';
+import 'package:brando_app/views/help/help_screen.dart';
 import 'package:brando_app/views/history/booking_history.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
@@ -148,7 +149,11 @@ class MenuScreen extends StatelessWidget {
               title: 'Booking History',
             ),
           ),
-          _buildMenuItem(icon: Icons.help_outline, title: 'Need Help?'),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>HelpScreen()));
+            },
+            child: _buildMenuItem(icon: Icons.help_outline, title: 'Need Help?')),
           _buildMenuItem(icon: Icons.phone_outlined, title: 'Contact Us'),
           _buildMenuItem(icon: Icons.help_outline, title: 'Terms & Conditions'),
           _buildMenuItem(icon: Icons.phone_outlined, title: 'Privacy Policy'),

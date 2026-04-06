@@ -3224,6 +3224,7 @@ class _DetailScreenState extends State<DetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    print('hosteeeeeeeeeeeeeelllllllllllllllll iddddddddddddddddd ${widget.hostelId}');
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -3288,14 +3289,14 @@ class _DetailScreenState extends State<DetailScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 48,
-                      ),
+                      // const Icon(
+                      //   Icons.error_outline,
+                      //   color: Colors.red,
+                      //   size: 48,
+                      // ),
                       const SizedBox(height: 12),
                       const Text(
-                        'Failed to load hostel details.',
+                        'Unable to load hostel details.',
                         style: TextStyle(fontSize: 15, color: Colors.black87),
                       ),
                       const SizedBox(height: 8),
