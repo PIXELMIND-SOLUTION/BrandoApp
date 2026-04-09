@@ -2873,6 +2873,34 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 // ─── Models ──────────────────────────────────────────────────────────────────
 
+// class SharingOption {
+//   final String shareType;
+//   final int acMonthlyPrice;
+//   final int acDailyPrice;
+//   final int nonAcMonthlyPrice;
+//   final int nonAcDailyPrice;
+
+//   SharingOption({
+//     required this.shareType,
+//     required this.acMonthlyPrice,
+//     required this.acDailyPrice,
+//     required this.nonAcMonthlyPrice,
+//     required this.nonAcDailyPrice,
+//   });
+
+//   factory SharingOption.fromJson(Map<String, dynamic> json) {
+//     return SharingOption(
+//       shareType: json['shareType'] ?? '',
+//       acMonthlyPrice: json['acMonthlyPrice'] ?? 0,
+//       acDailyPrice: json['acDailyPrice'] ?? 0,
+//       nonAcMonthlyPrice: json['nonAcMonthlyPrice'] ?? 0,
+//       nonAcDailyPrice: json['nonAcDailyPrice'] ?? 0,
+//     );
+//   }
+// }
+
+
+
 class SharingOption {
   final String shareType;
   final int acMonthlyPrice;
@@ -2882,21 +2910,11 @@ class SharingOption {
 
   SharingOption({
     required this.shareType,
-    required this.acMonthlyPrice,
-    required this.acDailyPrice,
-    required this.nonAcMonthlyPrice,
-    required this.nonAcDailyPrice,
+    this.acMonthlyPrice = 0,
+    this.acDailyPrice = 0,
+    this.nonAcMonthlyPrice = 0,
+    this.nonAcDailyPrice = 0,
   });
-
-  factory SharingOption.fromJson(Map<String, dynamic> json) {
-    return SharingOption(
-      shareType: json['shareType'] ?? '',
-      acMonthlyPrice: json['acMonthlyPrice'] ?? 0,
-      acDailyPrice: json['acDailyPrice'] ?? 0,
-      nonAcMonthlyPrice: json['nonAcMonthlyPrice'] ?? 0,
-      nonAcDailyPrice: json['nonAcDailyPrice'] ?? 0,
-    );
-  }
 }
 
 class HostelModel {
@@ -2920,23 +2938,69 @@ class HostelModel {
     required this.images,
   });
 
-  factory HostelModel.fromJson(Map<String, dynamic> json) {
-    return HostelModel(
-      id: json['_id'] ?? '',
-      name: json['name'] ?? '',
-      type: json['type'] ?? '',
-      rating: (json['rating'] ?? 0).toDouble(),
-      address: json['address'] ?? '',
-      monthlyAdvance: json['monthlyAdvance'] ?? 0,
-      sharings:
-          (json['sharings'] as List<dynamic>?)
-              ?.map((e) => SharingOption.fromJson(e))
-              .toList() ??
-          [],
-      images: List<String>.from(json['images'] ?? []),
-    );
+  // factory HostelModel.fromJson(Map<String, dynamic> json) {
+  //   return HostelModel(
+  //     id: json['_id'] ?? '',
+  //     name: json['name'] ?? '',
+  //     type: json['type'] ?? '',
+  //     rating: (json['rating'] ?? 0).toDouble(),
+  //     address: json['address'] ?? '',
+  //     monthlyAdvance: json['monthlyAdvance'] ?? 0,
+  //     sharings:
+  //         (json['sharings'] as List<dynamic>?)
+  //             ?.map((e) => SharingOption.fromJson(e))
+  //             .toList() ??
+  //         [],
+  //     images: List<String>.from(json['images'] ?? []),
+  //   );
+  // }
+
+
+
+factory HostelModel.fromJson(Map<String, dynamic> json) {
+  final rawSharings = (json['sharings'] as List<dynamic>?) ?? [];
+
+  // Group by shareType, merging AC and Non-AC prices
+  final Map<String, SharingOption> sharingMap = {};
+
+  for (final item in rawSharings) {
+    final shareType = item['shareType'] as String? ?? '';
+    final type = (item['type'] as String? ?? '').toUpperCase();
+    final monthlyPrice = (item['monthlyPrice'] ?? 0) as int;
+    final dailyPrice = (item['dailyPrice'] ?? 0) as int;
+
+    final existing = sharingMap[shareType];
+
+    if (type == 'AC') {
+      sharingMap[shareType] = SharingOption(
+        shareType: shareType,
+        acMonthlyPrice: monthlyPrice,
+        acDailyPrice: dailyPrice,
+        nonAcMonthlyPrice: existing?.nonAcMonthlyPrice ?? 0,
+        nonAcDailyPrice: existing?.nonAcDailyPrice ?? 0,
+      );
+    } else {
+      sharingMap[shareType] = SharingOption(
+        shareType: shareType,
+        acMonthlyPrice: existing?.acMonthlyPrice ?? 0,
+        acDailyPrice: existing?.acDailyPrice ?? 0,
+        nonAcMonthlyPrice: monthlyPrice,
+        nonAcDailyPrice: dailyPrice,
+      );
+    }
   }
 
+  return HostelModel(
+    id: json['_id'] ?? '',
+    name: json['name'] ?? '',
+    type: json['type'] ?? '',
+    rating: (json['rating'] ?? 0).toDouble(),
+    address: json['address'] ?? '',
+    monthlyAdvance: json['monthlyAdvance'] ?? 0,
+    sharings: sharingMap.values.toList(),
+    images: List<String>.from(json['images'] ?? []),
+  );
+}
   bool get isAC => type.toUpperCase() == 'AC';
 }
 
@@ -2946,7 +3010,7 @@ class HostelApiService {
   static const String _baseUrl = 'http://31.97.206.144:2003/api/Admin';
 
   static Future<HostelModel> getHostelById(String hostelId) async {
-    final uri = Uri.parse('$_baseUrl/getHostelById/$hostelId');
+    final uri = Uri.parse('$_baseUrl/hostel/$hostelId');
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
@@ -3140,7 +3204,8 @@ class _DetailScreenState extends State<DetailScreen>
       );
       setState(() {
         _hostel = hostel;
-        _isACToggled = hostel.isAC;
+        // _isACToggled = hostel.isAC;
+        _isACToggled = false; 
         _isLoading = false;
       });
     } catch (e) {

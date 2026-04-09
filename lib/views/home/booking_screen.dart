@@ -450,7 +450,11 @@ class _BookingScreenState extends State<BookingScreen> {
                     backgroundColor: const Color(0xFFD32F2F),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.green,
+                      content: Text('Booking Successfull....')));
+                  },
                   child: const Text(
                     'Book Now',
                     style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
