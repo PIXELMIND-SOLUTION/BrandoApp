@@ -4,7 +4,6 @@ import 'package:brando_app/helper/shared_preference.dart';
 import 'package:brando_app/models/wishlist_model.dart';
 import 'package:dio/dio.dart';
 
-
 class WishlistService {
   WishlistService._();
   static final WishlistService instance = WishlistService._();
@@ -13,12 +12,9 @@ class WishlistService {
     BaseOptions(
       connectTimeout: Duration(milliseconds: ApiConstants.connectTimeoutMs),
       receiveTimeout: Duration(milliseconds: ApiConstants.receiveTimeoutMs),
-      headers: {
-        ApiConstants.contentTypeHeader: ApiConstants.contentTypeJson,
-      },
+      headers: {ApiConstants.contentTypeHeader: ApiConstants.contentTypeJson},
     ),
   );
-
 
   Map<String, String> get _authHeaders {
     final token = AppPreferences.getAuthToken();
@@ -31,7 +27,6 @@ class WishlistService {
 
   // ─── Toggle Wishlist (Add / Remove) ───────────────────────────────────────
 
-
   Future<WishlistToggleResponse> toggleWishlist({
     required String hostelId,
   }) async {
@@ -43,26 +38,27 @@ class WishlistService {
     try {
       final response = await _dio.post(
         ApiConstants.addtowishlisturl,
-        data: jsonEncode({
-          'userId': userId,
-          'hostelId': hostelId,
-        }),
+        data: jsonEncode({'userId': userId, 'hostelId': hostelId}),
         options: Options(headers: _authHeaders),
       );
 
+      print(
+        'Response status code for add to wishlist and remove from wishlist ${response.statusCode}',
+      );
 
-      print('Response status code for add to wishlist and remove from wishlist ${response.statusCode}');
-
-            print('Response boddddddddyyyyyyyyyyyyyy  add to wishlist and remove from wishlist ${response.data}');
-
+      print(
+        'Response boddddddddyyyyyyyyyyyyyy  add to wishlist and remove from wishlist ${response.data}',
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return WishlistToggleResponse.fromJson(
-            response.data as Map<String, dynamic>);
+          response.data as Map<String, dynamic>,
+        );
       }
 
       throw Exception(
-          'Toggle wishlist failed with status: ${response.statusCode}');
+        'Toggle wishlist failed with status: ${response.statusCode}',
+      );
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
@@ -85,18 +81,20 @@ class WishlistService {
         options: Options(headers: _authHeaders),
       );
 
-            print('Response status code for get my wishlistttttt ${response.statusCode}');
-                        print('Response bodyyyyyyyyyy for get my wishlistttttt ${response.data}');
-
-
+      print(
+        'Response status code for get my wishlistttttt ${response.statusCode}',
+      );
+      print('Response bodyyyyyyyyyy for get my wishlistttttt ${response.data}');
 
       if (response.statusCode == 200) {
         return GetWishlistResponse.fromJson(
-            response.data as Map<String, dynamic>);
+          response.data as Map<String, dynamic>,
+        );
       }
 
       throw Exception(
-          'Get wishlist failed with status: ${response.statusCode}');
+        'Get wishlist failed with status: ${response.statusCode}',
+      );
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
