@@ -3205,7 +3205,9 @@ class _DetailScreenState extends State<DetailScreen>
       setState(() {
         _hostel = hostel;
         // _isACToggled = hostel.isAC;
-        _isACToggled = false; 
+        // _isACToggled = false; 
+
+        _isACToggled = hostel.sharings.any((s) => s.acMonthlyPrice > 0);
         _isLoading = false;
       });
     } catch (e) {
@@ -3223,24 +3225,45 @@ class _DetailScreenState extends State<DetailScreen>
     super.dispose();
   }
 
-  List<Map<String, dynamic>> get _currentPrices {
-    if (_hostel == null) return [];
-    final isMonthly = _tabController.index == 0;
+  // List<Map<String, dynamic>> get _currentPrices {
+  //   if (_hostel == null) return [];
+  //   final isMonthly = _tabController.index == 0;
 
-    return _hostel!.sharings.map((s) {
-      int price;
-      if (isMonthly) {
-        price = _isACToggled ? s.acMonthlyPrice : s.nonAcMonthlyPrice;
-      } else {
-        price = _isACToggled ? s.acDailyPrice : s.nonAcDailyPrice;
-      }
-      return {
-        'share': s.shareType.toUpperCase(),
-        'price': price,
-        'priceFormatted': '${_formatPrice(price)}/-',
-      };
-    }).toList();
-  }
+  //   return _hostel!.sharings.map((s) {
+  //     int price;
+  //     if (isMonthly) {
+  //       price = _isACToggled ? s.acMonthlyPrice : s.nonAcMonthlyPrice;
+  //     } else {
+  //       price = _isACToggled ? s.acDailyPrice : s.nonAcDailyPrice;
+  //     }
+  //     return {
+  //       'share': s.shareType.toUpperCase(),
+  //       'price': price,
+  //       'priceFormatted': '${_formatPrice(price)}/-',
+  //     };
+  //   }).toList();
+  // }
+
+
+  List<Map<String, dynamic>> get _currentPrices {
+  if (_hostel == null) return [];
+  final isMonthly = _tabController.index == 0;
+
+  return _hostel!.sharings.map((s) {
+    int price;
+    if (isMonthly) {
+      price = _isACToggled ? s.acMonthlyPrice : s.nonAcMonthlyPrice;
+    } else {
+      price = _isACToggled ? s.acDailyPrice : s.nonAcDailyPrice;
+    }
+    return {
+      'share': s.shareType.toUpperCase(),
+      'price': price,
+      'priceFormatted': '${_formatPrice(price)}/-',
+    };
+  // ✅ Filter out options with no price data
+  }).where((item) => (item['price'] as int) > 0).toList();
+}
 
   int? get _selectedPrice {
     if (_selectedPriceIndex == null) return null;

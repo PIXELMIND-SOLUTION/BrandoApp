@@ -27,6 +27,7 @@ class ApiConstants {
   static String getUserProfileUrl(String userId) =>
       '$baseUrl$apiPrefix/auth/user/$userId';
 
+
   static const String contentTypeHeader = 'Content-Type';
   static const String authorizationHeader = 'Authorization';
   static const String contentTypeJson = 'application/json';
