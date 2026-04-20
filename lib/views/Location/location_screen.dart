@@ -669,7 +669,7 @@ class _LocationScreenState extends State<LocationScreen>
                                   width: 1.5,
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
+                              focusedBorder: OutlineInputBorder( 
                                 borderRadius: BorderRadius.circular(16),
                                 borderSide: const BorderSide(
                                   color: Color(0xFFFF5A5F),

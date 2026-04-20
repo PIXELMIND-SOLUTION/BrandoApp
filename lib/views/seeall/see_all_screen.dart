@@ -854,7 +854,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
   Widget _buildHostelCard(Map<String, dynamic> hostel) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailScreen()));
+        // Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailScreen(hostelId: hostel['id'],)));
       },
 
       child: Container(

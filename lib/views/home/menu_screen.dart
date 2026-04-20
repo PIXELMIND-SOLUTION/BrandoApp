@@ -1,7 +1,10 @@
 import 'package:brando_app/provider/auth/auth_provider.dart';
+import 'package:brando_app/provider/booking/booking_provider.dart';
 import 'package:brando_app/views/contact/contact_us.dart';
+import 'package:brando_app/views/form/submit_form_details.dart';
 import 'package:brando_app/views/help/help_screen.dart';
 import 'package:brando_app/views/history/booking_history.dart';
+import 'package:brando_app/views/my%20bookings/my%20booking_screen.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -10,56 +13,58 @@ import 'package:provider/provider.dart';
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
 
-
   Future<void> _handleLogout(BuildContext context) async {
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text(
-        'Logout',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      content: const Text('Are you sure you want to logout?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx, false),
-          child: const Text('Cancel', style: TextStyle(color: Colors.black54)),
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Logout',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        TextButton(
-          onPressed: () => Navigator.pop(ctx, true),
-          child: const Text(
-            'Logout',
-            style: TextStyle(
-              color: Color(0xFFE53935),
-              fontWeight: FontWeight.bold,
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black54),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Logout',
+              style: TextStyle(
+                color: Color(0xFFE53935),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
 
-  if (confirmed == true && context.mounted) {
-    await context.read<AuthProvider>().logout();
+    if (confirmed == true && context.mounted) {
+      await context.read<AuthProvider>().logout();
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Logged out successfully'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Logged out successfully'),
+            duration: Duration(seconds: 2),
+          ),
+        );
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const SplashScreen()),
-        (route) => false,
-      );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const SplashScreen()),
+          (route) => false,
+        );
+      }
     }
   }
-}
 
   // Future<void> _handleLogout(BuildContext context) async {
   //   final confirmed = await showDialog<bool>(
@@ -150,16 +155,70 @@ class MenuScreen extends StatelessWidget {
               title: 'Booking History',
             ),
           ),
+
+          //   GestureDetector(
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => SubmitFormDetails()),
+          //     );
+          //   },
+          //   child: _buildMenuItem(
+          //     icon: Icons.description,
+          //     title: 'Submit Form',
+          //   ),
+          // ),
+          // GestureDetector(
+          //   onTap: () {
+          //     final hostelId =
+          //         context.read<BookingProvider>().bookingRequest?.hostelId ??
+          //         '';
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => SubmitFormDetails(hostelId: hostelId),
+          //       ),
+          //     );
+          //   },
+          //   child: _buildMenuItem(
+          //     icon: Icons.description,
+          //     title: 'Submit Form',
+          //   ),
+          // ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>HelpScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HelpScreen()),
+              );
             },
-            child: _buildMenuItem(icon: Icons.help_outline, title: 'Need Help?')),
+            child: _buildMenuItem(
+              icon: Icons.help_outline,
+              title: 'Need Help?',
+            ),
+          ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ContactUs()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactUs()),
+              );
             },
-            child: _buildMenuItem(icon: Icons.phone_outlined, title: 'Contact Us')),
+            child: _buildMenuItem(
+              icon: Icons.phone_outlined,
+              title: 'Contact Us',
+            ),
+          ),
+
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MybookingScreen()),
+              );
+            },
+            child: _buildMenuItem(icon: Icons.book_online, title: 'Mybookings'),
+          ),
           _buildMenuItem(icon: Icons.help_outline, title: 'Terms & Conditions'),
           _buildMenuItem(icon: Icons.phone_outlined, title: 'Privacy Policy'),
           GestureDetector(

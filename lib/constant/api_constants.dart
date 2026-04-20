@@ -13,7 +13,16 @@ class ApiConstants {
   static const String nearbyHostels = '$apiPrefix/auth/nearby-hostels';
   static const String addtowishlist = '$apiPrefix/auth/wishlist/toggle';
   static const String getmywishlist = '$apiPrefix/auth/wishlist';
-  static const String createbooking ='$apiPrefix/auth/createBooking';
+
+  static const String bookingRequest = '$apiPrefix/auth/booking-request';
+
+  static String bookingRequestUrl(String userId, String hostelId) =>
+      '$baseUrl$bookingRequest/$userId/$hostelId';
+
+  static const String hostelBooking = '$apiPrefix/auth/hostel-booking';
+
+  static String hostelBookingUrl(String userId, String hostelId) =>
+      '$baseUrl$hostelBooking/$userId/$hostelId';
 
   static const String sendOtpUrl = '$baseUrl$sendOtp';
   static const String verifyOtpUrl = '$baseUrl$verifyOtp';
@@ -26,7 +35,6 @@ class ApiConstants {
 
   static String getUserProfileUrl(String userId) =>
       '$baseUrl$apiPrefix/auth/user/$userId';
-
 
   static const String contentTypeHeader = 'Content-Type';
   static const String authorizationHeader = 'Authorization';
