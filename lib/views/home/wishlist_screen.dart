@@ -43,11 +43,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-          canPop: false,
-    onPopInvoked: (bool didPop) async {
-      if (didPop) return;
-      
+  return WillPopScope(
+    onWillPop: () async {
       final shouldExit = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -67,11 +64,12 @@ class _WishlistScreenState extends State<WishlistScreen> {
       );
       
       if (shouldExit == true) {
-        if (context.mounted) {
-          // ignore: deprecated_member_use
+        if (mounted) {
           SystemNavigator.pop();
         }
+        return true;
       }
+      return false;
     },
       child: Scaffold(
         backgroundColor: Colors.white,

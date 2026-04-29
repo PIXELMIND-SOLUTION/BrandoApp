@@ -1,7 +1,119 @@
+import 'package:brando_app/helper/shared_preference.dart';
+import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class DeleteAccount extends StatelessWidget {
+
+class DeleteAccount extends StatefulWidget {
   const DeleteAccount({super.key});
+
+  @override
+  State<DeleteAccount> createState() => _DeleteAccountState();
+}
+
+class _DeleteAccountState extends State<DeleteAccount> {
+  bool _isDeleting = false;
+
+  Future<void> _deleteAccount() async {
+    final userId = AppPreferences.getUserId();
+
+    if (userId == null || userId.isEmpty) {
+      _showSnackBar("User ID not found. Please login again.", isError: true);
+      return;
+    }
+
+    setState(() => _isDeleting = true);
+
+    try {
+      final response = await http.delete(
+        Uri.parse('http://187.127.146.52:2003/api/auth/deleteuser/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${AppPreferences.getAuthToken() ?? ''}',
+        },
+      );
+
+      final responseData = json.decode(response.body);
+
+
+      print('Response status code for delete account ${response.statusCode}');
+      print('Response bodyyyyyyyyyyyyyyyyyyy for delete account ${response.body}');
+
+      if (response.statusCode == 200) {
+        await AppPreferences.clearAll();
+
+        if (!mounted) return;
+
+        _showSnackBar("Account deleted successfully.");
+
+        await Future.delayed(const Duration(seconds: 1));
+
+        if (!mounted) return;
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+          (route) => false,
+        );
+      } else {
+        final message = responseData['message'] ?? 'Failed to delete account.';
+        _showSnackBar(message, isError: true);
+      }
+    } catch (e) {
+      _showSnackBar("Network error. Please try again.", isError: true);
+    } finally {
+      if (mounted) setState(() => _isDeleting = false);
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red.shade700 : Colors.green.shade700,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  void _showConfirmDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: !_isDeleting,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+        title: const Text("Confirm Delete"),
+        content: const Text(
+          "Are you sure you want to permanently delete your account?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: _isDeleting ? null : () => Navigator.pop(context),
+            child: const Text("No"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            onPressed: _isDeleting
+                ? null
+                : () async {
+                    Navigator.pop(context);
+                    await _deleteAccount();
+                  },
+            child: const Text(
+              "Delete",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +137,6 @@ class DeleteAccount extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-
-            /// Warning Icon
             Container(
               height: 110,
               width: 110,
@@ -55,7 +165,6 @@ class DeleteAccount extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            /// Subtitle
             Text(
               "Deleting your account is permanent.\nAll your data, bookings, and saved details will be removed forever.",
               textAlign: TextAlign.center,
@@ -68,7 +177,6 @@ class DeleteAccount extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            /// Info Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -82,12 +190,11 @@ class DeleteAccount extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Column(
-                children: const [
+              child: const Column(
+                children: [
                   Row(
                     children: [
-                      Icon(Icons.warning_amber_rounded,
-                          color: Colors.orange),
+                      Icon(Icons.warning_amber_rounded, color: Colors.orange),
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -100,8 +207,7 @@ class DeleteAccount extends StatelessWidget {
                   SizedBox(height: 15),
                   Row(
                     children: [
-                      Icon(Icons.folder_delete_outlined,
-                          color: Colors.red),
+                      Icon(Icons.folder_delete_outlined, color: Colors.red),
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -117,7 +223,6 @@ class DeleteAccount extends StatelessWidget {
 
             const Spacer(),
 
-            /// Buttons
             Row(
               children: [
                 Expanded(
@@ -128,9 +233,7 @@ class DeleteAccount extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: _isDeleting ? null : () => Navigator.pop(context),
                     child: const Text(
                       "Cancel",
                       style: TextStyle(fontSize: 16),
@@ -147,42 +250,20 @@ class DeleteAccount extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          title: const Text("Confirm Delete"),
-                          content: const Text(
-                            "Are you sure you want to permanently delete your account?",
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context),
-                              child: const Text("No"),
+                    onPressed: _isDeleting ? null : _showConfirmDialog,
+                    child: _isDeleting
+                        ? const SizedBox(
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-
-                                /// Delete API Here
-                              },
-                              child: const Text("Delete",style: TextStyle(color: Colors.white),),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Delete",
-                      style: TextStyle(fontSize: 16,color: Colors.white),
-                    ),
+                          )
+                        : const Text(
+                            "Delete",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                   ),
                 ),
               ],

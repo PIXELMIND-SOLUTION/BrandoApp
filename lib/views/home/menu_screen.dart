@@ -1,11 +1,9 @@
 import 'package:brando_app/provider/auth/auth_provider.dart';
-import 'package:brando_app/provider/booking/booking_provider.dart';
+import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/contact/contact_us.dart';
 import 'package:brando_app/views/delete%20account/delete_account.dart';
-import 'package:brando_app/views/form/submit_form_details.dart';
 import 'package:brando_app/views/help/help_screen.dart';
 import 'package:brando_app/views/history/booking_history.dart';
-import 'package:brando_app/views/my%20bookings/my%20booking_screen.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +45,7 @@ class MenuScreen extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
+       context.read<BottomNavbarProvider>().setIndex(0);
       await context.read<AuthProvider>().logout();
 
       if (context.mounted) {
@@ -107,144 +106,136 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Discover',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.black,
-          ),
+    return WillPopScope(
+          onWillPop: () async {
+      final shouldExit = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Exit'),
+          content: const Text('Are you sure you want to exit?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Yes'),
+            ),
+          ],
         ),
-        centerTitle: true,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 8, top: 4),
-            child: Text(
-              'Account',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+      );
+      return shouldExit ?? false;
+    },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            'Discover',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfileScreen()),
-              );
-            },
-            child: _buildMenuItem(
-              icon: Icons.person_outline,
-              title: 'Personal Information',
+          centerTitle: true,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 4, bottom: 8, top: 4),
+              child: Text(
+                'Account',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BookingHistory()),
-              );
-            },
-            child: _buildMenuItem(
-              icon: Icons.history,
-              title: 'Booking History',
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
+              },
+              child: _buildMenuItem(
+                icon: Icons.person_outline,
+                title: 'Personal Information',
+              ),
             ),
-          ),
-
-          //   GestureDetector(
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => SubmitFormDetails()),
-          //     );
-          //   },
-          //   child: _buildMenuItem(
-          //     icon: Icons.description,
-          //     title: 'Submit Form',
-          //   ),
-          // ),
-          // GestureDetector(
-          //   onTap: () {
-          //     final hostelId =
-          //         context.read<BookingProvider>().bookingRequest?.hostelId ??
-          //         '';
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => SubmitFormDetails(hostelId: hostelId),
-          //       ),
-          //     );
-          //   },
-          //   child: _buildMenuItem(
-          //     icon: Icons.description,
-          //     title: 'Submit Form',
-          //   ),
-          // ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HelpScreen()),
-              );
-            },
-            child: _buildMenuItem(
-              icon: Icons.help_outline,
-              title: 'Need Help?',
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BookingHistory()),
+                );
+              },
+              child: _buildMenuItem(
+                icon: Icons.history,
+                title: 'Booking History',
+              ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ContactUs()),
-              );
-            },
-            child: _buildMenuItem(
-              icon: Icons.phone_outlined,
-              title: 'Contact Us',
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HelpScreen()),
+                );
+              },
+              child: _buildMenuItem(
+                icon: Icons.help_outline,
+                title: 'Need Help?',
+              ),
             ),
-          ),
-
-
-           GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DeleteAccount()),
-              );
-            },
-            child: _buildMenuItem(
-              icon: Icons.delete,
-              title: 'Delete Account',
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ContactUs()),
+                );
+              },
+              child: _buildMenuItem(
+                icon: Icons.phone_outlined,
+                title: 'Contact Us',
+              ),
             ),
-          ),
-
-          // GestureDetector(
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => MybookingScreen()),
-          //     );
-          //   },
-          //   child: _buildMenuItem(icon: Icons.book_online, title: 'Mybookings'),
-          // ),
-          _buildMenuItem(icon: Icons.help_outline, title: 'Terms & Conditions'),
-          _buildMenuItem(icon: Icons.phone_outlined, title: 'Privacy Policy'),
-          GestureDetector(
-            onTap: () => _handleLogout(context),
-            child: _buildMenuItem(
-              icon: Icons.logout,
-              title: 'Logout',
-              isLogout: true,
+      
+      
+             GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DeleteAccount()),
+                );
+              },
+              child: _buildMenuItem(
+                icon: Icons.delete,
+                title: 'Delete Account',
+              ),
             ),
-          ),
-        ],
+      
+            // GestureDetector(
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => MybookingScreen()),
+            //     );
+            //   },
+            //   child: _buildMenuItem(icon: Icons.book_online, title: 'Mybookings'),
+            // ),
+            _buildMenuItem(icon: Icons.help_outline, title: 'Terms & Conditions'),
+            _buildMenuItem(icon: Icons.phone_outlined, title: 'Privacy Policy'),
+            GestureDetector(
+              onTap: () => _handleLogout(context),
+              child: _buildMenuItem(
+                icon: Icons.logout,
+                title: 'Logout',
+                isLogout: true,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

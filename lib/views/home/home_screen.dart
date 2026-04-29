@@ -1104,6 +1104,8 @@
 //   }
 // }
 
+// ignore_for_file: unnecessary_cast
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:brando_app/helper/shared_preference.dart';
@@ -1141,6 +1143,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _hintIndex = 0;
   Timer? _hintTimer;
 
+  bool _isDialogOpen = false;
+
   void _startHintCycling(List<String> names) {
     _hintTimer?.cancel();
     if (names.isEmpty) return;
@@ -1175,8 +1179,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
-  // ─── Location ─────────────────────────────────────────────────────────────
 
   Future<void> _fetchCurrentLocation() async {
     setState(() {
@@ -1373,126 +1375,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // ─── Book Now Handler ──────────────────────────────────────────────────────
-
-  // Future<void> _handleBookNow({
-  //   required String hostelId,
-  //   required String hostelName,
-  // }) async {
-  //   final userId = AppPreferences.getUserId();
-  //   if (userId == null || userId.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('Please log in to book a hostel.'),
-  //         backgroundColor: Colors.orange,
-  //       ),
-  //     );
-  //     return;
-  //   }
-
-  //   // Show confirmation dialog before booking
-  //   final confirmed = await showDialog<bool>(
-  //     context: context,
-  //     builder: (ctx) => AlertDialog(
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  //       title: const Text(
-  //         'Confirm Booking',
-  //         style: TextStyle(fontWeight: FontWeight.bold),
-  //       ),
-  //       content: RichText(
-  //         text: TextSpan(
-  //           style: const TextStyle(fontSize: 14, color: Colors.black87),
-  //           children: [
-  //             const TextSpan(text: 'Send a booking request to '),
-  //             TextSpan(
-  //               text: hostelName,
-  //               style: const TextStyle(
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.red,
-  //               ),
-  //             ),
-  //             const TextSpan(text: '?'),
-  //           ],
-  //         ),
-  //       ),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(ctx, false),
-  //           child: const Text(
-  //             'Cancel',
-  //             style: TextStyle(color: Colors.grey),
-  //           ),
-  //         ),
-  //         ElevatedButton(
-  //           onPressed: () => Navigator.pop(ctx, true),
-  //           style: ElevatedButton.styleFrom(
-  //             backgroundColor: Colors.red,
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(8),
-  //             ),
-  //           ),
-  //           child: const Text(
-  //             'Confirm',
-  //             style: TextStyle(color: Colors.white),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-
-  //   if (confirmed != true || !mounted) return;
-
-  //   final bookingProvider = context.read<BookingProvider>();
-
-  //   await bookingProvider.sendBookingRequest(
-  //     userId: userId,
-  //     hostelId: hostelId,
-  //   );
-
-  //   if (!mounted) return;
-
-  //   if (bookingProvider.isSuccess) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Row(
-  //           children: const [
-  //             Icon(Icons.check_circle, color: Colors.white, size: 18),
-  //             SizedBox(width: 8),
-  //             Text('Booking request sent successfully!'),
-  //           ],
-  //         ),
-  //         backgroundColor: Colors.green,
-  //         duration: const Duration(seconds: 3),
-  //       ),
-  //     );
-  //     // Reset so the state doesn't persist on the next card tap
-  //     bookingProvider.reset();
-  //   } else if (bookingProvider.hasError) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(bookingProvider.errorMessage ?? 'Booking failed.'),
-  //         backgroundColor: Colors.red,
-  //         duration: const Duration(seconds: 3),
-  //       ),
-  //     );
-  //     bookingProvider.reset();
-  //   }
-  // }
-
   @override
   void dispose() {
     _hintTimer?.cancel();
     super.dispose();
   }
 
-  // ─── Build ─────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        if (didPop) return;
+    return WillPopScope(
+      onWillPop: () async {
+        if (_isDialogOpen) return false;
+
+        _isDialogOpen = true;
 
         final shouldExit = await showDialog<bool>(
           context: context,
@@ -1512,14 +1407,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
 
+        _isDialogOpen = false;
+
         if (shouldExit == true) {
-          if (context.mounted) {
-            Navigator.of(context).pop();
-            // Then exit
-            await Future.delayed(const Duration(milliseconds: 100));
+          if (mounted) {
             SystemNavigator.pop();
           }
+          return true;
         }
+        return false;
       },
       child: Scaffold(
         backgroundColor: Colors.white,

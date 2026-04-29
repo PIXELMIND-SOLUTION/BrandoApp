@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class EnterDetails extends StatefulWidget {
-  final String bookingId; // ✅ changed from hostelId to bookingId
+  final String bookingId; 
 
   const EnterDetails({super.key, required this.bookingId});
 
