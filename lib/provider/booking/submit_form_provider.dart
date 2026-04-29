@@ -25,13 +25,52 @@ class HostelBookingProvider extends ChangeNotifier {
 
   // ─── Submit Booking ───────────────────────────────────────────────────────
 
+  // Future<bool> submitBooking({
+  //   required String hostelId,
+  //   required HostelBookingRequestModel request,
+  // }) async {
+  //   final userId = AppPreferences.getUserId();
+
+  //   if (userId == null) {
+  //     _setError('User not logged in. Please login again.');
+  //     return false;
+  //   }
+
+  //   _setLoading();
+
+  //   try {
+  //     final response = await _service.submitBooking(
+  //       userId: userId,
+  //       hostelId: hostelId,
+  //       request: request,
+  //     );
+
+  //     if (response.success) {
+  //       _bookingDetails = response.booking;
+  //       _status = BookingStatus.success;
+  //       _errorMessage = null;
+  //       notifyListeners();
+  //       return true;
+  //     } else {
+  //       _setError(response.message);
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     _setError(e.toString().replaceFirst('Exception: ', ''));
+  //     return false;
+  //   }
+  // }
+
+
+
+
   Future<bool> submitBooking({
-    required String hostelId,
+    required String bookingId,   // ✅ changed from hostelId to bookingId
     required HostelBookingRequestModel request,
   }) async {
     final userId = AppPreferences.getUserId();
 
-    if (userId == null) {
+    if (userId == null || userId.isEmpty) {
       _setError('User not logged in. Please login again.');
       return false;
     }
@@ -41,7 +80,7 @@ class HostelBookingProvider extends ChangeNotifier {
     try {
       final response = await _service.submitBooking(
         userId: userId,
-        hostelId: hostelId,
+        bookingId: bookingId,    // ✅
         request: request,
       );
 
@@ -52,7 +91,9 @@ class HostelBookingProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _setError(response.message);
+        _setError(response.message.isNotEmpty
+            ? response.message
+            : 'Submission failed. Please try again.');
         return false;
       }
     } catch (e) {

@@ -1,5 +1,3 @@
-// lib/features/booking/services/booking_service.dart
-
 import 'dart:convert';
 import 'package:brando_app/constant/api_constants.dart';
 import 'package:brando_app/helper/shared_preference.dart';
@@ -11,9 +9,14 @@ class BookingService {
 
   BookingService({Dio? dio}) : _dio = dio ?? Dio();
 
-  Future<BookingRequestModel> sendBookingRequest({
-    required String userId,
+  Future<BookingRequestModel> createBooking({
     required String hostelId,
+    required String userId,
+    required String roomType,
+    required String shareType,
+    required String bookingType,
+    required String startDate,
+    bool isTrue = true,
   }) async {
     final token = AppPreferences.getAuthToken();
 
@@ -21,35 +24,61 @@ class BookingService {
       throw Exception('User is not authenticated.');
     }
 
-    final url = ApiConstants.bookingRequestUrl(userId, hostelId);
+    try {
+      final payload = {
+        'hostelId': hostelId,
+        'userId': userId,
+        'roomType': roomType,
+        'shareType': shareType,
+        'bookingType': bookingType,
+        'startDate': startDate,
+        'isTrue': isTrue,
+      };
 
-    final response = await _dio.post(
-      url,
-      options: Options(
-        headers: {
-          ApiConstants.contentTypeHeader: ApiConstants.contentTypeJson,
-          ApiConstants.authorizationHeader: '${ApiConstants.bearerPrefix}$token',
-        },
-        sendTimeout: const Duration(milliseconds: ApiConstants.connectTimeoutMs),
-        receiveTimeout: const Duration(milliseconds: ApiConstants.receiveTimeoutMs),
-      ),
-    );
+      // ✅ Print Payload
+      print("Request Payload: ${jsonEncode(payload)}");
 
-
-    print('Status codeeeeeeeeeeeeeeeeeeeeee: ${response.statusCode}');
-        print('Status bodyyyyyyyyyy: ${response.data}');
-
-
-    final data = response.data is String
-        ? jsonDecode(response.data as String) as Map<String, dynamic>
-        : response.data as Map<String, dynamic>;
-
-    if (data['success'] == true && data['bookingRequest'] != null) {
-      return BookingRequestModel.fromJson(
-        data['bookingRequest'] as Map<String, dynamic>,
+      final response = await _dio.post(
+        ApiConstants.createBookingUrl,
+        data: payload,
+        options: Options(
+          headers: {
+            ApiConstants.contentTypeHeader: ApiConstants.contentTypeJson,
+            ApiConstants.authorizationHeader:
+                '${ApiConstants.bearerPrefix}$token',
+          },
+          sendTimeout:
+              const Duration(milliseconds: ApiConstants.connectTimeoutMs),
+          receiveTimeout:
+              const Duration(milliseconds: ApiConstants.receiveTimeoutMs),
+        ),
       );
-    }
 
-    throw Exception(data['message'] ?? 'Failed to send booking request.');
+      print("Status Code: ${response.statusCode}");
+
+      // ✅ Print Full Response Body
+      print("Response Body: ${response.data}");
+
+      final data = response.data is String
+          ? jsonDecode(response.data as String) as Map<String, dynamic>
+          : response.data as Map<String, dynamic>;
+
+      if (data['success'] == true && data['booking'] != null) {
+        return BookingRequestModel.fromJson(
+          data['booking'] as Map<String, dynamic>,
+        );
+      }
+
+      throw Exception(data['message'] ?? 'Failed to create booking.');
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      if (responseData != null) {
+        final body = responseData is String
+            ? jsonDecode(responseData) as Map<String, dynamic>
+            : responseData as Map<String, dynamic>;
+        throw Exception(body['message'] ?? 'Booking failed.');
+      }
+      throw Exception('Network error. Please try again.');
+    }
   }
 }

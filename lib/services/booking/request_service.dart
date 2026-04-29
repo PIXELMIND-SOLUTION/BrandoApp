@@ -1,11 +1,10 @@
 import 'dart:convert';
-
 import 'package:brando_app/helper/shared_preference.dart';
 import 'package:brando_app/models/request_model.dart';
 import 'package:http/http.dart' as http;
 
 class BookingApiService {
-  static const String _baseUrl = 'http://31.97.206.144:2003/api/auth';
+  static const String _baseUrl = 'http://187.127.146.52:2003/api/auth';
 
   static Future<List<BookingRequest>> fetchMyBookings(String userId) async {
     final token = AppPreferences.getAuthToken();

@@ -1,6 +1,7 @@
 import 'package:brando_app/provider/auth/auth_provider.dart';
 import 'package:brando_app/provider/booking/booking_provider.dart';
 import 'package:brando_app/views/contact/contact_us.dart';
+import 'package:brando_app/views/delete%20account/delete_account.dart';
 import 'package:brando_app/views/form/submit_form_details.dart';
 import 'package:brando_app/views/help/help_screen.dart';
 import 'package:brando_app/views/history/booking_history.dart';
@@ -210,15 +211,29 @@ class MenuScreen extends StatelessWidget {
             ),
           ),
 
-          GestureDetector(
+
+           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MybookingScreen()),
+                MaterialPageRoute(builder: (context) => DeleteAccount()),
               );
             },
-            child: _buildMenuItem(icon: Icons.book_online, title: 'Mybookings'),
+            child: _buildMenuItem(
+              icon: Icons.delete,
+              title: 'Delete Account',
+            ),
           ),
+
+          // GestureDetector(
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => MybookingScreen()),
+          //     );
+          //   },
+          //   child: _buildMenuItem(icon: Icons.book_online, title: 'Mybookings'),
+          // ),
           _buildMenuItem(icon: Icons.help_outline, title: 'Terms & Conditions'),
           _buildMenuItem(icon: Icons.phone_outlined, title: 'Privacy Policy'),
           GestureDetector(

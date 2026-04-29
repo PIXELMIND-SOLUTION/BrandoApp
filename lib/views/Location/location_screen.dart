@@ -603,7 +603,7 @@ class _LocationScreenState extends State<LocationScreen>
                             textEditingController: _searchController,
                             focusNode: _focusNode,
                             googleAPIKey:
-                                "AIzaSyBAgjZGzhUBDznc-wI5eGRHyjVTfENnLSs",
+                                "AIzaSyDaJzdZ5-Q2Lv2KArStqAtGXf4SukdHwig",
                             inputDecoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 20,

@@ -1104,31 +1104,9 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:brando_app/helper/shared_preference.dart';
-import 'package:brando_app/provider/booking/booking_provider.dart';
 import 'package:brando_app/provider/location/location_provider.dart';
 import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
@@ -1139,6 +1117,7 @@ import 'package:brando_app/views/search/search_screen.dart';
 import 'package:brando_app/views/seeall/see_all_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -1324,7 +1303,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchBanners() async {
     try {
       final response = await http.get(
-        Uri.parse("http://31.97.206.144:2003/api/Admin/getAllBanners"),
+        Uri.parse("http://187.127.146.52:2003/api/Admin/getAllBanners"),
       );
 
       if (response.statusCode == 200) {
@@ -1396,109 +1375,109 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ─── Book Now Handler ──────────────────────────────────────────────────────
 
-  Future<void> _handleBookNow({
-    required String hostelId,
-    required String hostelName,
-  }) async {
-    final userId = AppPreferences.getUserId();
-    if (userId == null || userId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please log in to book a hostel.'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
+  // Future<void> _handleBookNow({
+  //   required String hostelId,
+  //   required String hostelName,
+  // }) async {
+  //   final userId = AppPreferences.getUserId();
+  //   if (userId == null || userId.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Please log in to book a hostel.'),
+  //         backgroundColor: Colors.orange,
+  //       ),
+  //     );
+  //     return;
+  //   }
 
-    // Show confirmation dialog before booking
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        title: const Text(
-          'Confirm Booking',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: RichText(
-          text: TextSpan(
-            style: const TextStyle(fontSize: 14, color: Colors.black87),
-            children: [
-              const TextSpan(text: 'Send a booking request to '),
-              TextSpan(
-                text: hostelName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
-              const TextSpan(text: '?'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Confirm',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
+  //   // Show confirmation dialog before booking
+  //   final confirmed = await showDialog<bool>(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //       title: const Text(
+  //         'Confirm Booking',
+  //         style: TextStyle(fontWeight: FontWeight.bold),
+  //       ),
+  //       content: RichText(
+  //         text: TextSpan(
+  //           style: const TextStyle(fontSize: 14, color: Colors.black87),
+  //           children: [
+  //             const TextSpan(text: 'Send a booking request to '),
+  //             TextSpan(
+  //               text: hostelName,
+  //               style: const TextStyle(
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Colors.red,
+  //               ),
+  //             ),
+  //             const TextSpan(text: '?'),
+  //           ],
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(ctx, false),
+  //           child: const Text(
+  //             'Cancel',
+  //             style: TextStyle(color: Colors.grey),
+  //           ),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () => Navigator.pop(ctx, true),
+  //           style: ElevatedButton.styleFrom(
+  //             backgroundColor: Colors.red,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //           ),
+  //           child: const Text(
+  //             'Confirm',
+  //             style: TextStyle(color: Colors.white),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
 
-    if (confirmed != true || !mounted) return;
+  //   if (confirmed != true || !mounted) return;
 
-    final bookingProvider = context.read<BookingProvider>();
+  //   final bookingProvider = context.read<BookingProvider>();
 
-    await bookingProvider.sendBookingRequest(
-      userId: userId,
-      hostelId: hostelId,
-    );
+  //   await bookingProvider.sendBookingRequest(
+  //     userId: userId,
+  //     hostelId: hostelId,
+  //   );
 
-    if (!mounted) return;
+  //   if (!mounted) return;
 
-    if (bookingProvider.isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.check_circle, color: Colors.white, size: 18),
-              SizedBox(width: 8),
-              Text('Booking request sent successfully!'),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-      // Reset so the state doesn't persist on the next card tap
-      bookingProvider.reset();
-    } else if (bookingProvider.hasError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(bookingProvider.errorMessage ?? 'Booking failed.'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-      bookingProvider.reset();
-    }
-  }
+  //   if (bookingProvider.isSuccess) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Row(
+  //           children: const [
+  //             Icon(Icons.check_circle, color: Colors.white, size: 18),
+  //             SizedBox(width: 8),
+  //             Text('Booking request sent successfully!'),
+  //           ],
+  //         ),
+  //         backgroundColor: Colors.green,
+  //         duration: const Duration(seconds: 3),
+  //       ),
+  //     );
+  //     // Reset so the state doesn't persist on the next card tap
+  //     bookingProvider.reset();
+  //   } else if (bookingProvider.hasError) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(bookingProvider.errorMessage ?? 'Booking failed.'),
+  //         backgroundColor: Colors.red,
+  //         duration: const Duration(seconds: 3),
+  //       ),
+  //     );
+  //     bookingProvider.reset();
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -1510,20 +1489,53 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTopBar(),
-              _buildSearchBar(context),
-              _buildCarouselBanner(),
-              _buildRecommendedSection(),
-              _buildHostelList(),
-              const SizedBox(height: 20),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) return;
+
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Exit App'),
+            content: const Text('Are you sure you want to exit?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Exit', style: TextStyle(color: Colors.red)),
+              ),
             ],
+          ),
+        );
+
+        if (shouldExit == true) {
+          if (context.mounted) {
+            Navigator.of(context).pop();
+            // Then exit
+            await Future.delayed(const Duration(milliseconds: 100));
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTopBar(),
+                _buildSearchBar(context),
+                _buildCarouselBanner(),
+                _buildRecommendedSection(),
+                _buildHostelList(),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -1598,6 +1610,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 showOnOff: true,
                 activeColor: Colors.red,
                 inactiveColor: Colors.grey.shade400,
+
+                // onToggle: (val) {
+                //   setState(() => _isAC = val);
+
+                //   final hostelProvider = Provider.of<HostelProvider>(
+                //     context,
+                //     listen: false,
+                //   );
+                //   hostelProvider.setTypeFilter(val ? 'AC' : 'NON-AC');
+
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(
+                //       backgroundColor: Colors.green,
+                //       content: Text(
+                //         val
+                //             ? "Room preference updated to AC successfully."
+                //             : "Room preference updated to Non-AC successfully.",
+                //       ),
+                //       duration: const Duration(seconds: 2),
+                //     ),
+                //   );
+                // },
                 onToggle: (val) {
                   setState(() => _isAC = val);
 
@@ -1930,12 +1964,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => DetailScreen(hostelId: hostelId),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailScreen(hostelId: hostelId),
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -2179,10 +2213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           label: const Text(
                             'Call',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 12, color: Colors.white),
                           ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -2251,10 +2282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           label: const Text(
                             'Location',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
+                            style: TextStyle(fontSize: 12, color: Colors.black),
                           ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.red,
@@ -2271,56 +2299,56 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: 6),
 
-                  // ── Row 2: Book Now (full width) ────────────────────────
-                  Selector<BookingProvider, BookingStatus>(
-                    selector: (_, provider) => provider.status,
-                    builder: (context, status, _) {
-                      final isLoading = status == BookingStatus.loading;
-                      return SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: isLoading
-                              ? null
-                              : () => _handleBookNow(
-                                    hostelId: hostelId,
-                                    hostelName: name,
-                                  ),
-                          icon: isLoading
-                              ? const SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.book_online,
-                                  size: 14,
-                                  color: Colors.white,
-                                ),
-                          label: Text(
-                            isLoading ? 'Sending...' : 'Book Now',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFF80500),
-                            disabledBackgroundColor:
-                                Colors.red.shade200,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  // // ── Row 2: Book Now (full width) ────────────────────────
+                  // Selector<BookingProvider, BookingStatus>(
+                  //   selector: (_, provider) => provider.status,
+                  //   builder: (context, status, _) {
+                  //     final isLoading = status == BookingStatus.loading;
+                  //     return SizedBox(
+                  //       width: double.infinity,
+                  //       child: ElevatedButton.icon(
+                  //         onPressed: isLoading
+                  //             ? null
+                  //             : () => _handleBookNow(
+                  //                   hostelId: hostelId,
+                  //                   hostelName: name,
+                  //                 ),
+                  //         icon: isLoading
+                  //             ? const SizedBox(
+                  //                 width: 14,
+                  //                 height: 14,
+                  //                 child: CircularProgressIndicator(
+                  //                   color: Colors.white,
+                  //                   strokeWidth: 2,
+                  //                 ),
+                  //               )
+                  //             : const Icon(
+                  //                 Icons.book_online,
+                  //                 size: 14,
+                  //                 color: Colors.white,
+                  //               ),
+                  //         label: Text(
+                  //           isLoading ? 'Sending...' : 'Book Now',
+                  //           style: const TextStyle(
+                  //             fontSize: 13,
+                  //             color: Colors.white,
+                  //             fontWeight: FontWeight.w600,
+                  //           ),
+                  //         ),
+                  //         style: ElevatedButton.styleFrom(
+                  //           backgroundColor: const Color(0xFFF80500),
+                  //           disabledBackgroundColor:
+                  //               Colors.red.shade200,
+                  //           padding: const EdgeInsets.symmetric(vertical: 10),
+                  //           elevation: 0,
+                  //           shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(6),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),

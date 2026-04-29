@@ -1,8 +1,7 @@
 class ApiConstants {
   ApiConstants._();
 
-  // Base URL
-  static const String baseUrl = 'http://31.97.206.144:2003';
+  static const String baseUrl = 'http://187.127.146.52:2003';
 
   static const String apiPrefix = '/api';
 
@@ -15,6 +14,9 @@ class ApiConstants {
   static const String getmywishlist = '$apiPrefix/auth/wishlist';
 
   static const String bookingRequest = '$apiPrefix/auth/booking-request';
+
+  static String upgradeBookingUrl(String bookingId) =>
+      '$baseUrl$apiPrefix/auth/upgradebooking/$bookingId';
 
   static String bookingRequestUrl(String userId, String hostelId) =>
       '$baseUrl$bookingRequest/$userId/$hostelId';
@@ -35,6 +37,12 @@ class ApiConstants {
 
   static String getUserProfileUrl(String userId) =>
       '$baseUrl$apiPrefix/auth/user/$userId';
+
+  static String submitBookingFormUrl(String userId, String bookingId) =>
+      '$baseUrl$apiPrefix/auth/$userId/bookings/$bookingId/submit-form';
+
+  static const String createBooking = '$apiPrefix/auth/createBooking';
+  static const String createBookingUrl = '$baseUrl$createBooking';
 
   static const String contentTypeHeader = 'Content-Type';
   static const String authorizationHeader = 'Authorization';

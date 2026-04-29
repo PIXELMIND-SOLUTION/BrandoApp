@@ -1,6 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// REQUEST MODELS
-// ─────────────────────────────────────────────────────────────────────────────
 
 class SendOtpRequest {
   final String mobileNumber;
@@ -19,15 +16,12 @@ class VerifyOtpRequest {
   Map<String, dynamic> toJson() => {'token': token, 'otp': otp};
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RESPONSE MODELS
-// ─────────────────────────────────────────────────────────────────────────────
 
 class SendOtpResponse {
   final bool success;
   final String message;
-  final String? otp; // Provided by server in dev/test mode
-  final String token; // Pre-OTP token for verify step
+  final String? otp;
+  final String token; 
 
   const SendOtpResponse({
     required this.success,
@@ -86,7 +80,7 @@ class UserModel {
 class VerifyOtpResponse {
   final bool success;
   final String message;
-  final String token; // Verified auth token
+  final String token; 
   final UserModel user;
 
   const VerifyOtpResponse({

@@ -1,6 +1,8 @@
 import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
+import 'package:brando_app/views/details/detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,105 +43,140 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Favourites',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+    return PopScope(
+          canPop: false,
+    onPopInvoked: (bool didPop) async {
+      if (didPop) return;
+      
+      final shouldExit = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Exit App'),
+          content: const Text('Are you sure you want to exit?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Exit', style: TextStyle(color: Colors.red)),
+            ),
+          ],
         ),
-        centerTitle: true,
-      ),
-      body: Consumer<WishlistProvider>(
-        builder: (context, wishlistProvider, _) {
-          // ── Loading ──────────────────────────────────────────────────────
-          if (wishlistProvider.status == WishlistStatus.loading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.red),
-            );
-          }
-
-          // ── Error ────────────────────────────────────────────────────────
-          if (wishlistProvider.status == WishlistStatus.error) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red.shade300,
-                    size: 56,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    wishlistProvider.errorMessage ?? 'Something went wrong.',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => wishlistProvider.fetchWishlist(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+      );
+      
+      if (shouldExit == true) {
+        if (context.mounted) {
+          // ignore: deprecated_member_use
+          SystemNavigator.pop();
+        }
+      }
+    },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: const Text(
+            'Favourites',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Consumer<WishlistProvider>(
+          builder: (context, wishlistProvider, _) {
+            // ── Loading ──────────────────────────────────────────────────────
+            if (wishlistProvider.status == WishlistStatus.loading) {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.red),
+              );
+            }
+      
+            // ── Error ────────────────────────────────────────────────────────
+            if (wishlistProvider.status == WishlistStatus.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.red.shade300,
+                      size: 56,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      wishlistProvider.errorMessage ?? 'Something went wrong.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => wishlistProvider.fetchWishlist(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Retry',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    child: const Text(
-                      'Retry',
-                      style: TextStyle(color: Colors.white),
+                  ],
+                ),
+              );
+            }
+      
+            // ── Empty ────────────────────────────────────────────────────────
+            if (wishlistProvider.wishlistItems.isEmpty) {
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.favorite_border, size: 60, color: Colors.grey),
+                    SizedBox(height: 12),
+                    Text(
+                      'No favourites yet',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 6),
+                    Text(
+                      'Tap the heart on any hostel to save it here.',
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                  ],
+                ),
+              );
+            }
+      
+            // ── List ─────────────────────────────────────────────────────────
+            return RefreshIndicator(
+              color: Colors.red,
+              onRefresh: () => wishlistProvider.fetchWishlist(),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: wishlistProvider.wishlistItems.length,
+                itemBuilder: (context, index) {
+                  final item = wishlistProvider.wishlistItems[index];
+                  final hostel = item.hostel;
+                  if (hostel == null) return const SizedBox.shrink();
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailScreen(hostelId: hostel.id,)));
+                    },
+                    child: _buildHostelCard(hostel, wishlistProvider));
+                },
               ),
             );
-          }
-
-          // ── Empty ────────────────────────────────────────────────────────
-          if (wishlistProvider.wishlistItems.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.favorite_border, size: 60, color: Colors.grey),
-                  SizedBox(height: 12),
-                  Text(
-                    'No favourites yet',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                  SizedBox(height: 6),
-                  Text(
-                    'Tap the heart on any hostel to save it here.',
-                    style: TextStyle(color: Colors.grey, fontSize: 13),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          // ── List ─────────────────────────────────────────────────────────
-          return RefreshIndicator(
-            color: Colors.red,
-            onRefresh: () => wishlistProvider.fetchWishlist(),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: wishlistProvider.wishlistItems.length,
-              itemBuilder: (context, index) {
-                final item = wishlistProvider.wishlistItems[index];
-                final hostel = item.hostel;
-                if (hostel == null) return const SizedBox.shrink();
-                return _buildHostelCard(hostel, wishlistProvider);
-              },
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

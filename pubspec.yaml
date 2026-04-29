@@ -48,10 +48,17 @@ dependencies:
   dio: ^5.9.2
   image_picker: ^1.2.1
   google_maps_flutter: ^2.14.2
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.jpg"    
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -80,6 +87,7 @@ flutter:
     - assets\detailimage.png
     - assets\profile.png
     - assets\booking.png
+    - assets\logo.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -48,7 +48,7 @@ class NotificationItem {
 // ── API Service ───────────────────────────────────────────────────────────────
 
 class NotificationService {
-  static const String _baseUrl = 'http://31.97.206.144:2003';
+  static const String _baseUrl = 'http://187.127.146.52:2003';
 
   static Future<List<NotificationItem>> fetchNotifications(
     String userId,

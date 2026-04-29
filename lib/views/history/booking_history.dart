@@ -1,577 +1,3 @@
-// import 'package:brando_app/views/details/enter_details.dart';
-// import 'package:flutter/material.dart';
-
-// class BookingHistory extends StatefulWidget {
-//   const BookingHistory({super.key});
-
-//   @override
-//   State<BookingHistory> createState() => _BookingHistoryState();
-// }
-
-// class _BookingHistoryState extends State<BookingHistory>
-//     with SingleTickerProviderStateMixin {
-//   late TabController _tabController;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _tabController = TabController(length: 3, vsync: this);
-//     _tabController.index = 0;
-//   }
-
-//   @override
-//   void dispose() {
-//     _tabController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: Colors.white,
-//         elevation: 0,
-//         leading: const BackButton(color: Colors.black),
-//         title: RichText(
-//           text: const TextSpan(
-//             children: [
-//               TextSpan(
-//                 text: 'Booking ',
-//                 style: TextStyle(
-//                   color: Colors.red,
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 20,
-//                 ),
-//               ),
-//               TextSpan(
-//                 text: 'History',
-//                 style: TextStyle(
-//                   color: Colors.black,
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 20,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//         centerTitle: true,
-//         bottom: PreferredSize(
-//           preferredSize: const Size.fromHeight(56),
-//           child: Padding(
-//             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//             child: Container(
-//               height: 44,
-//               decoration: BoxDecoration(
-//                 color: const Color(0xFFF5F5F5),
-//                 borderRadius: BorderRadius.circular(30),
-//               ),
-//               child: TabBar(
-//                 controller: _tabController,
-//                 indicator: BoxDecoration(
-//                   color: Colors.red,
-//                   borderRadius: BorderRadius.circular(30),
-//                 ),
-//                 indicatorSize: TabBarIndicatorSize.tab,
-//                 labelColor: Colors.white,
-//                 unselectedLabelColor: Colors.red,
-//                 labelStyle: const TextStyle(
-//                   fontWeight: FontWeight.w600,
-//                   fontSize: 14,
-//                 ),
-//                 tabs: const [
-//                   Tab(text: 'Pending'),
-//                   Tab(text: 'Running'),
-//                   Tab(text: 'Completed'),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//       body: TabBarView(
-//         controller: _tabController,
-//         children: [
-//           _buildPendingTab(),
-//           _buildRunningTab(),
-//           _buildEmptyTab('No Completed Bookings'),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _buildPendingTab() {
-//     return ListView(
-//       padding: const EdgeInsets.all(16),
-//       children: [_buildBookingCard()],
-//     );
-//   }
-
-//   Widget _buildRunningTab() {
-//     return ListView(
-//       padding: const EdgeInsets.all(16),
-//       children: [_buildRunningBookingCard()],
-//     );
-//   }
-
-//   Widget _buildEmptyTab(String message) {
-//     return Center(
-//       child: Text(
-//         message,
-//         style: const TextStyle(color: Colors.grey, fontSize: 16),
-//       ),
-//     );
-//   }
-
-//   /// Running tab card — matches the screenshot design
-//   Widget _buildRunningBookingCard() {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.grey.withOpacity(0.15),
-//             blurRadius: 10,
-//             offset: const Offset(0, 4),
-//           ),
-//         ],
-//       ),
-//       child: Padding(
-//         padding: const EdgeInsets.all(12),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // Top Row: Image + Info
-//             Row(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 // Hotel Image
-//                 GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => EnterDetails()),
-//                     );
-//                   },
-//                   child: ClipRRect(
-//                     borderRadius: BorderRadius.circular(8),
-//                     child: Image.asset(
-//                       'assets/hotelimage.png',
-//                       width: 80,
-//                       height: 80,
-//                       fit: BoxFit.cover,
-//                       errorBuilder: (context, error, stackTrace) => Container(
-//                         width: 80,
-//                         height: 80,
-//                         color: Colors.grey[300],
-//                         child: const Icon(Icons.hotel, color: Colors.grey),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 12),
-//                 // Info Column
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       // Name + Badge
-//                       Row(
-//                         children: [
-//                           RichText(
-//                             text: const TextSpan(
-//                               children: [
-//                                 TextSpan(
-//                                   text: 'HIFI ',
-//                                   style: TextStyle(
-//                                     color: Colors.red,
-//                                     fontWeight: FontWeight.bold,
-//                                     fontSize: 16,
-//                                   ),
-//                                 ),
-//                                 TextSpan(
-//                                   text: 'HOSTELS',
-//                                   style: TextStyle(
-//                                     color: Colors.black,
-//                                     fontWeight: FontWeight.bold,
-//                                     fontSize: 16,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                           const SizedBox(width: 8),
-//                           Container(
-//                             padding: const EdgeInsets.symmetric(
-//                               horizontal: 6,
-//                               vertical: 2,
-//                             ),
-//                             decoration: BoxDecoration(
-//                               color: Colors.red,
-//                               borderRadius: BorderRadius.circular(4),
-//                             ),
-//                             child: const Text(
-//                               '3 Star',
-//                               style: TextStyle(
-//                                 color: Colors.white,
-//                                 fontSize: 10,
-//                                 fontWeight: FontWeight.w600,
-//                               ),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(height: 4),
-//                       // Location
-//                       Row(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: const [
-//                           Icon(Icons.location_on, size: 12, color: Colors.red),
-//                           SizedBox(width: 2),
-//                           Expanded(
-//                             child: Text(
-//                               'Amd Hyderabad Kukatpally Hyderabad, 500081... BIM Area',
-//                               style: TextStyle(
-//                                 color: Colors.grey,
-//                                 fontSize: 11,
-//                               ),
-//                               maxLines: 2,
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 12),
-
-//             // Details Grid (red background table)
-//             Container(
-//               decoration: BoxDecoration(
-//                 color: Colors.red,
-//                 borderRadius: BorderRadius.circular(8),
-//               ),
-//               child: Column(
-//                 children: [
-//                   // Row 1: Room No | Amount Paid
-//                   IntrinsicHeight(
-//                     child: Row(
-//                       children: [
-//                         Expanded(
-//                           child: _buildDetailCell(
-//                             label: 'Room No :',
-//                             value: '101 1st floor',
-//                             borderRight: true,
-//                             borderBottom: true,
-//                           ),
-//                         ),
-//                         Expanded(
-//                           child: _buildDetailCell(
-//                             label: 'Amount Paid :',
-//                             value: '2,000/-',
-//                             borderBottom: true,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                   // Row 2: Proofs Submitted | Daily dates
-//                   IntrinsicHeight(
-//                     child: Row(
-//                       children: [
-//                         Expanded(
-//                           child: _buildDetailCell(
-//                             label: 'Proofs Submited :',
-//                             value: 'Aadhar Card, Pan Card',
-//                             valueColor: Colors.yellow,
-//                             borderRight: true,
-//                           ),
-//                         ),
-//                         Expanded(
-//                           child: _buildDetailCell(
-//                             label: 'Daily',
-//                             value: '( 15/2/2026 - 18/2/2026 )',
-//                             valueColor: Colors.yellow,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildDetailCell({
-//     required String label,
-//     required String value,
-//     Color valueColor = Colors.white,
-//     bool borderRight = false,
-//     bool borderBottom = false,
-//   }) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-//       decoration: BoxDecoration(
-//         border: Border(
-//           right: borderRight
-//               ? const BorderSide(color: Colors.white24, width: 1)
-//               : BorderSide.none,
-//           bottom: borderBottom
-//               ? const BorderSide(color: Colors.white24, width: 1)
-//               : BorderSide.none,
-//         ),
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(
-//             label,
-//             style: const TextStyle(
-//               color: Colors.white,
-//               fontSize: 11,
-//               fontWeight: FontWeight.w500,
-//             ),
-//           ),
-//           const SizedBox(height: 2),
-//           Text(
-//             value,
-//             style: TextStyle(
-//               color: valueColor,
-//               fontSize: 11,
-//               fontWeight: FontWeight.w600,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   // ── Original Pending card ──────────────────────────────────────────────────
-
-//   Widget _buildBookingCard() {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.grey.withOpacity(0.15),
-//             blurRadius: 10,
-//             offset: const Offset(0, 4),
-//           ),
-//         ],
-//       ),
-//       child: Padding(
-//         padding: const EdgeInsets.all(12),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Row(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => EnterDetails()),
-//                     );
-//                   },
-//                   child: ClipRRect(
-//                     borderRadius: BorderRadius.circular(8),
-//                     child: Image.asset(
-//                       'assets/hotelimage.png',
-//                       width: 80,
-//                       height: 80,
-//                       fit: BoxFit.cover,
-//                       errorBuilder: (context, error, stackTrace) => Container(
-//                         width: 80,
-//                         height: 80,
-//                         color: Colors.grey[300],
-//                         child: const Icon(Icons.hotel, color: Colors.grey),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 12),
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Row(
-//                         children: [
-//                           RichText(
-//                             text: const TextSpan(
-//                               children: [
-//                                 TextSpan(
-//                                   text: 'HIFI ',
-//                                   style: TextStyle(
-//                                     color: Colors.red,
-//                                     fontWeight: FontWeight.bold,
-//                                     fontSize: 16,
-//                                   ),
-//                                 ),
-//                                 TextSpan(
-//                                   text: 'HOSTELS',
-//                                   style: TextStyle(
-//                                     color: Colors.black,
-//                                     fontWeight: FontWeight.bold,
-//                                     fontSize: 16,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                           const SizedBox(width: 8),
-//                           Container(
-//                             padding: const EdgeInsets.symmetric(
-//                               horizontal: 6,
-//                               vertical: 2,
-//                             ),
-//                             decoration: BoxDecoration(
-//                               color: Colors.red,
-//                               borderRadius: BorderRadius.circular(4),
-//                             ),
-//                             child: const Text(
-//                               '3 Star',
-//                               style: TextStyle(
-//                                 color: Colors.white,
-//                                 fontSize: 10,
-//                                 fontWeight: FontWeight.w600,
-//                               ),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(height: 4),
-//                       Row(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: const [
-//                           Icon(Icons.location_on, size: 12, color: Colors.red),
-//                           SizedBox(width: 2),
-//                           Expanded(
-//                             child: Text(
-//                               'Amd Hyderabad Kukatpally Hyderabad, 500081... BIM Area',
-//                               style: TextStyle(
-//                                 color: Colors.grey,
-//                                 fontSize: 11,
-//                               ),
-//                               maxLines: 2,
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(height: 8),
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           _buildShareOption('1 SHARE', '6,000/-'),
-//                           _buildShareOption('2 SHARE', '4,000/-'),
-//                           _buildShareOption('3 SHARE', '4,000/-'),
-//                           _buildShareOption('4 SHARE', '3,000/-'),
-//                           _buildShareOption('5 SHARE', '9,000/-'),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 12),
-//             const Divider(height: 1),
-//             const SizedBox(height: 12),
-//             Row(
-//               children: [
-//                 Expanded(
-//                   child: OutlinedButton.icon(
-//                     onPressed: () {},
-//                     icon: const Icon(Icons.call, size: 16, color: Colors.red),
-//                     label: const Text(
-//                       'Call',
-//                       style: TextStyle(color: Colors.red, fontSize: 13),
-//                     ),
-//                     style: OutlinedButton.styleFrom(
-//                       padding: const EdgeInsets.symmetric(vertical: 6),
-//                       side: const BorderSide(color: Colors.red),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(8),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 8),
-//                 Expanded(
-//                   child: OutlinedButton.icon(
-//                     onPressed: () {},
-//                     icon: const Icon(Icons.chat, size: 16, color: Colors.red),
-//                     label: const Text(
-//                       'Whatsapp',
-//                       style: TextStyle(color: Colors.red, fontSize: 13),
-//                     ),
-//                     style: OutlinedButton.styleFrom(
-//                       padding: const EdgeInsets.symmetric(vertical: 6),
-//                       side: const BorderSide(color: Colors.red),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(8),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 8),
-//                 Expanded(
-//                   child: OutlinedButton.icon(
-//                     onPressed: () {},
-//                     icon: const Icon(
-//                       Icons.location_on,
-//                       size: 16,
-//                       color: Colors.red,
-//                     ),
-//                     label: const Text(
-//                       'Location',
-//                       style: TextStyle(color: Colors.red, fontSize: 13),
-//                     ),
-//                     style: OutlinedButton.styleFrom(
-//                       padding: const EdgeInsets.symmetric(vertical: 6),
-//                       side: const BorderSide(color: Colors.red),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(8),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildShareOption(String label, String price) {
-//     return Column(
-//       children: [
-//         Text(
-//           label,
-//           style: const TextStyle(
-//             fontSize: 9,
-//             fontWeight: FontWeight.w600,
-//             color: Colors.black87,
-//           ),
-//         ),
-//         Text(price, style: const TextStyle(fontSize: 9, color: Colors.grey)),
-//       ],
-//     );
-//   }
-// }
-
 import 'dart:convert';
 import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/enter_details.dart';
@@ -580,7 +6,28 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// ─── Model ────────────────────────────────────────────────────────────────────
+
+
+// Add this class above BookingModel
+class PaymentHistoryEntry {
+  final String date;
+  final double amount;
+  final String status;
+
+  PaymentHistoryEntry({
+    required this.date,
+    required this.amount,
+    required this.status,
+  });
+
+  factory PaymentHistoryEntry.fromJson(Map<String, dynamic> json) {
+    return PaymentHistoryEntry(
+      date: json['date'] ?? '',
+      amount: (json['amount'] ?? 0).toDouble(),
+      status: json['status'] ?? '',
+    );
+  }
+}
 
 class BookingModel {
   final String id;
@@ -591,17 +38,20 @@ class BookingModel {
   final List<String> hostelImages;
   final String shareType;
   final String roomType;
-  final String roomNo;
-  final String name;
-  final String mobileNumber;
-  final String email;
-  final String aadharCardImage;
-  final String panCardImage;
-  final String paymentStatus;
-  final double price;
-  final String? assignedDate;
+  final String bookingType;
+  final String startDate;
+  final double totalAmount;
+  final double monthlyAdvance;
   final String status;
+  final String bookingReference;
   final String createdAt;
+  final String updatedAt;
+
+  final String? vendorId;
+  final String? vendorName;
+  final String? vendorMobile;
+
+  final List<PaymentHistoryEntry> paymentHistory;
 
   BookingModel({
     required this.id,
@@ -612,22 +62,24 @@ class BookingModel {
     required this.hostelImages,
     required this.shareType,
     required this.roomType,
-    required this.roomNo,
-    required this.name,
-    required this.mobileNumber,
-    required this.email,
-    required this.aadharCardImage,
-    required this.panCardImage,
-    required this.paymentStatus,
-    required this.price,
-    this.assignedDate,
+    required this.bookingType,
+    required this.startDate,
+    required this.totalAmount,
+    required this.monthlyAdvance,
     required this.status,
+    required this.bookingReference,
     required this.createdAt,
+    required this.updatedAt,
+    required this.paymentHistory,
+    this.vendorId,
+    this.vendorName,
+    this.vendorMobile,
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     final hostel = json['hostelId'] as Map<String, dynamic>? ?? {};
     final rawImages = hostel['images'] as List<dynamic>? ?? [];
+    final vendor = json['vendorId'] as Map<String, dynamic>?;
 
     return BookingModel(
       id: json['_id'] ?? '',
@@ -636,22 +88,25 @@ class BookingModel {
       hostelName: hostel['name'] ?? '',
       hostelAddress: hostel['address'] ?? '',
       hostelImages: rawImages
-          .map((e) => 'http://31.97.206.144:2003/$e')
+          .map((e) => 'http://187.127.146.52:2003/$e')
           .toList()
           .cast<String>(),
       shareType: json['shareType'] ?? '',
       roomType: json['roomType'] ?? '',
-      roomNo: json['roomNo'] ?? '',
-      name: json['name'] ?? '',
-      mobileNumber: json['mobileNumber'] ?? '',
-      email: json['email'] ?? '',
-      aadharCardImage: json['aadharCardImage'] ?? '',
-      panCardImage: json['panCardImage'] ?? '',
-      paymentStatus: json['paymentStatus'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      assignedDate: json['assignedDate'],
+      bookingType: json['bookingType'] ?? '',
+      startDate: json['startDate'] ?? '',
+      totalAmount: (json['totalAmount'] ?? 0).toDouble(),
+      monthlyAdvance: (json['monthlyAdvance'] ?? 0).toDouble(),
       status: json['status'] ?? '',
+      bookingReference: json['bookingReference'] ?? '',
       createdAt: json['createdAt'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
+      vendorId: vendor?['_id'],
+      vendorName: vendor?['name'],
+      vendorMobile: vendor?['mobileNumber'],
+      paymentHistory: (json['paymentHistory'] as List<dynamic>? ?? [])
+    .map((e) => PaymentHistoryEntry.fromJson(e as Map<String, dynamic>))
+    .toList(),
     );
   }
 }
@@ -659,35 +114,53 @@ class BookingModel {
 // ─── API Service ──────────────────────────────────────────────────────────────
 
 class BookingApiService {
-  static const String _baseUrl = 'http://31.97.206.144:2003/api/auth';
+  static const String _baseUrl = 'http://187.127.146.52:2003/api/auth';
 
-  static Future<BookingModel?> fetchMyHostel(String userId) async {
+  static Future<Map<String, String>> _authHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
+    return {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
 
-    final uri = Uri.parse('$_baseUrl/my-hostel/$userId');
-    final response = await http.get(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
-    );
+  static Future<List<BookingModel>> fetchPendingBookings(String userId) async {
+    final uri = Uri.parse('$_baseUrl/$userId/pending-bookings');
+    final response = await http.get(uri, headers: await _authHeaders());
 
-    print(
-      'Response status code for my hosteeeeeeelllllllllllllll ${response.statusCode}',
-    );
-    print(
-      'Response boddddddddddddyyyyyyyyyyyyyy for my hosteeeeeeelllllllllllllll ${response.body}',
-    );
+    print('Pending bookings status: ${response.statusCode}');
+    print('Pending bookings body: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      if (data['success'] == true && data['booking'] != null) {
-        return BookingModel.fromJson(data['booking']);
+      if (data['success'] == true && data['bookings'] != null) {
+        final list = data['bookings'] as List<dynamic>;
+        return list
+            .map((e) => BookingModel.fromJson(e as Map<String, dynamic>))
+            .toList();
       }
     }
-    return null;
+    return [];
+  }
+
+  static Future<List<BookingModel>> fetchRunningBookings(String userId) async {
+    final uri = Uri.parse('$_baseUrl/$userId/running-bookings');
+    final response = await http.get(uri, headers: await _authHeaders());
+
+    print('Running bookings status: ${response.statusCode}');
+    print('Running bookings body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      if (data['success'] == true && data['bookings'] != null) {
+        final list = data['bookings'] as List<dynamic>;
+        return list
+            .map((e) => BookingModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+    }
+    return [];
   }
 }
 
@@ -703,21 +176,26 @@ class BookingHistory extends StatefulWidget {
 class _BookingHistoryState extends State<BookingHistory>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  BookingModel? _booking;
+
+  List<BookingModel> _pendingBookings = [];
+  List<BookingModel> _runningBookings = [];
+
   bool _isLoading = true;
   String? _errorMessage;
-
-  String? _userId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _tabController.index = 0;
-    _loadBooking();
+    _loadBookings();
   }
 
-  Future<void> _loadBooking() async {
+  Future<void> _loadBookings() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('user_id');
@@ -730,44 +208,19 @@ class _BookingHistoryState extends State<BookingHistory>
         return;
       }
 
-      // setState(() {
-      //   _userId = userId; // 👈 Add this line
-      // });
+      final results = await Future.wait([
+        BookingApiService.fetchPendingBookings(userId),
+        BookingApiService.fetchRunningBookings(userId),
+      ]);
 
-      final booking = await BookingApiService.fetchMyHostel(userId);
       setState(() {
-        _booking = booking;
+        _pendingBookings = results[0];
+        _runningBookings = results[1];
         _isLoading = false;
       });
-
-      // // Auto-switch tab based on status
-      // if (booking != null) {
-      //   final status = booking.status.toLowerCase();
-      //   if (status == 'requested' || status == 'pending') {
-      //     _tabController.index = 0;
-      //   } else if (status == 'running' || status == 'confirmed') {
-      //     _tabController.index = 1;
-      //   } else if (status == 'completed') {
-      //     _tabController.index = 2;
-      //   }
-      // }
-
-      // Auto-switch tab based on status
-      if (booking != null) {
-        final status = booking.status.toLowerCase();
-        if (status == 'requested' || status == 'pending') {
-          _tabController.index = 0;
-        } else if (status == 'running' ||
-            status == 'confirmed' ||
-            status == 'assigned') {
-          _tabController.index = 1;
-        } else if (status == 'completed') {
-          _tabController.index = 2;
-        }
-      }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to load booking. Please try again.';
+        _errorMessage = 'Failed to load bookings. Please try again.';
         _isLoading = false;
       });
     }
@@ -779,34 +232,8 @@ class _BookingHistoryState extends State<BookingHistory>
     super.dispose();
   }
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────
-
-  bool get _isPending {
-    if (_booking == null) return false;
-    final s = _booking!.status.toLowerCase();
-    return s == 'requested' || s == 'pending';
-  }
-
-  // bool get _isRunning {
-  //   if (_booking == null) return false;
-  //   final s = _booking!.status.toLowerCase();
-  //   return s == 'running' || s == 'confirmed';
-  // }
-
-  // AFTER
-  bool get _isRunning {
-    if (_booking == null) return false;
-    final s = _booking!.status.toLowerCase();
-    return s == 'running' || s == 'confirmed' || s == 'assigned';
-  }
-
-  bool get _isCompleted {
-    if (_booking == null) return false;
-    return _booking!.status.toLowerCase() == 'completed';
-  }
-
   String _formatDate(String? isoDate) {
-    if (isoDate == null) return 'N/A';
+    if (isoDate == null || isoDate.isEmpty) return 'N/A';
     try {
       final dt = DateTime.parse(isoDate);
       return '${dt.day}/${dt.month}/${dt.year}';
@@ -814,15 +241,6 @@ class _BookingHistoryState extends State<BookingHistory>
       return isoDate;
     }
   }
-
-  String get _proofLabels {
-    final parts = <String>[];
-    if (_booking?.aadharCardImage.isNotEmpty == true) parts.add('Aadhar Card');
-    if (_booking?.panCardImage.isNotEmpty == true) parts.add('Pan Card');
-    return parts.isEmpty ? 'N/A' : parts.join(', ');
-  }
-
-  // ─── Build ────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -881,7 +299,7 @@ class _BookingHistoryState extends State<BookingHistory>
                 tabs: const [
                   Tab(text: 'Pending'),
                   Tab(text: 'Running'),
-                  Tab(text: 'Completed'),
+                  Tab(text: 'Declined'),
                 ],
               ),
             ),
@@ -917,13 +335,7 @@ class _BookingHistoryState extends State<BookingHistory>
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _isLoading = true;
-                _errorMessage = null;
-              });
-              _loadBooking();
-            },
+            onPressed: _loadBookings,
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Retry', style: TextStyle(color: Colors.white)),
           ),
@@ -934,46 +346,85 @@ class _BookingHistoryState extends State<BookingHistory>
 
   // ─── Tabs ─────────────────────────────────────────────────────────────────
 
+  // Widget _buildPendingTab() {
+  //   if (_pendingBookings.isEmpty) return _buildEmptyTab('No Pending Bookings');
+  //   return RefreshIndicator(
+  //     color: Colors.red,
+  //     onRefresh: _loadBookings,
+  //     child: ListView.separated(
+  //       padding: const EdgeInsets.all(16),
+  //       itemCount: _pendingBookings.length,
+  //       separatorBuilder: (_, __) => const SizedBox(height: 12),
+  //       itemBuilder: (_, i) => _buildPendingCard(_pendingBookings[i]),
+  //     ),
+  //   );
+  // }
+
   Widget _buildPendingTab() {
-    if (!_isPending || _booking == null) {
-      return _buildEmptyTab('No Pending Bookings');
-    }
+    if (_pendingBookings.isEmpty) return _buildEmptyTab('No Pending Bookings');
     return RefreshIndicator(
       color: Colors.red,
-      onRefresh: _loadBooking,
-      child: ListView(
+      onRefresh: _loadBookings,
+      child: ListView.separated(
         padding: const EdgeInsets.all(16),
-        children: [_buildBookingCard(_booking!)],
+        itemCount: _pendingBookings.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        // ✅ Navigate to EnterDetails on tap
+        itemBuilder: (_, i) => GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EnterDetails(bookingId: _pendingBookings[i].id),
+            ),
+          ),
+          child: _buildPendingCard(_pendingBookings[i]),
+        ),
       ),
     );
   }
 
+  // Widget _buildRunningTab() {
+  //   if (_runningBookings.isEmpty) return _buildEmptyTab('No Running Bookings');
+  //   return RefreshIndicator(
+  //     color: Colors.red,
+  //     onRefresh: _loadBookings,
+  //     child: ListView.separated(
+  //       padding: const EdgeInsets.all(16),
+  //       itemCount: _runningBookings.length,
+  //       separatorBuilder: (_, __) => const SizedBox(height: 12),
+  //       // ✅ Wrap each running card in GestureDetector to navigate with bookingId
+  //       itemBuilder: (_, i) => GestureDetector(
+  //         onTap: () => Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (_) => EnterDetails(
+  //               bookingId: _runningBookings[i].id, // ✅ pass bookingId
+  //             ),
+  //           ),
+  //         ),
+  //         child: _buildRunningCard(_runningBookings[i]),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildRunningTab() {
-    if (!_isRunning || _booking == null) {
-      return _buildEmptyTab('No Running Bookings');
-    }
+    if (_runningBookings.isEmpty) return _buildEmptyTab('No Running Bookings');
     return RefreshIndicator(
       color: Colors.red,
-      onRefresh: _loadBooking,
-      child: ListView(
+      onRefresh: _loadBookings,
+      child: ListView.separated(
         padding: const EdgeInsets.all(16),
-        children: [_buildRunningBookingCard(_booking!)],
+        itemCount: _runningBookings.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        // ✅ No navigation on running cards
+        itemBuilder: (_, i) => _buildRunningCard(_runningBookings[i]),
       ),
     );
   }
 
   Widget _buildCompletedTab() {
-    if (!_isCompleted || _booking == null) {
-      return _buildEmptyTab('No Completed Bookings');
-    }
-    return RefreshIndicator(
-      color: Colors.red,
-      onRefresh: _loadBooking,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [_buildRunningBookingCard(_booking!)],
-      ),
-    );
+    return _buildEmptyTab('No Completed Bookings');
   }
 
   Widget _buildEmptyTab(String message) {
@@ -985,9 +436,9 @@ class _BookingHistoryState extends State<BookingHistory>
     );
   }
 
-  // ─── Running Card ─────────────────────────────────────────────────────────
+  // ─── Pending Card — NOT tappable, no navigation ───────────────────────────
 
-  Widget _buildRunningBookingCard(BookingModel booking) {
+  Widget _buildPendingCard(BookingModel booking) {
     final imageUrl = booking.hostelImages.isNotEmpty
         ? booking.hostelImages.first
         : null;
@@ -1009,32 +460,21 @@ class _BookingHistoryState extends State<BookingHistory>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Row: Image + Info
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            EnterDetails(hostelId: booking.hostelId),
-                      ),
-                    );
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: imageUrl != null
-                        ? Image.network(
-                            imageUrl,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _placeholderImage(),
-                          )
-                        : _placeholderImage(),
-                  ),
+                // ✅ Pending card image — not tappable
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: imageUrl != null
+                      ? Image.network(
+                          imageUrl,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _placeholderImage(),
+                        )
+                      : _placeholderImage(),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1052,24 +492,7 @@ class _BookingHistoryState extends State<BookingHistory>
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              booking.roomType,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+                          _roomTypeBadge(booking.roomType),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -1095,14 +518,30 @@ class _BookingHistoryState extends State<BookingHistory>
                           ),
                         ],
                       ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildInfoChip(
+                            label: booking.shareType,
+                            icon: Icons.people,
+                          ),
+                          Text(
+                            booking.bookingReference,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
-            // Details Grid
             Container(
               decoration: BoxDecoration(
                 color: Colors.red,
@@ -1115,18 +554,17 @@ class _BookingHistoryState extends State<BookingHistory>
                       children: [
                         Expanded(
                           child: _buildDetailCell(
-                            label: 'Room No :',
-                            value: '${booking.roomNo} (${booking.shareType})',
+                            label: 'Start Date :',
+                            value: _formatDate(booking.startDate),
                             borderRight: true,
                             borderBottom: true,
                           ),
                         ),
                         Expanded(
                           child: _buildDetailCell(
-                            label: 'Amount Paid :',
-                            value: booking.price > 0
-                                ? '${booking.price.toStringAsFixed(0)}/-'
-                                : 'Pending',
+                            label: 'Total Amount :',
+                            value:
+                                '₹${booking.totalAmount.toStringAsFixed(0)}/-',
                             borderBottom: true,
                           ),
                         ),
@@ -1138,8 +576,8 @@ class _BookingHistoryState extends State<BookingHistory>
                       children: [
                         Expanded(
                           child: _buildDetailCell(
-                            label: 'Proofs Submitted :',
-                            value: _proofLabels,
+                            label: 'Booking Type :',
+                            value: booking.bookingType.toUpperCase(),
                             valueColor: Colors.yellow,
                             borderRight: true,
                           ),
@@ -1157,7 +595,443 @@ class _BookingHistoryState extends State<BookingHistory>
                 ],
               ),
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _actionButton(
+                    icon: Icons.call,
+                    label: 'Call',
+                    onPressed: booking.vendorMobile != null
+                        ? () => _callNumber(booking.vendorMobile!)
+                        : null,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _actionButton(
+                    icon: Icons.chat,
+                    label: 'Whatsapp',
+                    onPressed: booking.vendorMobile != null
+                        ? () => _openWhatsApp(booking.vendorMobile!)
+                        : null,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _actionButton(
+                    icon: Icons.location_on,
+                    label: 'Location',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MapScreen()),
+                    ),
+                  ),
+                ),
+
+                // ✅ Add this at the bottom of _buildPendingCard, after the action buttons Row:
+              ],
+            ),
+
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                Text(
+                  'Tap to fill details',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.red,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.arrow_forward_ios, size: 10, color: Colors.red),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Running Card — tappable via parent GestureDetector ───────────────────
+
+  Widget _buildRunningCard(BookingModel booking) {
+    final imageUrl = booking.hostelImages.isNotEmpty
+        ? booking.hostelImages.first
+        : null;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: imageUrl != null
+                      ? Image.network(
+                          imageUrl,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _placeholderImage(),
+                        )
+                      : _placeholderImage(),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: RichText(
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                children: _hostelNameSpans(booking.hostelName),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _roomTypeBadge(booking.roomType),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 12,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            child: Text(
+                              booking.hostelAddress,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 11,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        booking.bookingReference,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildDetailCell(
+                            label: 'Share Type :',
+                            value: booking.shareType,
+                            borderRight: true,
+                            borderBottom: true,
+                          ),
+                        ),
+                        Expanded(
+                          child: _buildDetailCell(
+                            label: 'Total Amount :',
+                            value:
+                                '₹${booking.totalAmount.toStringAsFixed(0)}/-',
+                            borderBottom: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildDetailCell(
+                            label: 'Start Date :',
+                            value: _formatDate(booking.startDate),
+                            valueColor: Colors.yellow,
+                            borderRight: true,
+                          ),
+                        ),
+                        Expanded(
+                          child: _buildDetailCell(
+                            label: 'Booked On :',
+                            value: _formatDate(booking.createdAt),
+                            valueColor: Colors.yellow,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (booking.vendorName != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.person, size: 14, color: Colors.red),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Vendor: ${booking.vendorName}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    if (booking.vendorMobile != null) ...[
+                      const Spacer(),
+                      // ✅ stopPropagation via absorbing the tap so card tap still works
+                      GestureDetector(
+                        onTap: () => _callNumber(booking.vendorMobile!),
+                        behavior: HitTestBehavior.opaque,
+                        child: const Icon(
+                          Icons.call,
+                          size: 16,
+                          color: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () => _openWhatsApp(booking.vendorMobile!),
+                        behavior: HitTestBehavior.opaque,
+                        child: const Icon(
+                          Icons.chat,
+                          size: 16,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+
+
+            // After the vendor info block (if booking.vendorName != null), add:
+if (booking.paymentHistory.isNotEmpty) ...[
+  const SizedBox(height: 10),
+  Container(
+    padding: const EdgeInsets.all(10),
+    decoration: BoxDecoration(
+      color: Colors.grey[50],
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey.shade200),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          children: [
+            Icon(Icons.receipt_long, size: 14, color: Colors.red),
+            SizedBox(width: 6),
+            Text(
+              'Payment History',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        // Header row
+        Row(
+          children: const [
+            Expanded(
+              flex: 3,
+              child: Text(
+                'Date',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                'Amount',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                'Status',
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Divider(height: 8, thickness: 0.5),
+        ...booking.paymentHistory.map(
+          (p) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    _formatDate(p.date),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '₹${p.amount.toStringAsFixed(0)}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: p.status.toLowerCase() == 'paid'
+                            ? Colors.green.shade50
+                            : Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: p.status.toLowerCase() == 'paid'
+                              ? Colors.green.shade300
+                              : Colors.orange.shade300,
+                        ),
+                      ),
+                      child: Text(
+                        p.status.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: p.status.toLowerCase() == 'paid'
+                              ? Colors.green.shade700
+                              : Colors.orange.shade700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+],
+            // ✅ Tap hint for running cards
+            // const SizedBox(height: 10),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: const [
+            //     Text(
+            //       'Tap to fill details',
+            //       style: TextStyle(
+            //         fontSize: 11,
+            //         color: Colors.red,
+            //         fontStyle: FontStyle.italic,
+            //       ),
+            //     ),
+            //     SizedBox(width: 4),
+            //     Icon(Icons.arrow_forward_ios, size: 10, color: Colors.red),
+            //   ],
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Shared Helpers ───────────────────────────────────────────────────────
+
+  Widget _roomTypeBadge(String roomType) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        roomType,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -1206,248 +1080,6 @@ class _BookingHistoryState extends State<BookingHistory>
       ),
     );
   }
-
-  // ─── Pending Card ─────────────────────────────────────────────────────────
-
-  Widget _buildBookingCard(BookingModel booking) {
-    final imageUrl = booking.hostelImages.isNotEmpty
-        ? booking.hostelImages.first
-        : null;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            EnterDetails(hostelId: booking.hostelId),
-                      ),
-                    );
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: imageUrl != null
-                        ? Image.network(
-                            imageUrl,
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _placeholderImage(),
-                          )
-                        : _placeholderImage(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: RichText(
-                              overflow: TextOverflow.ellipsis,
-                              text: TextSpan(
-                                children: _hostelNameSpans(booking.hostelName),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              booking.roomType,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.location_on,
-                            size: 12,
-                            color: Colors.red,
-                          ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: Text(
-                              booking.hostelAddress,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 11,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Share Type + Payment Status row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildInfoChip(
-                            label: booking.shareType,
-                            icon: Icons.people,
-                          ),
-                          _buildStatusBadge(booking.paymentStatus),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            const Divider(height: 1),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final phone = booking.mobileNumber.trim();
-                      final uri = Uri(scheme: 'tel', path: phone);
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri);
-                      } else {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Could not open dialer'),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.call, size: 16, color: Colors.red),
-                    label: const Text(
-                      'Call',
-                      style: TextStyle(color: Colors.red, fontSize: 13),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final phone = booking.mobileNumber.trim().replaceAll(
-                        RegExp(r'\D'),
-                        '',
-                      );
-                      final fullPhone = phone.startsWith('91')
-                          ? phone
-                          : '91$phone';
-                      final uri = Uri.parse('https://wa.me/$fullPhone');
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } else {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Could not open WhatsApp'),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.chat, size: 16, color: Colors.red),
-                    label: const Text(
-                      'Whatsapp',
-                      style: TextStyle(color: Colors.red, fontSize: 13),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MapScreen()),
-                      );
-
-                      // Navigator.push(context, MaterialPageRoute(builder: (context)=>LocationScreen(userId:_userId,)));
-                    },
-                    icon: const Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: Colors.red,
-                    ),
-                    label: const Text(
-                      'Location',
-                      style: TextStyle(color: Colors.red, fontSize: 13),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ─── Shared Helpers ───────────────────────────────────────────────────────
 
   Widget _placeholderImage() {
     return Container(
@@ -1513,29 +1145,54 @@ class _BookingHistoryState extends State<BookingHistory>
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color bg;
-    switch (status.toLowerCase()) {
-      case 'paid':
-        bg = Colors.green;
-        break;
-      case 'pending':
-        bg = Colors.orange;
-        break;
-      default:
-        bg = Colors.grey;
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: bg.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: bg, width: 1),
+  Widget _actionButton({
+    required IconData icon,
+    required String label,
+    VoidCallback? onPressed,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(
+        icon,
+        size: 16,
+        color: onPressed != null ? Colors.red : Colors.grey,
       ),
-      child: Text(
-        status,
-        style: TextStyle(color: bg, fontSize: 10, fontWeight: FontWeight.w600),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: onPressed != null ? Colors.red : Colors.grey,
+          fontSize: 13,
+        ),
+      ),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        side: BorderSide(color: onPressed != null ? Colors.red : Colors.grey),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
+  }
+
+  Future<void> _callNumber(String phone) async {
+    final uri = Uri(scheme: 'tel', path: phone.trim());
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Could not open dialer')));
+    }
+  }
+
+  Future<void> _openWhatsApp(String phone) async {
+    final cleaned = phone.trim().replaceAll(RegExp(r'\D'), '');
+    final full = cleaned.startsWith('91') ? cleaned : '91$cleaned';
+    final uri = Uri.parse('https://wa.me/$full');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp')));
+    }
   }
 }

@@ -2748,7 +2748,7 @@ class CategoryModel {
 // ═══════════════════════════════════════════════════════
 
 class CategoriesService {
-  static const String _baseUrl = 'http://31.97.206.144:2003/api';
+  static const String _baseUrl = 'http://187.127.146.52:2003/api';
 
   static Future<List<CategoryModel>> getAllCategories() async {
     final response = await http.get(

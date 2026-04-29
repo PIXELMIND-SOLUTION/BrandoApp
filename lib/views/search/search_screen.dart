@@ -645,7 +645,7 @@ class _SearchScreenState extends State<SearchScreen> {
   static const Duration _debounceDuration = Duration(milliseconds: 500);
 
   static const String _baseUrl =
-      'http://31.97.206.144:2003/api/auth/search-filter-hostels';
+      'http://187.127.146.52:2003/api/auth/search-filter-hostels';
 
   void _onSearchChanged(String value) {
     _debounceTimer?.cancel();

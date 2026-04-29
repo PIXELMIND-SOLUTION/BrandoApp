@@ -5,6 +5,7 @@ import 'package:brando_app/provider/booking/booking_provider.dart';
 import 'package:brando_app/provider/booking/submit_form_provider.dart';
 import 'package:brando_app/provider/location/location_provider.dart';
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
+import 'package:brando_app/provider/upgrade/upgrade_provider.dart';
 import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => WishlistProvider()),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
         ChangeNotifierProvider(create: (_) => HostelBookingProvider()),
+        ChangeNotifierProvider(create: (_) => UpgradeBookingProvider()),
       ],
       child: MaterialApp(
         title: 'BRANDO APP',

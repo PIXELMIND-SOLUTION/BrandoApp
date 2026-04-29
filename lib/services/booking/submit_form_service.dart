@@ -24,11 +24,13 @@ class HostelBookingService {
 
   Future<HostelBookingResponseModel> submitBooking({
     required String userId,
-    required String hostelId,
+    required String bookingId,
     required HostelBookingRequestModel request,
   }) async {
     try {
       final token = AppPreferences.getAuthToken();
+
+      final url = ApiConstants.submitBookingFormUrl(userId, bookingId);
 
       final formData = FormData.fromMap({
         'name': request.name,
@@ -43,7 +45,7 @@ class HostelBookingService {
       });
 
       final response = await _dio.post(
-        ApiConstants.hostelBookingUrl(userId, hostelId),
+        url,
         data: formData,
         options: Options(
           headers: {
@@ -54,9 +56,8 @@ class HostelBookingService {
         ),
       );
 
-      print('Status Codeeeeeeeeeeeeeeeeee for submit booking: ${response.statusCode}');
-
-      print('Response Bodyyyyyyyyyyyyyyyyyyyy for submit booking : ${response.data}');
+      print('Status Code [submitBooking]: ${response.statusCode}');
+      print('Response Body [submitBooking]: ${response.data}');
 
       return HostelBookingResponseModel.fromJson(
         response.data as Map<String, dynamic>,
@@ -69,6 +70,54 @@ class HostelBookingService {
       throw Exception('Unexpected error: $e');
     }
   }
+
+  // Future<HostelBookingResponseModel> submitBooking({
+  //   required String userId,
+  //   required String hostelId,
+  //   required HostelBookingRequestModel request,
+  // }) async {
+  //   try {
+  //     final token = AppPreferences.getAuthToken();
+
+  //     final formData = FormData.fromMap({
+  //       'name': request.name,
+  //       'mobileNumber': request.mobileNumber,
+  //       'roomNo': request.roomNo,
+  //       'roomType': request.roomType,
+  //       'shareType': request.shareType,
+  //       'email': request.email,
+  //       'aadharCardImage': await _toMultipartFile(request.aadharCardImagePath),
+  //       'panCardImage': await _toMultipartFile(request.panCardImagePath),
+  //       'profileImage': await _toMultipartFile(request.profileImagePath),
+  //     });
+
+  //     final response = await _dio.post(
+  //       ApiConstants.hostelBookingUrl(userId, hostelId),
+  //       data: formData,
+  //       options: Options(
+  //         headers: {
+  //           if (token != null)
+  //             ApiConstants.authorizationHeader:
+  //                 '${ApiConstants.bearerPrefix}$token',
+  //         },
+  //       ),
+  //     );
+
+  //     print('Status Codeeeeeeeeeeeeeeeeee for submit booking: ${response.statusCode}');
+
+  //     print('Response Bodyyyyyyyyyyyyyyyyyyyy for submit booking : ${response.data}');
+
+  //     return HostelBookingResponseModel.fromJson(
+  //       response.data as Map<String, dynamic>,
+  //     );
+  //   } on DioException catch (e) {
+  //     final message =
+  //         e.response?.data?['message'] ?? e.message ?? 'Booking failed';
+  //     throw Exception(message);
+  //   } catch (e) {
+  //     throw Exception('Unexpected error: $e');
+  //   }
+  // }
 
   Future<MultipartFile> _toMultipartFile(String filePath) async {
     final file = File(filePath);

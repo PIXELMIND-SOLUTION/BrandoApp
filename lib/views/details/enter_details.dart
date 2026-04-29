@@ -1,237 +1,3 @@
-// import 'package:brando_app/views/navbar/navbar_screen.dart';
-// import 'package:flutter/material.dart';
-
-// class EnterDetails extends StatefulWidget {
-//   const EnterDetails({super.key});
-
-//   @override
-//   State<EnterDetails> createState() => _EnterDetailsState();
-// }
-
-// class _EnterDetailsState extends State<EnterDetails> {
-//   final _nameController = TextEditingController();
-//   final _mobileController = TextEditingController();
-//   final _aadharController = TextEditingController();
-//   final _panController = TextEditingController();
-//   final _profileImageController = TextEditingController();
-
-//   @override
-//   void dispose() {
-//     _nameController.dispose();
-//     _mobileController.dispose();
-//     _aadharController.dispose();
-//     _panController.dispose();
-//     _profileImageController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: Colors.white,
-//         elevation: 0,
-//         leading: const BackButton(color: Colors.black),
-//         title: RichText(
-//           text: const TextSpan(
-//             children: [
-//               TextSpan(
-//                 text: 'HIFI ',
-//                 style: TextStyle(
-//                   color: Colors.red,
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 20,
-//                 ),
-//               ),
-//               TextSpan(
-//                 text: 'Hostels',
-//                 style: TextStyle(
-//                   color: Colors.black,
-//                   fontWeight: FontWeight.w500,
-//                   fontSize: 20,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//         centerTitle: true,
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // Room Image
-//             SizedBox(
-//               width: double.infinity,
-//               height: 180,
-//               child: Image.asset('assets/detailimage.png', fit: BoxFit.cover),
-//             ),
-
-//             // Location Row
-//             Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//               child: Row(
-//                 children: [
-//                   const Icon(Icons.location_on, color: Colors.red, size: 18),
-//                   const SizedBox(width: 4),
-//                   const Expanded(
-//                     child: Text(
-//                       'Kphb Hyderabad Kukatpally ... ',
-//                       style: TextStyle(fontSize: 14, color: Colors.black87),
-//                       overflow: TextOverflow.ellipsis,
-//                     ),
-//                   ),
-//                   const Icon(Icons.keyboard_arrow_down, size: 18),
-//                   const SizedBox(width: 8),
-//                   Container(
-//                     padding: const EdgeInsets.symmetric(
-//                       horizontal: 10,
-//                       vertical: 4,
-//                     ),
-//                     decoration: BoxDecoration(
-//                       color: Colors.red,
-//                       borderRadius: BorderRadius.circular(4),
-//                     ),
-//                     child: const Text(
-//                       'AC',
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontWeight: FontWeight.bold,
-//                         fontSize: 12,
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-
-//             // Form Fields
-//             Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 16),
-//               child: Column(
-//                 children: [
-//                   _buildTextField(
-//                     controller: _nameController,
-//                     hint: 'Name',
-//                     hasBorder: true,
-//                   ),
-//                   const SizedBox(height: 12),
-//                   _buildTextField(
-//                     controller: _mobileController,
-//                     hint: 'Mobile Number',
-//                     keyboardType: TextInputType.phone,
-//                   ),
-//                   const SizedBox(height: 12),
-//                   _buildTextField(
-//                     controller: _aadharController,
-//                     hint: 'Aadhar Card',
-//                     hasBorder: true,
-//                   ),
-//                   const SizedBox(height: 12),
-
-//                   _buildTextField(
-//                     controller: _panController,
-//                     hint: 'Pan Card',
-//                     hasBorder: true,
-//                   ),
-
-//                   const SizedBox(height: 12),
-
-//                   const SizedBox(height: 4),
-//                   _buildTextField(
-//                     controller: _profileImageController,
-//                     hint: 'Profile Image',
-//                   ),
-//                   const SizedBox(height: 32),
-
-//                   // Proceed Button
-//                   SizedBox(
-//                     width: double.infinity,
-//                     height: 50,
-//                     child: ElevatedButton(
-//                       onPressed: () {
-//                         Navigator.pushAndRemoveUntil(
-//                           context,
-//                           MaterialPageRoute(
-//                             builder: (context) =>
-//                                 NavbarScreen(), 
-//                           ),
-//                           (route) => false, 
-//                         );
-//                       },
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Color(0xFFFF0000),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(8),
-//                         ),
-//                         elevation: 0,
-//                       ),
-//                       child: const Text(
-//                         'Proceed',
-//                         style: TextStyle(
-//                           color: Colors.white,
-//                           fontSize: 16,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 24),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildTextField({
-//     required TextEditingController controller,
-//     required String hint,
-//     TextInputType keyboardType = TextInputType.text,
-//     bool hasBorder = false,
-//   }) {
-//     return TextField(
-//       controller: controller,
-//       keyboardType: keyboardType,
-//       decoration: InputDecoration(
-//         hintText: hint,
-//         hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-//         contentPadding: const EdgeInsets.symmetric(
-//           horizontal: 12,
-//           vertical: 14,
-//         ),
-//         enabledBorder: OutlineInputBorder(
-//           borderRadius: BorderRadius.circular(6),
-//           borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-//         ),
-//         focusedBorder: OutlineInputBorder(
-//           borderRadius: BorderRadius.circular(6),
-//           borderSide: const BorderSide(color: Colors.red),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import 'dart:io';
 import 'package:brando_app/models/submit_hostel_model.dart';
@@ -242,9 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class EnterDetails extends StatefulWidget {
-  final String hostelId;
+  final String bookingId; // ✅ changed from hostelId to bookingId
 
-  const EnterDetails({super.key, required this.hostelId});
+  const EnterDetails({super.key, required this.bookingId});
 
   @override
   State<EnterDetails> createState() => _EnterDetailsState();
@@ -253,13 +19,11 @@ class EnterDetails extends StatefulWidget {
 class _EnterDetailsState extends State<EnterDetails> {
   final _formKey = GlobalKey<FormState>();
 
-  // ─── Controllers ──────────────────────────────────────────────────────────
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
   final _roomNoController = TextEditingController();
 
-  // ─── Dropdown values ──────────────────────────────────────────────────────
   String? _selectedRoomType;
   String? _selectedShareType;
 
@@ -272,7 +36,6 @@ class _EnterDetailsState extends State<EnterDetails> {
     '5-sharing',
   ];
 
-  // ─── Image paths ──────────────────────────────────────────────────────────
   String? _aadharImagePath;
   String? _panImagePath;
   String? _profileImagePath;
@@ -287,8 +50,6 @@ class _EnterDetailsState extends State<EnterDetails> {
     _roomNoController.dispose();
     super.dispose();
   }
-
-  // ─── Image picker ─────────────────────────────────────────────────────────
 
   Future<void> _pickImage(String type) async {
     final picked = await _picker.pickImage(
@@ -310,8 +71,6 @@ class _EnterDetailsState extends State<EnterDetails> {
       }
     });
   }
-
-  // ─── Submit ───────────────────────────────────────────────────────────────
 
   Future<void> _onProceed() async {
     if (!_formKey.currentState!.validate()) return;
@@ -343,7 +102,7 @@ class _EnterDetailsState extends State<EnterDetails> {
 
     final provider = context.read<HostelBookingProvider>();
     final success = await provider.submitBooking(
-      hostelId: widget.hostelId,
+      bookingId: widget.bookingId, // ✅ pass bookingId
       request: request,
     );
 
@@ -384,7 +143,8 @@ class _EnterDetailsState extends State<EnterDetails> {
                 color: Color(0xFFFFEBEE),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check_circle, color: Colors.red, size: 36),
+              child:
+                  const Icon(Icons.check_circle, color: Colors.red, size: 36),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -406,7 +166,7 @@ class _EnterDetailsState extends State<EnterDetails> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); 
+                  Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
@@ -428,8 +188,6 @@ class _EnterDetailsState extends State<EnterDetails> {
     );
   }
 
-  // ─── Build ────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -439,7 +197,7 @@ class _EnterDetailsState extends State<EnterDetails> {
   }
 
   Widget _buildScaffold(BuildContext ctx) {
-    print('Hosteeeeeeeeeeeeeeeeeeeel idddddddddddddddddd ${widget.hostelId}');
+    print('Booking ID: ${widget.bookingId}'); // ✅ debug log
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -475,13 +233,10 @@ class _EnterDetailsState extends State<EnterDetails> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           children: [
-            // ── Profile Photo ──────────────────────────────────────────────
             _buildSectionLabel('Profile Photo'),
             const SizedBox(height: 10),
             _buildProfilePicker(),
             const SizedBox(height: 24),
-
-            // ── Personal Info ──────────────────────────────────────────────
             _buildSectionLabel('Personal Information'),
             const SizedBox(height: 12),
             _buildTextField(
@@ -505,7 +260,8 @@ class _EnterDetailsState extends State<EnterDetails> {
               ],
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Mobile is required';
-                if (v.trim().length != 10) return 'Enter a valid 10-digit number';
+                if (v.trim().length != 10)
+                  return 'Enter a valid 10-digit number';
                 return null;
               },
             ),
@@ -526,8 +282,6 @@ class _EnterDetailsState extends State<EnterDetails> {
               },
             ),
             const SizedBox(height: 24),
-
-            // ── Room Details ───────────────────────────────────────────────
             _buildSectionLabel('Room Details'),
             const SizedBox(height: 12),
             _buildTextField(
@@ -535,8 +289,9 @@ class _EnterDetailsState extends State<EnterDetails> {
               label: 'Room Number',
               hint: 'e.g. 101',
               icon: Icons.door_back_door_outlined,
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Room number is required' : null,
+              validator: (v) => v == null || v.trim().isEmpty
+                  ? 'Room number is required'
+                  : null,
             ),
             const SizedBox(height: 14),
             _buildDropdown(
@@ -556,11 +311,10 @@ class _EnterDetailsState extends State<EnterDetails> {
               value: _selectedShareType,
               items: _shareTypes,
               onChanged: (val) => setState(() => _selectedShareType = val),
-              validator: (v) => v == null ? 'Please select a share type' : null,
+              validator: (v) =>
+                  v == null ? 'Please select a share type' : null,
             ),
             const SizedBox(height: 24),
-
-            // ── Documents ──────────────────────────────────────────────────
             _buildSectionLabel('Upload Documents'),
             const SizedBox(height: 12),
             _buildImageUploadTile(
@@ -579,8 +333,6 @@ class _EnterDetailsState extends State<EnterDetails> {
               onTap: () => _pickImage('pan'),
             ),
             const SizedBox(height: 32),
-
-            // ── Proceed Button ─────────────────────────────────────────────
             Consumer<HostelBookingProvider>(
               builder: (_, provider, __) => SizedBox(
                 width: double.infinity,
@@ -623,8 +375,6 @@ class _EnterDetailsState extends State<EnterDetails> {
     );
   }
 
-  // ─── Widgets ──────────────────────────────────────────────────────────────
-
   Widget _buildSectionLabel(String text) {
     return Text(
       text,
@@ -649,7 +399,8 @@ class _EnterDetailsState extends State<EnterDetails> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFFF5F5F5),
-                border: Border.all(color: Colors.red.withOpacity(0.4), width: 2),
+                border:
+                    Border.all(color: Colors.red.withOpacity(0.4), width: 2),
               ),
               child: _profileImagePath != null
                   ? ClipOval(
@@ -670,7 +421,8 @@ class _EnterDetailsState extends State<EnterDetails> {
                   color: Colors.red,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.camera_alt, size: 15, color: Colors.white),
+                child:
+                    const Icon(Icons.camera_alt, size: 15, color: Colors.white),
               ),
             ),
           ],
@@ -785,23 +537,21 @@ class _EnterDetailsState extends State<EnterDetails> {
     required VoidCallback onTap,
   }) {
     final hasImage = imagePath != null;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: hasImage
-              ? const Color(0xFFFFF3F3)
-              : const Color(0xFFFAFAFA),
+          color: hasImage ? const Color(0xFFFFF3F3) : const Color(0xFFFAFAFA),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: hasImage ? Colors.red.withOpacity(0.5) : const Color(0xFFE0E0E0),
+            color: hasImage
+                ? Colors.red.withOpacity(0.5)
+                : const Color(0xFFE0E0E0),
           ),
         ),
         child: Row(
           children: [
-            // Thumbnail or placeholder
             Container(
               width: 52,
               height: 52,
@@ -812,10 +562,7 @@ class _EnterDetailsState extends State<EnterDetails> {
               child: hasImage
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.file(
-                        File(imagePath),
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.file(File(imagePath), fit: BoxFit.cover),
                     )
                   : Icon(icon, color: Colors.red, size: 26),
             ),
