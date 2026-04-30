@@ -45,17 +45,23 @@ class UserProfileModel {
     );
   }
 
+  // static String? _sanitizeImageUrl(String? raw) {
+  //   if (raw == null || raw.isEmpty) return null;
+
+  //   final uploadsIndex = raw.indexOf('/uploads');
+  //   if (uploadsIndex != -1) {
+  //     final path = raw.substring(uploadsIndex).replaceAll('\\', '/');
+  //     return 'http://31.97.206.144:2003$path';
+  //   }
+
+  //   return raw;
+  // }
+
+
   static String? _sanitizeImageUrl(String? raw) {
-    if (raw == null || raw.isEmpty) return null;
-
-    final uploadsIndex = raw.indexOf('/uploads');
-    if (uploadsIndex != -1) {
-      final path = raw.substring(uploadsIndex).replaceAll('\\', '/');
-      return 'http://31.97.206.144:2003$path';
-    }
-
-    return raw;
-  }
+  if (raw == null || raw.isEmpty) return null;
+  return raw.trim(); // ✅ Trust the URL the server returns
+}
 
   UserProfileModel copyWith({
     String? id,

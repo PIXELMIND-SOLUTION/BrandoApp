@@ -3,6 +3,7 @@ import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,15 +32,33 @@ class _WishlistScreenState extends State<WishlistScreen> {
     }
   }
 
+  // Future<void> _openWhatsApp(String phoneNumber) async {
+  //   final message = Uri.encodeComponent(
+  //     "Hello, I am interested in your hostel.",
+  //   );
+  //   final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
+  //   if (await canLaunchUrl(url)) {
+  //     await launchUrl(url, mode: LaunchMode.externalApplication);
+  //   }
+  // }
+
+
+
+
   Future<void> _openWhatsApp(String phoneNumber) async {
-    final message = Uri.encodeComponent(
-      "Hello, I am interested in your hostel.",
-    );
-    final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+  final message = Uri.encodeComponent("Hello, I am interested in your hostel.");
+  final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
+
+  try {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open WhatsApp.')),
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -133,26 +152,73 @@ class _WishlistScreenState extends State<WishlistScreen> {
             }
       
             // ── Empty ────────────────────────────────────────────────────────
-            if (wishlistProvider.wishlistItems.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.favorite_border, size: 60, color: Colors.grey),
-                    SizedBox(height: 12),
-                    Text(
-                      'No favourites yet',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                    SizedBox(height: 6),
-                    Text(
-                      'Tap the heart on any hostel to save it here.',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                  ],
-                ),
-              );
-            }
+            // if (wishlistProvider.wishlistItems.isEmpty) {
+            //   return const Center(
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Icon(Icons.favorite_border, size: 60, color: Colors.grey),
+            //         SizedBox(height: 12),
+            //         Text(
+            //           'No favourites yet',
+            //           style: TextStyle(color: Colors.grey, fontSize: 16),
+            //         ),
+            //         SizedBox(height: 6),
+            //         Text(
+            //           'Tap the heart on any hostel to save it here.',
+            //           style: TextStyle(color: Colors.grey, fontSize: 13),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }
+
+
+
+            // ── Empty ────────────────────────────────────────────────────────
+if (wishlistProvider.wishlistItems.isEmpty) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.network(
+            'https://assets9.lottiefiles.com/packages/lf20_ydo1amjm.json',
+            width: 220,
+            height: 220,
+            fit: BoxFit.contain,
+            repeat: true,
+            errorBuilder: (_, __, ___) => Icon(
+              Icons.favorite_border,
+              size: 64,
+              color: Colors.red.shade200,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'No Favourites Yet',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E2E2E),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Tap the ❤️ on any hostel to\nsave it here for later.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
       
             // ── List ─────────────────────────────────────────────────────────
             return RefreshIndicator(

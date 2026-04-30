@@ -1423,7 +1423,7 @@ class _BookingHistoryState extends State<BookingHistory>
       setState(() {
         _pendingBookings = results[0];
         _runningBookings = results[1];
-        _completedBookings = results[2]; // ✅ NEW
+        _completedBookings = results[2];
         _isLoading = false;
       });
     } catch (e) {
@@ -1523,7 +1523,7 @@ class _BookingHistoryState extends State<BookingHistory>
               children: [
                 _buildPendingTab(),
                 _buildRunningTab(),
-                _buildCompletedTab(), 
+                _buildCompletedTab(),
               ],
             ),
     );
@@ -2217,7 +2217,6 @@ class _BookingHistoryState extends State<BookingHistory>
               ),
             ),
             const SizedBox(height: 10),
-            // ── Details grid (green for completed) ──────────────────────────
             Container(
               decoration: BoxDecoration(
                 color: Colors.green.shade600,
@@ -2656,16 +2655,33 @@ class _BookingHistoryState extends State<BookingHistory>
     }
   }
 
-  Future<void> _openWhatsApp(String phone) async {
-    final cleaned = phone.trim().replaceAll(RegExp(r'\D'), '');
-    final full = cleaned.startsWith('91') ? cleaned : '91$cleaned';
-    final uri = Uri.parse('https://wa.me/$full');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp')));
+  // Future<void> _openWhatsApp(String phone) async {
+  //   final cleaned = phone.trim().replaceAll(RegExp(r'\D'), '');
+  //   final full = cleaned.startsWith('91') ? cleaned : '91$cleaned';
+  //   final uri = Uri.parse('https://wa.me/$full');
+  //   if (await canLaunchUrl(uri)) {
+  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  //   } else if (mounted) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp')));
+  //   }
+  // }
+
+  Future<void> _openWhatsApp(String phoneNumber) async {
+    final message = Uri.encodeComponent(
+      "Hello, I am interested in your hostel.",
+    );
+    final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
+
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open WhatsApp.')),
+        );
+      }
     }
   }
 }

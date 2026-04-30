@@ -1,4 +1,3 @@
-
 // import 'dart:convert';
 // import 'package:brando_app/helper/shared_preference.dart';
 // import 'package:brando_app/provider/booking/booking_provider.dart';
@@ -502,7 +501,6 @@
 //         //     bookingProvider.isSuccess;
 
 //         // final bool alreadySubmitted = bookingProvider.isSuccess;
-
 
 //         final bool alreadySubmitted =
 //     bookingProvider.isSuccess ||
@@ -1302,27 +1300,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ignore_for_file: unused_field
 
 import 'dart:convert';
 import 'package:brando_app/helper/shared_preference.dart';
@@ -1331,7 +1309,9 @@ import 'package:brando_app/views/history/booking_history.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SharingOption {
   final String shareType;
@@ -1438,8 +1418,6 @@ class HostelApiService {
 
 class MyBookingsApiService {
   static const String _baseUrl = 'http://187.127.146.52:2003/api/auth';
-
-  /// Returns true if the user has any booking for [hostelId] where isTrue == "true"
   static Future<bool> hasActiveBookingForHostel({
     required String userId,
     required String hostelId,
@@ -1447,20 +1425,21 @@ class MyBookingsApiService {
     final uri = Uri.parse('$_baseUrl/mybookings/$userId');
     final response = await http.get(uri);
 
+    print('Response status code for my bookings ${response.statusCode}');
+    print('Response bodyyyyyyyyyyyyy for my bookings ${response.body}');
+
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
       if (json['success'] == true) {
         final bookings = (json['bookings'] as List<dynamic>?) ?? [];
         for (final booking in bookings) {
-          final bookingHostelId =
-              (booking['hostelId'] is Map)
-                  ? booking['hostelId']['_id'] as String? ?? ''
-                  : booking['hostelId'] as String? ?? '';
+          final bookingHostelId = (booking['hostelId'] is Map)
+              ? booking['hostelId']['_id'] as String? ?? ''
+              : booking['hostelId'] as String? ?? '';
 
           // isTrue is returned as a string "true"/"false" from the API
           final isTrue = booking['isTrue'];
-          final isTrueBool =
-              isTrue == true || isTrue == 'true';
+          final isTrueBool = isTrue == true || isTrue == 'true';
 
           if (bookingHostelId == hostelId && isTrueBool) {
             return true;
@@ -1501,6 +1480,10 @@ class _DetailScreenState extends State<DetailScreen>
 
   String? _userId;
 
+
+
+  
+
   // ── My Bookings state ──────────────────────────────────────────────────────
   /// Whether the user already has an active (isTrue == true) booking for this hostel
   bool _hasActiveBooking = false;
@@ -1517,6 +1500,22 @@ class _DetailScreenState extends State<DetailScreen>
         'fullDate': day,
       };
     });
+  }
+
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open the link. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   /// Returns the selected date formatted as "yyyy-MM-dd" for the API
@@ -1890,7 +1889,7 @@ class _DetailScreenState extends State<DetailScreen>
                                       imageUrl,
                                       width: double.infinity,
                                       height: 220,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                       loadingBuilder:
                                           (context, child, progress) {
                                             if (progress == null) return child;
@@ -2369,8 +2368,6 @@ class _DetailScreenState extends State<DetailScreen>
 
                       const SizedBox(height: 20),
 
-                      // ── Terms and Privacy ─────────────────────────────
-                      // Only show checkbox if not already submitted and a price is selected
                       if (_selectedPriceIndex != null && !alreadySubmitted)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -2390,8 +2387,8 @@ class _DetailScreenState extends State<DetailScreen>
                               Expanded(
                                 child: Text.rich(
                                   TextSpan(
-                                    children: const [
-                                      TextSpan(
+                                    children: [
+                                      const TextSpan(
                                         text:
                                             'By signing up, you agree to our ',
                                         style: TextStyle(
@@ -2399,27 +2396,43 @@ class _DetailScreenState extends State<DetailScreen>
                                           color: Colors.black87,
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: 'Terms of Use',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFFFF0000),
-                                          decoration: TextDecoration.underline,
+                                      WidgetSpan(
+                                        child: GestureDetector(
+                                          onTap: () => _launchURL(
+                                            'https://brando-user-policy.onrender.com/terms-and-conditions',
+                                          ),
+                                          child: const Text(
+                                            'Terms of Use',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Color(0xFFFF0000),
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      TextSpan(
+                                      const TextSpan(
                                         text: '\nand ',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.black87,
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: 'Privacy Policy',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Color(0xFFFF0000),
-                                          decoration: TextDecoration.underline,
+                                      WidgetSpan(
+                                        child: GestureDetector(
+                                          onTap: () => _launchURL(
+                                            'https://brando-user-policy.onrender.com/privacy-and-policy',
+                                          ),
+                                          child: const Text(
+                                            'Privacy Policy',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Color(0xFFFF0000),
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -2430,6 +2443,66 @@ class _DetailScreenState extends State<DetailScreen>
                           ),
                         ),
 
+                      // ── Terms and Privacy ─────────────────────────────
+                      // Only show checkbox if not already submitted and a price is selected
+                      // if (_selectedPriceIndex != null && !alreadySubmitted)
+                      //   Padding(
+                      //     padding: const EdgeInsets.symmetric(horizontal: 12),
+                      //     child: Row(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Checkbox(
+                      //           value: _isAgreed,
+                      //           onChanged: (value) =>
+                      //               setState(() => _isAgreed = value ?? false),
+                      //           activeColor: const Color(0xFFFF0000),
+                      //           materialTapTargetSize:
+                      //               MaterialTapTargetSize.shrinkWrap,
+                      //           visualDensity: VisualDensity.compact,
+                      //         ),
+                      //         const SizedBox(width: 4),
+                      //         Expanded(
+                      //           child: Text.rich(
+                      //             TextSpan(
+                      //               children: const [
+                      //                 TextSpan(
+                      //                   text:
+                      //                       'By signing up, you agree to our ',
+                      //                   style: TextStyle(
+                      //                     fontSize: 12,
+                      //                     color: Colors.black87,
+                      //                   ),
+                      //                 ),
+                      //                 TextSpan(
+                      //                   text: 'Terms of Use',
+                      //                   style: TextStyle(
+                      //                     fontSize: 12,
+                      //                     color: Color(0xFFFF0000),
+                      //                     decoration: TextDecoration.underline,
+                      //                   ),
+                      //                 ),
+                      //                 TextSpan(
+                      //                   text: '\nand ',
+                      //                   style: TextStyle(
+                      //                     fontSize: 12,
+                      //                     color: Colors.black87,
+                      //                   ),
+                      //                 ),
+                      //                 TextSpan(
+                      //                   text: 'Privacy Policy',
+                      //                   style: TextStyle(
+                      //                     fontSize: 12,
+                      //                     color: Color(0xFFFF0000),
+                      //                     decoration: TextDecoration.underline,
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -2464,75 +2537,74 @@ class _DetailScreenState extends State<DetailScreen>
                           ),
                         )
                       : alreadySubmitted
-                          // ── Already Submitted State ──────────────────
-                          ? ElevatedButton.icon(
-                              onPressed: null,
-                              icon: const Icon(
-                                Icons.check_circle_outline,
-                                color: Colors.white70,
-                              ),
-                              label: const Text(
-                                'Already Submitted',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green[700],
-                                disabledBackgroundColor: Colors.green[700],
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                elevation: 0,
-                              ),
-                            )
-                          // ── Normal / Loading State ───────────────────
-                          : ElevatedButton(
-                              onPressed:
-                                  (_isAgreed &&
-                                      _selectedPriceIndex != null &&
-                                      !isProcessing)
-                                  ? _handleBooking
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF0000),
-                                disabledBackgroundColor: Colors.grey[300],
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                elevation: 2,
-                              ),
-                              child: isProcessing
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2.5,
-                                      ),
-                                    )
-                                  : AnimatedSwitcher(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      child: Text(
-                                        _selectedPrice != null
-                                            ? 'Book Now  ₹${_formatPrice(_selectedPrice!)}/-'
-                                            : 'Book Now',
-                                        key: ValueKey(_selectedPrice),
-                                        style: TextStyle(
-                                          color:
-                                              (_isAgreed &&
-                                                  _selectedPriceIndex != null)
-                                              ? Colors.white
-                                              : Colors.black45,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
+                      // ── Already Submitted State ──────────────────
+                      ? ElevatedButton.icon(
+                          onPressed: null,
+                          icon: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.white70,
+                          ),
+                          label: const Text(
+                            'Already Submitted',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[700],
+                            disabledBackgroundColor: Colors.green[700],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                        )
+                      // ── Normal / Loading State ───────────────────
+                      : ElevatedButton(
+                          onPressed:
+                              (_isAgreed &&
+                                  _selectedPriceIndex != null &&
+                                  !isProcessing)
+                              ? _handleBooking
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF0000),
+                            disabledBackgroundColor: Colors.grey[300],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 2,
+                          ),
+                          child: isProcessing
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 200),
+                                  child: Text(
+                                    _selectedPrice != null
+                                        ? 'Book Now  ₹${_formatPrice(_selectedPrice!)}/-'
+                                        : 'Book Now',
+                                    key: ValueKey(_selectedPrice),
+                                    style: TextStyle(
+                                      color:
+                                          (_isAgreed &&
+                                              _selectedPriceIndex != null)
+                                          ? Colors.white
+                                          : Colors.black45,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                        ),
                 ),
               ),
             ],
@@ -2554,9 +2626,130 @@ class _DetailScreenState extends State<DetailScreen>
 
 // ─── Booking Success Modal ────────────────────────────────────────────────────
 
+// class _BookingSuccessModal extends StatefulWidget {
+//   final VoidCallback onImageTap;
+
+//   const _BookingSuccessModal({required this.onImageTap});
+
+//   @override
+//   State<_BookingSuccessModal> createState() => _BookingSuccessModalState();
+// }
+
+// class _BookingSuccessModalState extends State<_BookingSuccessModal>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _animController;
+//   late Animation<double> _scaleAnim;
+//   late Animation<double> _fadeAnim;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _animController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 400),
+//     );
+//     _scaleAnim = CurvedAnimation(
+//       parent: _animController,
+//       curve: Curves.easeOutBack,
+//     );
+//     _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
+//     _animController.forward();
+//   }
+
+//   @override
+//   void dispose() {
+//     _animController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FadeTransition(
+//       opacity: _fadeAnim,
+//       child: ScaleTransition(
+//         scale: _scaleAnim,
+//         child: Container(
+//           margin: const EdgeInsets.symmetric(horizontal: 20),
+//           padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(20),
+//             boxShadow: [
+//               BoxShadow(
+//                 color: Colors.black.withOpacity(0.15),
+//                 blurRadius: 30,
+//                 offset: const Offset(0, 10),
+//               ),
+//             ],
+//           ),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               GestureDetector(
+//                 onTap: widget.onImageTap,
+//                 child: Image.asset(
+//                   'assets/booking.png',
+//                   width: 180,
+//                   height: 180,
+//                   fit: BoxFit.contain,
+//                   errorBuilder: (context, error, stackTrace) => Container(
+//                     width: 180,
+//                     height: 180,
+//                     decoration: BoxDecoration(
+//                       color: Colors.grey[100],
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
+//                     child: const Icon(
+//                       Icons.hotel,
+//                       size: 80,
+//                       color: Colors.grey,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(height: 20),
+//               Text.rich(
+//                 TextSpan(
+//                   children: const [
+//                     TextSpan(
+//                       text: 'Hostel Booking ',
+//                       style: TextStyle(
+//                         color: Color(0xFFE53935),
+//                         fontWeight: FontWeight.bold,
+//                         fontSize: 18,
+//                       ),
+//                     ),
+//                     TextSpan(
+//                       text: 'Completed\nSuccessfully',
+//                       style: TextStyle(
+//                         color: Colors.black,
+//                         fontWeight: FontWeight.bold,
+//                         fontSize: 18,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 textAlign: TextAlign.center,
+//               ),
+//               const SizedBox(height: 24),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+
+
+
+
 class _BookingSuccessModal extends StatefulWidget {
   final VoidCallback onImageTap;
-
   const _BookingSuccessModal({required this.onImageTap});
 
   @override
@@ -2564,106 +2757,363 @@ class _BookingSuccessModal extends StatefulWidget {
 }
 
 class _BookingSuccessModalState extends State<_BookingSuccessModal>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _scaleAnim;
+    with TickerProviderStateMixin {
+  late AnimationController _lottieController;
+  late AnimationController _slideController;
+  late AnimationController _confettiController;
+
+  late Animation<double> _slideAnim;
   late Animation<double> _fadeAnim;
+  late Animation<double> _scaleAnim;
 
   @override
   void initState() {
     super.initState();
-    _animController = AnimationController(
+
+    // Lottie animation controller
+    _lottieController = AnimationController(vsync: this);
+
+    // Modal slide-up + fade
+    _slideController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 550),
     );
-    _scaleAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOutBack,
+
+    _slideAnim = Tween<double>(begin: 80, end: 0).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
     );
-    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
-    _animController.forward();
+    _fadeAnim = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOut),
+    );
+    _scaleAnim = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack),
+    );
+
+    _slideController.forward();
   }
 
   @override
   void dispose() {
-    _animController.dispose();
+    _lottieController.dispose();
+    _slideController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnim,
-      child: ScaleTransition(
-        scale: _scaleAnim,
+    return AnimatedBuilder(
+      animation: _slideController,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _fadeAnim.value,
+          child: Transform.translate(
+            offset: Offset(0, _slideAnim.value),
+            child: Transform.scale(
+              scale: _scaleAnim.value,
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
+                color: Colors.black.withOpacity(0.25),
+                blurRadius: 60,
+                offset: const Offset(0, 20),
               ),
             ],
           ),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              GestureDetector(
-                onTap: widget.onImageTap,
-                child: Image.asset(
-                  'assets/booking.png',
-                  width: 180,
-                  height: 180,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 180,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.hotel,
-                      size: 80,
-                      color: Colors.grey,
-                    ),
+              // ── Red header band with Lottie ──────────────────────
+              Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF1744), Color(0xFFE53935)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text.rich(
-                TextSpan(
-                  children: const [
-                    TextSpan(
-                      text: 'Hostel Booking ',
-                      style: TextStyle(
-                        color: Color(0xFFE53935),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                padding: const EdgeInsets.symmetric(vertical: 28),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Decorative circle
+                    Positioned(
+                      top: -30,
+                      right: -30,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.08),
+                        ),
                       ),
                     ),
-                    TextSpan(
-                      text: 'Completed\nSuccessfully',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                    Column(
+                      children: [
+                        // Lottie animation
+                        Lottie.asset(
+                          'assets/animations/booking_success.json',
+                          controller: _lottieController,
+                          width: 130,
+                          height: 130,
+                          fit: BoxFit.contain,
+                          onLoaded: (composition) {
+                            _lottieController
+                              ..duration = composition.duration
+                              ..forward();
+                          },
+                          // Fallback if Lottie fails
+                          errorBuilder: (context, error, stack) {
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withOpacity(0.2),
+                              ),
+                              child: const Icon(
+                                Icons.check_rounded,
+                                color: Colors.white,
+                                size: 56,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 6),
+                        // Confirmed badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.18),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.4),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              const Text(
+                                'BOOKING CONFIRMED',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Body ────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
+                child: Column(
+                  children: [
+                    // Title
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: const TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Your Hostel Booking\nis ',
+                            style: TextStyle(
+                              color: Color(0xFF1A1A1A),
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              height: 1.35,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'Successfully Placed!',
+                            style: TextStyle(
+                              color: Color(0xFFE53935),
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Info card
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: const Color(0xFFFFF5F5),
+                    //     borderRadius: BorderRadius.circular(16),
+                    //     border: Border.all(
+                    //       color: const Color(0xFFFFCDD2),
+                    //       width: 1.5,
+                    //     ),
+                    //   ),
+                    //   // padding: const EdgeInsets.symmetric(
+                    //   //   horizontal: 16, vertical: 12,
+                    //   // ),
+                    //   // child: Column(
+                    //   //   children: [
+                    //   //     _InfoRow(
+                    //   //       icon: Icons.schedule_rounded,
+                    //   //       text: 'Our team will contact you within 24 hrs',
+                    //   //     ),
+                    //   //     const Divider(
+                    //   //       color: Color(0xFFFFE0E0),
+                    //   //       height: 16,
+                    //   //       thickness: 1,
+                    //   //     ),
+                    //   //     // _InfoRow(
+                    //   //     //   icon: Icons.phone_in_talk_rounded,
+                    //   //     //   text: 'Keep your phone ready for confirmation',
+                    //   //     // ),
+                    //   //     const Divider(
+                    //   //       color: Color(0xFFFFE0E0),
+                    //   //       height: 16,
+                    //   //       thickness: 1,
+                    //   //     ),
+                    //   //     // _InfoRow(
+                    //   //     //   icon: Icons.history_rounded,
+                    //   //     //   text: 'Track your booking in History tab',
+                    //   //     // ),
+                    //   //   ],
+                    //   // ),
+                    // ),
+
+                    const SizedBox(height: 22),
+
+                    // CTA button
+                    GestureDetector(
+                      onTap: widget.onImageTap,
+                      child: Container(
+                        width: double.infinity,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFF1744), Color(0xFFE53935)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFE53935).withOpacity(0.38),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.receipt_long_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'View My Bookings',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Dismiss link
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Text(
+                        'Stay on this page',
+                        style: TextStyle(
+                          color: Color(0xFF9E9E9E),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+// ── Small info row widget ─────────────────────────────────────────────────────
+class _InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _InfoRow({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFEBEB),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: const Color(0xFFE53935), size: 16),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF444444),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

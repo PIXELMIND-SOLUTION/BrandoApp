@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
 class DeleteAccount extends StatefulWidget {
   const DeleteAccount({super.key});
 
@@ -36,9 +35,11 @@ class _DeleteAccountState extends State<DeleteAccount> {
 
       final responseData = json.decode(response.body);
 
-
-      print('Response status code for delete account ${response.statusCode}');
-      print('Response bodyyyyyyyyyyyyyyyyyyy for delete account ${response.body}');
+      print('Response status code for delete account: ${response.statusCode}');
+      print(
+        'Response bodyyyyyyyyyyyyyyyyyyy for delete account: ${response.body}',
+      );
+      print('Userrrrrrrrrrrrr idddddddddddddddddddd for delete account: $userId');
 
       if (response.statusCode == 200) {
         await AppPreferences.clearAll();
@@ -83,9 +84,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
       context: context,
       barrierDismissible: !_isDeleting,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: const Text("Confirm Delete"),
         content: const Text(
           "Are you sure you want to permanently delete your account?",
@@ -96,19 +95,14 @@ class _DeleteAccountState extends State<DeleteAccount> {
             child: const Text("No"),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: _isDeleting
                 ? null
                 : () async {
                     Navigator.pop(context);
                     await _deleteAccount();
                   },
-            child: const Text(
-              "Delete",
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text("Delete", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -125,10 +119,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
         centerTitle: true,
         title: const Text(
           "Delete Account",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -157,10 +148,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
             const Text(
               "We're Sorry to See You Go",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 12),
@@ -233,11 +221,10 @@ class _DeleteAccountState extends State<DeleteAccount> {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: _isDeleting ? null : () => Navigator.pop(context),
-                    child: const Text(
-                      "Cancel",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    onPressed: _isDeleting
+                        ? null
+                        : () => Navigator.pop(context),
+                    child: const Text("Cancel", style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 const SizedBox(width: 14),

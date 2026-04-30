@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UpgradeBookingProvider()),
       ],
       child: MaterialApp(
-        title: 'BRANDO APP',
+        title: 'BRANDO',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

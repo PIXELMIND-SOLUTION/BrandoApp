@@ -4,8 +4,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapScreen extends StatefulWidget {
-  /// Pass a specific hostel location to show a marker there.
-  /// If both are null, the map will centre on the user's current location.
   final double? hostelLatitude;
   final double? hostelLongitude;
   final String? hostelName;
@@ -122,8 +120,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  /// Opens Google Maps / Apple Maps navigation to the hostel
-  Future<void> _openDirections() async {
+   Future<void> _openDirections() async {
     if (_hostelLocation == null) return;
     final lat = _hostelLocation!.latitude;
     final lng = _hostelLocation!.longitude;

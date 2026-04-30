@@ -1,3 +1,5 @@
+
+
 // // lib/screens/profile_screen.dart
 // import 'dart:io';
 // import 'package:brando_app/helper/shared_preference.dart';
@@ -18,6 +20,8 @@
 //   final ImagePicker _picker = ImagePicker();
 //   File? _pickedImage;
 //   late TextEditingController _nameController;
+
+//   int _imageCacheBuster = DateTime.now().millisecondsSinceEpoch;
 
 //   @override
 //   void initState() {
@@ -123,13 +127,20 @@
 //     final success = await provider.updateProfile(
 //       name: nameChanged ? newName : null,
 //       profileImage: imageChanged ? _pickedImage : null,
-      
 //     );
 
 //     if (!mounted) return;
 
 //     if (success) {
-//       setState(() => _pickedImage = null); // clear local pick after upload
+//       setState(() {
+//         // ✅ Bust the image cache so the updated NetworkImage is re-fetched.
+//         // Do NOT clear _pickedImage here — we clear it only once the new
+//         // NetworkImage finishes loading (see _buildAvatar below).
+//         if (imageChanged) {
+//           _imageCacheBuster = DateTime.now().millisecondsSinceEpoch;
+//         }
+//       });
+
 //       ScaffoldMessenger.of(context).showSnackBar(
 //         const SnackBar(
 //           content: Text('Profile updated successfully!'),
@@ -163,6 +174,12 @@
 //             (profile.name?.isNotEmpty ?? false)) {
 //           _nameController.text = profile.name!;
 //         }
+
+//         // ✅ Build a cache-busted URL so Flutter re-fetches the updated image
+//         final rawImageUrl = profile?.profileImage;
+//         final profileImageUrl = (rawImageUrl != null && rawImageUrl.isNotEmpty)
+//             ? '$rawImageUrl?v=$_imageCacheBuster'
+//             : null;
 
 //         return Scaffold(
 //           backgroundColor: Colors.white,
@@ -206,17 +223,7 @@
 //                       Center(
 //                         child: Stack(
 //                           children: [
-//                             CircleAvatar(
-//                               radius: 50,
-//                               backgroundColor: Colors.grey[300],
-//                               backgroundImage: _pickedImage != null
-//                                   ? FileImage(_pickedImage!)
-//                                   : (profile?.profileImage != null
-//                                       ? NetworkImage(profile!.profileImage!)
-//                                           as ImageProvider
-//                                       : const AssetImage(
-//                                           'assets/profile.png')),
-//                             ),
+//                             _buildAvatar(profileImageUrl),
 //                             Positioned(
 //                               bottom: 0,
 //                               right: 0,
@@ -340,6 +347,70 @@
 //     );
 //   }
 
+//   // ─── Avatar: stays on FileImage until NetworkImage finishes loading ─────
+
+//   Widget _buildAvatar(String? profileImageUrl) {
+//     // 1. User just picked a new image — always show it immediately.
+//     if (_pickedImage != null) {
+//       return CircleAvatar(
+//         radius: 50,
+//         backgroundColor: Colors.grey[300],
+//         backgroundImage: FileImage(_pickedImage!),
+//       );
+//     }
+
+//     // 2. No network URL — fall back to asset.
+//     if (profileImageUrl == null) {
+//       return CircleAvatar(
+//         radius: 50,
+//         backgroundColor: Colors.grey[300],
+//         backgroundImage: const AssetImage('assets/profile.png'),
+//       );
+//     }
+
+//     // 3. Network image — use Image.network so we can intercept the
+//     //    loadingBuilder and keep showing the old FileImage (if any)
+//     //    or a shimmer placeholder until the new frame is ready.
+//     return ClipOval(
+//       child: Image.network(
+//         profileImageUrl,
+//         width: 100,
+//         height: 100,
+//         fit: BoxFit.cover,
+//         // While loading: show either the previously picked file or a shimmer
+//         loadingBuilder: (context, child, loadingProgress) {
+//           if (loadingProgress == null) {
+//             // ✅ Network image fully loaded — now safe to drop _pickedImage
+//             WidgetsBinding.instance.addPostFrameCallback((_) {
+//               if (_pickedImage != null && mounted) {
+//                 setState(() => _pickedImage = null);
+//               }
+//             });
+//             return child;
+//           }
+//           // Still downloading — show a grey shimmer circle (no flash)
+//           return Container(
+//             width: 100,
+//             height: 100,
+//             color: Colors.grey[300],
+//             child: const Center(
+//               child: CircularProgressIndicator(
+//                 strokeWidth: 2,
+//                 color: Colors.red,
+//               ),
+//             ),
+//           );
+//         },
+//         // On error fall back to asset
+//         errorBuilder: (context, error, stackTrace) => CircleAvatar(
+//           radius: 50,
+//           backgroundColor: Colors.grey[300],
+//           backgroundImage: const AssetImage('assets/profile.png'),
+//         ),
+//       ),
+//     );
+//   }
+
 //   Widget _buildInputField({
 //     required String label,
 //     required String value,
@@ -403,7 +474,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -416,7 +486,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   File? _pickedImage;
   late TextEditingController _nameController;
 
-  // Cache-bust key: updated after every successful profile image upload
   int _imageCacheBuster = DateTime.now().millisecondsSinceEpoch;
 
   @override
@@ -528,11 +597,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!mounted) return;
 
     if (success) {
+      // ✅ Re-fetch profile so profileImage URL reflects the newly uploaded file
+      if (imageChanged) {
+        await provider.fetchProfile();
+      }
+
+      if (!mounted) return;
+
       setState(() {
-        // ✅ Bust the image cache so the updated NetworkImage is re-fetched.
-        // Do NOT clear _pickedImage here — we clear it only once the new
-        // NetworkImage finishes loading (see _buildAvatar below).
         if (imageChanged) {
+          // ✅ Clear picked image — server URL is now fresh from fetchProfile()
+          // ✅ Bust the cache so NetworkImage re-fetches the updated image
+          _pickedImage = null;
           _imageCacheBuster = DateTime.now().millisecondsSinceEpoch;
         }
       });
@@ -571,7 +647,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _nameController.text = profile.name!;
         }
 
-        // ✅ Build a cache-busted URL so Flutter re-fetches the updated image
+        // ✅ Build a cache-busted URL using the freshly fetched profileImage
         final rawImageUrl = profile?.profileImage;
         final profileImageUrl = (rawImageUrl != null && rawImageUrl.isNotEmpty)
             ? '$rawImageUrl?v=$_imageCacheBuster'
@@ -607,7 +683,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           body: provider.status == ProfileStatus.loading && profile == null
-              ? const Center(child: CircularProgressIndicator(color: Colors.red))
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.red))
               : SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -700,7 +777,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: provider.isLoading ? null : _submitUpdate,
+                          onPressed:
+                              provider.isLoading ? null : _submitUpdate,
                           child: provider.isLoading
                               ? const SizedBox(
                                   height: 22,
@@ -743,10 +821,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ─── Avatar: stays on FileImage until NetworkImage finishes loading ─────
+  // ─── Avatar ───────────────────────────────────────────────────────────────
 
   Widget _buildAvatar(String? profileImageUrl) {
-    // 1. User just picked a new image — always show it immediately.
+    // 1. User just picked a new image — show it immediately
     if (_pickedImage != null) {
       return CircleAvatar(
         radius: 50,
@@ -755,7 +833,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    // 2. No network URL — fall back to asset.
+    // 2. No network URL — fall back to asset
     if (profileImageUrl == null) {
       return CircleAvatar(
         radius: 50,
@@ -764,48 +842,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    // 3. Network image — use Image.network so we can intercept the
-    //    loadingBuilder and keep showing the old FileImage (if any)
-    //    or a shimmer placeholder until the new frame is ready.
-    return ClipOval(
-      child: Image.network(
-        profileImageUrl,
-        width: 100,
-        height: 100,
-        fit: BoxFit.cover,
-        // While loading: show either the previously picked file or a shimmer
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) {
-            // ✅ Network image fully loaded — now safe to drop _pickedImage
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_pickedImage != null && mounted) {
-                setState(() => _pickedImage = null);
-              }
-            });
-            return child;
-          }
-          // Still downloading — show a grey shimmer circle (no flash)
-          return Container(
-            width: 100,
-            height: 100,
-            color: Colors.grey[300],
-            child: const Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.red,
-              ),
-            ),
-          );
-        },
-        // On error fall back to asset
-        errorBuilder: (context, error, stackTrace) => CircleAvatar(
-          radius: 50,
-          backgroundColor: Colors.grey[300],
-          backgroundImage: const AssetImage('assets/profile.png'),
-        ),
-      ),
+    // 3. Network image with cache-busted URL (applied after fetchProfile returns fresh URL)
+    return CircleAvatar(
+      radius: 50,
+      backgroundColor: Colors.grey[300],
+      backgroundImage: NetworkImage(profileImageUrl),
+      onBackgroundImageError: (_, __) {},
     );
   }
+
+  // ─── Input Field ──────────────────────────────────────────────────────────
 
   Widget _buildInputField({
     required String label,
