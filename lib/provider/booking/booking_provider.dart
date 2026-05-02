@@ -4,7 +4,6 @@
 // import 'package:brando_app/services/booking/booking_service.dart';
 // import 'package:flutter/foundation.dart';
 
-
 // enum BookingStatus { idle, loading, success, error }
 
 // class BookingProvider extends ChangeNotifier {
@@ -57,20 +56,6 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // lib/features/booking/providers/booking_provider.dart
 
 import 'package:brando_app/models/booking_model.dart';
@@ -83,12 +68,11 @@ class BookingProvider extends ChangeNotifier {
   final BookingService _bookingService;
 
   BookingProvider({BookingService? bookingService})
-      : _bookingService = bookingService ?? BookingService();
+    : _bookingService = bookingService ?? BookingService();
 
   BookingStatus _status = BookingStatus.idle;
   BookingRequestModel? _booking;
   String? _errorMessage;
-
 
   final Set<String> _submittedHostelIds = {};
 
@@ -100,7 +84,8 @@ class BookingProvider extends ChangeNotifier {
   bool get isSuccess => _status == BookingStatus.success;
   bool get hasError => _status == BookingStatus.error;
 
-  bool isHostelSubmitted(String hostelId) => _submittedHostelIds.contains(hostelId);
+  bool isHostelSubmitted(String hostelId) =>
+      _submittedHostelIds.contains(hostelId);
 
   Future<void> createBooking({
     required String hostelId,
@@ -115,11 +100,6 @@ class BookingProvider extends ChangeNotifier {
     _errorMessage = null;
 
     try {
-     
-     
-
-
-
       _booking = await _bookingService.createBooking(
         hostelId: hostelId,
         userId: userId,
@@ -129,6 +109,7 @@ class BookingProvider extends ChangeNotifier {
         startDate: startDate,
         isTrue: isTrue,
       );
+      _submittedHostelIds.add(hostelId);
       _setStatus(BookingStatus.success);
     } catch (e) {
       _errorMessage = e.toString().replaceFirst('Exception: ', '');
@@ -140,6 +121,8 @@ class BookingProvider extends ChangeNotifier {
     _status = BookingStatus.idle;
     _booking = null;
     _errorMessage = null;
+    _submittedHostelIds.clear();
+
     notifyListeners();
   }
 

@@ -1,6 +1,7 @@
 import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/detail_screen.dart';
+import 'package:brando_app/widgets/toast_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -42,54 +43,53 @@ class _WishlistScreenState extends State<WishlistScreen> {
   //   }
   // }
 
-
-
-
   Future<void> _openWhatsApp(String phoneNumber) async {
-  final message = Uri.encodeComponent("Hello, I am interested in your hostel.");
-  final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
+    final message = Uri.encodeComponent(
+      "Hello, I am interested in your hostel.",
+    );
+    final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
 
-  try {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open WhatsApp.')),
-      );
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open WhatsApp.')),
+        );
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
-  return WillPopScope(
-    onWillPop: () async {
-      final shouldExit = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Exit App'),
-          content: const Text('Are you sure you want to exit?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Exit', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        ),
-      );
-      
-      if (shouldExit == true) {
-        if (mounted) {
-          SystemNavigator.pop();
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Exit App'),
+            content: const Text('Are you sure you want to exit?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Exit', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+        );
+
+        if (shouldExit == true) {
+          if (mounted) {
+            SystemNavigator.pop();
+          }
+          return true;
         }
-        return true;
-      }
-      return false;
-    },
+        return false;
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -114,7 +114,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 child: CircularProgressIndicator(color: Colors.red),
               );
             }
-      
+
             // ── Error ────────────────────────────────────────────────────────
             if (wishlistProvider.status == WishlistStatus.error) {
               return Center(
@@ -150,7 +150,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 ),
               );
             }
-      
+
             // ── Empty ────────────────────────────────────────────────────────
             // if (wishlistProvider.wishlistItems.isEmpty) {
             //   return const Center(
@@ -173,53 +173,51 @@ class _WishlistScreenState extends State<WishlistScreen> {
             //   );
             // }
 
-
-
             // ── Empty ────────────────────────────────────────────────────────
-if (wishlistProvider.wishlistItems.isEmpty) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.network(
-            'https://assets9.lottiefiles.com/packages/lf20_ydo1amjm.json',
-            width: 220,
-            height: 220,
-            fit: BoxFit.contain,
-            repeat: true,
-            errorBuilder: (_, __, ___) => Icon(
-              Icons.favorite_border,
-              size: 64,
-              color: Colors.red.shade200,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'No Favourites Yet',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2E2E2E),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Tap the ❤️ on any hostel to\nsave it here for later.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-      
+            if (wishlistProvider.wishlistItems.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Lottie.network(
+                        'https://assets9.lottiefiles.com/packages/lf20_ydo1amjm.json',
+                        width: 220,
+                        height: 220,
+                        fit: BoxFit.contain,
+                        repeat: true,
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.favorite_border,
+                          size: 64,
+                          color: Colors.red.shade200,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'No Favourites Yet',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E2E2E),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Tap the ❤️ on any hostel to\nsave it here for later.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             // ── List ─────────────────────────────────────────────────────────
             return RefreshIndicator(
               color: Colors.red,
@@ -233,9 +231,16 @@ if (wishlistProvider.wishlistItems.isEmpty) {
                   if (hostel == null) return const SizedBox.shrink();
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailScreen(hostelId: hostel.id,)));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailScreen(hostelId: hostel.id),
+                        ),
+                      );
                     },
-                    child: _buildHostelCard(hostel, wishlistProvider));
+                    child: _buildHostelCard(hostel, wishlistProvider),
+                  );
                 },
               ),
             );
@@ -257,8 +262,8 @@ if (wishlistProvider.wishlistItems.isEmpty) {
         : '';
     final String categoryName = hostel.category?.name ?? '';
 
-      final double? latitude = hostel.location?.latitude;
-  final double? longitude = hostel.location?.longitude;
+    final double? latitude = hostel.location?.latitude;
+    final double? longitude = hostel.location?.longitude;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -347,12 +352,37 @@ if (wishlistProvider.wishlistItems.isEmpty) {
                             selector: (_, p) => p.isWishlisted(hostelId),
                             builder: (context, wishlisted, _) {
                               return GestureDetector(
+                                // onTap: hostelId.isEmpty
+                                //     ? null
+                                //     : () {
+                                //         context
+                                //             .read<WishlistProvider>()
+                                //             .toggleWishlist(hostelId);
+                                //       },
+
+                                // Replace the onTap inside Selector<WishlistProvider, bool> builder
                                 onTap: hostelId.isEmpty
                                     ? null
                                     : () {
-                                        context
-                                            .read<WishlistProvider>()
-                                            .toggleWishlist(hostelId);
+                                        final wishlistProvider = context
+                                            .read<WishlistProvider>();
+                                        final isCurrentlyWishlisted =
+                                            wishlistProvider.isWishlisted(
+                                              hostelId,
+                                            );
+                                        wishlistProvider.toggleWishlist(
+                                          hostelId,
+                                        );
+
+                                        ToastHelper.show(
+                                          context,
+                                          message: isCurrentlyWishlisted
+                                              ? 'Removed from your favourites'
+                                              : '❤️  Added to favourites — $name',
+                                          type: isCurrentlyWishlisted
+                                              ? ToastType.warning
+                                              : ToastType.success,
+                                        );
                                       },
                                 child: AnimatedSwitcher(
                                   duration: const Duration(milliseconds: 300),

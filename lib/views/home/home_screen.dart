@@ -2454,29 +2454,6 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:brando_app/helper/shared_preference.dart';
@@ -2488,6 +2465,7 @@ import 'package:brando_app/views/location/location_screen.dart';
 import 'package:brando_app/views/notifications/notification_screen.dart';
 import 'package:brando_app/views/search/search_screen.dart';
 import 'package:brando_app/views/seeall/see_all_screen.dart';
+import 'package:brando_app/widgets/toast_message.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/services.dart';
@@ -2514,6 +2492,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchHintHostelName = 'Hostel';
   int _hintIndex = 0;
   Timer? _hintTimer;
+
+  bool _locationPermissionDenied = false;
+  bool _locationServiceDisabled = false;
 
   bool _isDialogOpen = false;
 
@@ -2577,14 +2558,19 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isFetchingLocation = true;
       _currentAddress = 'Fetching location...';
+      _locationPermissionDenied = false;
+      _locationServiceDisabled = false;
     });
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         setState(() {
-          _currentAddress = 'Location services disabled';
+          _locationServiceDisabled = true;
+          _currentAddress = 'Location off';
           _isFetchingLocation = false;
+          // _currentAddress = 'Location services disabled';
+          // _isFetchingLocation = false;
         });
         return;
       }
@@ -2594,8 +2580,11 @@ class _HomeScreenState extends State<HomeScreen> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           setState(() {
-            _currentAddress = 'Location permission denied';
+            _locationPermissionDenied = true;
+            _currentAddress = 'Permission denied';
             _isFetchingLocation = false;
+            // _currentAddress = 'Location permission denied';
+            // _isFetchingLocation = false;
           });
           return;
         }
@@ -2603,8 +2592,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (permission == LocationPermission.deniedForever) {
         setState(() {
-          _currentAddress = 'Location permission permanently denied';
+          _locationPermissionDenied = true;
+          _currentAddress = 'Permission denied';
           _isFetchingLocation = false;
+          // _currentAddress = 'Location permission permanently denied';
+          // _isFetchingLocation = false;
         });
         return;
       }
@@ -3118,6 +3110,9 @@ class _HomeScreenState extends State<HomeScreen> {
   // ─── Hostel List ───────────────────────────────────────────────────────────
 
   Widget _buildHostelList() {
+    if (_locationPermissionDenied || _locationServiceDisabled) {
+      return _buildLocationPermissionScreen();
+    }
     return Consumer<HostelProvider>(
       builder: (context, hostelProvider, _) {
         if (hostelProvider.isLoading) {
@@ -3127,35 +3122,103 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
+        // if (hostelProvider.hasError) {
+        //   return Padding(
+        //     padding: const EdgeInsets.all(24),
+        //     child: Center(
+        //       child: Column(
+        //         children: [
+        //           Icon(
+        //             Icons.error_outline,
+        //             color: Colors.red.shade300,
+        //             size: 48,
+        //           ),
+        //           const SizedBox(height: 12),
+        //           Text(
+        //             hostelProvider.errorMessage ?? 'Something went wrong.',
+        //             textAlign: TextAlign.center,
+        //             style: const TextStyle(color: Colors.grey, fontSize: 14),
+        //           ),
+        //           const SizedBox(height: 16),
+        //           ElevatedButton(
+        //             onPressed: () => hostelProvider.fetchNearbyHostels(),
+        //             style: ElevatedButton.styleFrom(
+        //               backgroundColor: Colors.red,
+        //               shape: RoundedRectangleBorder(
+        //                 borderRadius: BorderRadius.circular(8),
+        //               ),
+        //             ),
+        //             child: const Text(
+        //               'Retry',
+        //               style: TextStyle(color: Colors.white),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   );
+        // }
+
         if (hostelProvider.hasError) {
           return Padding(
             padding: const EdgeInsets.all(24),
             child: Center(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red.shade300,
-                    size: 48,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    hostelProvider.errorMessage ?? 'Something went wrong.',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => hostelProvider.fetchNearbyHostels(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  Lottie.network(
+                    'https://assets2.lottiefiles.com/packages/lf20_qh5z2fdq.json',
+                    width: 220,
+                    height: 220,
+                    fit: BoxFit.contain,
+                    repeat: true,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.error_outline,
+                      color: Colors.red.shade300,
+                      size: 64,
                     ),
-                    child: const Text(
-                      'Retry',
-                      style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 8),
+                  // const Text(
+                  //   'Oops! Something Went Wrong',
+                  //   style: TextStyle(
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: Color(0xFF2E2E2E),
+                  //   ),
+                  // ),
+                  const SizedBox(height: 8),
+                  // Text(
+                  //   hostelProvider.errorMessage ?? 'We couldn\'t load hostels.\nPlease try again.',
+                  //   textAlign: TextAlign.center,
+                  //   style: const TextStyle(
+                  //     color: Colors.grey,
+                  //     fontSize: 13,
+                  //     height: 1.5,
+                  //   ),
+                  // ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => hostelProvider.fetchNearbyHostels(),
+                      icon: const Icon(Icons.refresh_rounded, size: 18),
+                      label: const Text(
+                        'Refresh',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
                     ),
                   ),
                 ],
@@ -3238,6 +3301,126 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildLocationPermissionScreen() {
+    final bool isServiceOff = _locationServiceDisabled;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Lottie animation — GPS/location themed
+          Lottie.network(
+            isServiceOff
+                ? 'https://assets4.lottiefiles.com/packages/lf20_UJNc2t.json' // GPS searching
+                : 'https://assets9.lottiefiles.com/packages/lf20_qwL4Ajt1zX.json', // location pin
+            width: 240,
+            height: 240,
+            fit: BoxFit.contain,
+            repeat: true,
+            errorBuilder: (_, __, ___) => Lottie.network(
+              'https://assets10.lottiefiles.com/packages/lf20_myejiggj.json',
+              width: 240,
+              height: 240,
+              repeat: true,
+              errorBuilder: (_, __, ___) => Icon(
+                Icons.location_off_rounded,
+                size: 80,
+                color: Colors.red.shade300,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          // Title
+          Text(
+            isServiceOff ? 'Location Is Turned Off' : 'Location Access Needed',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E2E2E),
+              letterSpacing: -0.3,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Subtitle
+          Text(
+            isServiceOff
+                ? 'Please enable location services on your device so we can find hostels near you.'
+                : 'We need your location to show nearby hostels.\nTap below to grant access.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.grey,
+              height: 1.6,
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          // CTA Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: isServiceOff
+                  ? () async {
+                      await Geolocator.openLocationSettings();
+                    }
+                  : () async {
+                      if (_locationPermissionDenied) {
+                        await Geolocator.openAppSettings();
+                      } else {
+                        await _fetchCurrentLocation();
+                      }
+                    },
+              icon: Icon(
+                isServiceOff ? Icons.settings : Icons.my_location_rounded,
+                size: 18,
+              ),
+              label: Text(
+                isServiceOff ? 'Open Location Settings' : 'Enable Location',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Secondary: manual location pick
+          TextButton.icon(
+            onPressed: _openLocationScreen,
+            icon: const Icon(Icons.search, size: 16, color: Colors.red),
+            label: const Text(
+              'Search a location manually',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
   // ─── Hostel Card ───────────────────────────────────────────────────────────
 
   Widget _buildHostelCard(dynamic hostel) {
@@ -3270,8 +3453,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }).toList();
 
     // Fall back to all shares if none match the selected type
-    final List displayShares =
-        filteredShares.isNotEmpty ? filteredShares : allShares;
+    final List displayShares = filteredShares.isNotEmpty
+        ? filteredShares
+        : allShares;
 
     return GestureDetector(
       onTap: () {
@@ -3364,12 +3548,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                   provider.isWishlisted(hostelId),
                               builder: (context, wishlisted, _) {
                                 return GestureDetector(
+                                  // onTap: hostelId.isEmpty
+                                  //     ? null
+                                  //     : () {
+                                  //         context
+                                  //             .read<WishlistProvider>()
+                                  //             .toggleWishlist(hostelId);
+                                  //       },
+
+                                  // Replace the onTap inside the Selector<WishlistProvider> block
                                   onTap: hostelId.isEmpty
                                       ? null
                                       : () {
-                                          context
-                                              .read<WishlistProvider>()
-                                              .toggleWishlist(hostelId);
+                                          final wishlistProvider = context
+                                              .read<WishlistProvider>();
+                                          final isCurrentlyWishlisted =
+                                              wishlistProvider.isWishlisted(
+                                                hostelId,
+                                              );
+                                          wishlistProvider.toggleWishlist(
+                                            hostelId,
+                                          );
+
+                                          ToastHelper.show(
+                                            context,
+                                            message: isCurrentlyWishlisted
+                                                ? 'Removed from your wishlist'
+                                                : '❤️  Added to wishlist — $name',
+                                            type: isCurrentlyWishlisted
+                                                ? ToastType.warning
+                                                : ToastType.success,
+                                          );
                                         },
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
@@ -3493,12 +3702,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: displayShares.map<Widget>((share) {
                               final String label = isHostelModel
                                   ? share.shareType
-                                  : (share['shareType'] ?? share['label'] ?? '');
+                                  : (share['shareType'] ??
+                                        share['label'] ??
+                                        '');
                               final int monthlyPrice = isHostelModel
                                   ? share.monthlyPrice
                                   : (share['monthlyPrice'] ?? 0);
-                              final String priceText =
-                                  '₹$monthlyPrice/-';
+                              final String priceText = '₹$monthlyPrice/-';
 
                               return Padding(
                                 padding: const EdgeInsets.only(right: 8),
