@@ -3106,7 +3106,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   // ─── Hostel List ───────────────────────────────────────────────────────────
 
   Widget _buildHostelList() {
