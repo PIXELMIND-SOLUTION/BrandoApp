@@ -2257,7 +2257,7 @@ class PendingBooking {
           ? HostelInfo.fromJson(hostelData)
           : HostelInfo(
               id: '',
-              name: 'Unknown Hostel',
+              name: 'Bookings',
               rating: 0,
               address: '',
               images: [],
