@@ -435,6 +435,192 @@ class _DetailScreenState extends State<DetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: _hostel == null
+          ? const SizedBox.shrink()
+          : Consumer<BookingProvider>(
+              builder: (context, bookingProvider, _) {
+                final isProcessing = bookingProvider.isLoading;
+                final bool alreadySubmitted =
+                    _hasActiveBooking ||
+                    bookingProvider.isHostelSubmitted(_hostel!.id);
+
+                return BottomAppBar(
+                  elevation: 10,
+                  shadowColor: Colors.black,
+                  height: 56,
+                  surfaceTintColor: Colors.white,
+                  color: Colors.white,
+                  padding: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 0,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // ── Left: Price Info ──────────────────────
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _selectedShareType.isNotEmpty
+                                  ? '${_selectedShareType.toUpperCase()}'
+                                  : 'Select a room',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                // if (_selectedPrice != null) ...[
+                                //   Text(
+                                //     '₹ ${_formatPrice(_selectedPrice!)}',
+                                //     style: TextStyle(
+                                //       fontSize: 13,
+                                //       decoration: TextDecoration.lineThrough,
+                                //       decorationColor: Colors.black.withOpacity(
+                                //         0.6,
+                                //       ),
+                                //       color: Colors.black.withOpacity(0.6),
+                                //     ),
+                                //   ),
+                                //   const SizedBox(width: 11),
+                                // ],
+                                Text(
+                                  _selectedPrice != null
+                                      ? '₹ ${_formatPrice(_selectedPrice!)}'
+                                      : '— —',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFE53935),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        // ── Right: Action Button ──────────────────
+                        _isCheckingBooking
+                            ? Container(
+                                height: 31,
+                                width: 140,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.grey,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : alreadySubmitted
+                            ? Container(
+                                height: 31,
+                                width: 140,
+                                decoration: BoxDecoration(
+                                  color: Colors.green[700],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle_outline,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      'Submitted',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap:
+                                    (_isAgreed &&
+                                        _selectedPriceIndex != null &&
+                                        !isProcessing)
+                                    ? _handleBooking
+                                    : null,
+                                child: Container(
+                                  height: 31,
+                                  width: 140,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        (_isAgreed &&
+                                            _selectedPriceIndex != null)
+                                        ? const Color(0xFFE53935)
+                                        : Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: isProcessing
+                                      ? const Center(
+                                          child: SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        )
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Pay After Service',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color:
+                                                    (_isAgreed &&
+                                                        _selectedPriceIndex !=
+                                                            null)
+                                                    ? Colors.white
+                                                    : Colors.black45,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 9),
+                                            Icon(
+                                              Icons.navigate_next,
+                                              color:
+                                                  (_isAgreed &&
+                                                      _selectedPriceIndex !=
+                                                          null)
+                                                  ? Colors.white
+                                                  : Colors.black45,
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
@@ -1207,103 +1393,103 @@ class _DetailScreenState extends State<DetailScreen>
               ),
 
               // ── Book Now / Already Submitted / Checking Button ──────────
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: _isCheckingBooking
-                      // ── Checking booking state (loading spinner) ─────
-                      ? ElevatedButton(
-                          onPressed: null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
-                            disabledBackgroundColor: Colors.grey[300],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.grey,
-                              strokeWidth: 2.5,
-                            ),
-                          ),
-                        )
-                      : alreadySubmitted
-                      // ── Already Submitted State ──────────────────
-                      ? ElevatedButton.icon(
-                          onPressed: null,
-                          icon: const Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.white70,
-                          ),
-                          label: const Text(
-                            'Already Submitted',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green[700],
-                            disabledBackgroundColor: Colors.green[700],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 0,
-                          ),
-                        )
-                      // ── Normal / Loading State ───────────────────
-                      : ElevatedButton(
-                          onPressed:
-                              (_isAgreed &&
-                                  _selectedPriceIndex != null &&
-                                  !isProcessing)
-                              ? _handleBooking
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF0000),
-                            disabledBackgroundColor: Colors.grey[300],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 2,
-                          ),
-                          child: isProcessing
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2.5,
-                                  ),
-                                )
-                              : AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 200),
-                                  child: Text(
-                                    _selectedPrice != null
-                                        ? 'Book Now  ₹${_formatPrice(_selectedPrice!)}/-'
-                                        : 'Book Now',
-                                    key: ValueKey(_selectedPrice),
-                                    style: TextStyle(
-                                      color:
-                                          (_isAgreed &&
-                                              _selectedPriceIndex != null)
-                                          ? Colors.white
-                                          : Colors.black45,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                        ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(12),
+              //   child: SizedBox(
+              //     width: double.infinity,
+              //     height: 50,
+              //     child: _isCheckingBooking
+              //         // ── Checking booking state (loading spinner) ─────
+              //         ? ElevatedButton(
+              //             onPressed: null,
+              //             style: ElevatedButton.styleFrom(
+              //               backgroundColor: Colors.grey[300],
+              //               disabledBackgroundColor: Colors.grey[300],
+              //               shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(8),
+              //               ),
+              //               elevation: 0,
+              //             ),
+              //             child: const SizedBox(
+              //               width: 24,
+              //               height: 24,
+              //               child: CircularProgressIndicator(
+              //                 color: Colors.grey,
+              //                 strokeWidth: 2.5,
+              //               ),
+              //             ),
+              //           )
+              //         : alreadySubmitted
+              //         // ── Already Submitted State ──────────────────
+              //         ? ElevatedButton.icon(
+              //             onPressed: null,
+              //             icon: const Icon(
+              //               Icons.check_circle_outline,
+              //               color: Colors.white70,
+              //             ),
+              //             label: const Text(
+              //               'Already Submitted',
+              //               style: TextStyle(
+              //                 color: Colors.white70,
+              //                 fontSize: 16,
+              //                 fontWeight: FontWeight.w600,
+              //               ),
+              //             ),
+              //             style: ElevatedButton.styleFrom(
+              //               backgroundColor: Colors.green[700],
+              //               disabledBackgroundColor: Colors.green[700],
+              //               shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(8),
+              //               ),
+              //               elevation: 0,
+              //             ),
+              //           )
+              //         // ── Normal / Loading State ───────────────────
+              //         : ElevatedButton(
+              //             onPressed:
+              //                 (_isAgreed &&
+              //                     _selectedPriceIndex != null &&
+              //                     !isProcessing)
+              //                 ? _handleBooking
+              //                 : null,
+              //             style: ElevatedButton.styleFrom(
+              //               backgroundColor: const Color(0xFFFF0000),
+              //               disabledBackgroundColor: Colors.grey[300],
+              //               shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(8),
+              //               ),
+              //               elevation: 2,
+              //             ),
+              //             child: isProcessing
+              //                 ? const SizedBox(
+              //                     width: 24,
+              //                     height: 24,
+              //                     child: CircularProgressIndicator(
+              //                       color: Colors.white,
+              //                       strokeWidth: 2.5,
+              //                     ),
+              //                   )
+              //                 : AnimatedSwitcher(
+              //                     duration: const Duration(milliseconds: 200),
+              //                     child: Text(
+              //                       _selectedPrice != null
+              //                           ? 'Book Now  ₹${_formatPrice(_selectedPrice!)}/-'
+              //                           : 'Book Now',
+              //                       key: ValueKey(_selectedPrice),
+              //                       style: TextStyle(
+              //                         color:
+              //                             (_isAgreed &&
+              //                                 _selectedPriceIndex != null)
+              //                             ? Colors.white
+              //                             : Colors.black45,
+              //                         fontSize: 16,
+              //                         fontWeight: FontWeight.w600,
+              //                       ),
+              //                     ),
+              //                   ),
+              //           ),
+              //   ),
+              // ),
             ],
           ),
         );
