@@ -84,9 +84,47 @@ class HostelService {
     }
   }
 
+  Future<NearbyHostelsResponse> getRecoHostels(String userId) async {
+    try {
+      final response = await http
+          .get(Uri.parse(ApiConstants.recHostelsUrl(userId)), headers: _headers)
+          .timeout(const Duration(milliseconds: ApiConstants.connectTimeoutMs));
+
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+      print(
+        'Response status code for get hostelssssssssssssss ${response.statusCode}',
+      );
+      print(
+        'Response bodyyyyyyyyyyyyyyyy for get hostelssssssssssss ${response.body}',
+      );
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return NearbyHostelsResponse.fromJson(data);
+      } else {
+        throw Exception(data['message'] ?? 'Failed to fetch nearby hostels');
+      }
+    } catch (e) {
+      throw Exception('Nearby hostels error: $e');
+    }
+  }
+
   // ─── Update Location + Fetch Hostels in one call ─────────────────────────
 
-  Future<NearbyHostelsResponse> updateLocationAndFetchHostels({
+  // Future<NearbyHostelsResponse> updateLocationAndFetchHostels({
+  //   required String userId,
+  //   required double latitude,
+  //   required double longitude,
+  // }) async {
+  //   await updateLocation(
+  //     userId: userId,
+  //     latitude: latitude,
+  //     longitude: longitude,
+  //   );
+  //   return getNearbyHostels(userId);
+  // }
+
+  Future<Map<String, dynamic>> updateLocationAndFetchHostels({
     required String userId,
     required double latitude,
     required double longitude,
@@ -96,6 +134,12 @@ class HostelService {
       latitude: latitude,
       longitude: longitude,
     );
-    return getNearbyHostels(userId);
+
+    final results = await Future.wait([
+      getNearbyHostels(userId),
+      getRecoHostels(userId),
+    ]);
+
+    return {"nearby": results[0], "recommended": results[1]};
   }
 }

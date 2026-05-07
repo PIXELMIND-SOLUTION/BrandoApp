@@ -1,3 +1,7 @@
+// /////////////////////////// Fixed the Bottom bar overflow issueeeeessssssss//////////////////////////////
+
+// // ignore_for_file: dangling_library_doc_comments
+
 // import 'package:brando_app/provider/navbar/navbar_provider.dart';
 // import 'package:brando_app/views/home/booking_screen.dart';
 // import 'package:brando_app/views/home/home_screen.dart';
@@ -18,7 +22,9 @@
 //   });
 // }
 
-// // ─── Bottom Navbar Widget ────────────────────────────────────────────────────
+// // ─────────────────────────────────────────────────────────────
+// // Bottom Navbar
+// // ─────────────────────────────────────────────────────────────
 
 // class CustomBottomNavbar extends StatelessWidget {
 //   const CustomBottomNavbar({super.key});
@@ -57,7 +63,7 @@
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.08),
-//             blurRadius: 24,
+//             blurRadius: 20,
 //             offset: const Offset(0, -4),
 //           ),
 //         ],
@@ -71,9 +77,8 @@
 //               final item = _items[index];
 //               final isActive = index == currentIndex;
 
-//               // ✅ FIX: Give active item more flex space so it doesn't overflow
+//               // ✅ All items equal width (No flex change)
 //               return Expanded(
-//                 flex: isActive ? 2 : 1,
 //                 child: _NavBarItem(
 //                   item: item,
 //                   isActive: isActive,
@@ -88,7 +93,9 @@
 //   }
 // }
 
-// // ─── Individual Nav Item ─────────────────────────────────────────────────────
+// // ─────────────────────────────────────────────────────────────
+// // Individual Nav Item
+// // ─────────────────────────────────────────────────────────────
 
 // class _NavBarItem extends StatefulWidget {
 //   final _NavItem item;
@@ -115,9 +122,9 @@
 //     super.initState();
 //     _controller = AnimationController(
 //       vsync: this,
-//       duration: const Duration(milliseconds: 200),
+//       duration: const Duration(milliseconds: 150),
 //     );
-//     _scaleAnim = Tween<double>(begin: 1.0, end: 0.88).animate(
+//     _scaleAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
 //       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
 //     );
 //   }
@@ -137,62 +144,52 @@
 //   Widget build(BuildContext context) {
 //     const activeColor = Color(0xFFE84A4A);
 //     const inactiveColor = Color(0xFFB0B0B0);
-//     const activeBg = Color(0xFFFFF0F0);
 
 //     return GestureDetector(
 //       onTap: _handleTap,
 //       behavior: HitTestBehavior.opaque,
 //       child: ScaleTransition(
 //         scale: _scaleAnim,
-//         // ✅ FIX: Center the pill within the expanded slot
 //         child: Center(
 //           child: AnimatedContainer(
 //             duration: const Duration(milliseconds: 250),
 //             curve: Curves.easeInOut,
-//             // ✅ FIX: Reduced margin & padding to prevent overflow
-//             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-//             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+//             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
 //             decoration: BoxDecoration(
-//               color: widget.isActive ? const Color.fromARGB(255, 253, 212, 212) : Colors.transparent,
-//               borderRadius: BorderRadius.circular(6),
+//               color: widget.isActive
+//                   ? const Color(0xFFFFE5E5)
+//                   : Colors.transparent,
+//               borderRadius: BorderRadius.circular(8),
 //             ),
-//             // ✅ FIX: Constrain width so it never exceeds available space
+//             // ✅ Constrain max width so it never overflows
+//             constraints: const BoxConstraints(
+//               maxWidth: 120,
+//             ),
 //             child: Row(
 //               mainAxisSize: MainAxisSize.min,
-//               mainAxisAlignment: MainAxisAlignment.center,
 //               children: [
-//                 AnimatedSwitcher(
-//                   duration: const Duration(milliseconds: 200),
-//                   child: Icon(
-//                     widget.isActive
-//                         ? widget.item.activeIcon
-//                         : widget.item.icon,
-//                     key: ValueKey(widget.isActive),
-//                     color: widget.isActive ? activeColor : inactiveColor,
-//                     size: 22,
+//                 Icon(
+//                   widget.isActive
+//                       ? widget.item.activeIcon
+//                       : widget.item.icon,
+//                   color: widget.isActive ? activeColor : inactiveColor,
+//                   size: 22,
+//                 ),
+//                 if (widget.isActive) ...[
+//                   const SizedBox(width: 4),
+//                   Flexible(
+//                     child: Text(
+//                       widget.item.label,
+//                       overflow: TextOverflow.ellipsis,
+//                       maxLines: 1,
+//                       style: const TextStyle(
+//                         color: activeColor,
+//                         fontSize: 13,
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                     ),
 //                   ),
-//                 ),
-//                 AnimatedSize(
-//                   duration: const Duration(milliseconds: 250),
-//                   curve: Curves.easeInOut,
-//                   child: widget.isActive
-//                       ? Padding(
-//                           padding: const EdgeInsets.only(left: 5),
-//                           child: Text(
-//                             widget.item.label,
-//                             style: const TextStyle(
-//                               color: activeColor,
-//                               fontSize: 13,
-//                               fontWeight: FontWeight.w600,
-//                               letterSpacing: 0.2,
-//                             ),
-//                             overflow: TextOverflow.ellipsis,
-//                             maxLines: 1,
-//                              softWrap: false,
-//                           ),
-//                         )
-//                       : const SizedBox.shrink(),
-//                 ),
+//                 ]
 //               ],
 //             ),
 //           ),
@@ -202,18 +199,19 @@
 //   }
 // }
 
-// // ─── NavbarScreen ─────────────────────────────────────────────────────────────
+// // ─────────────────────────────────────────────────────────────
+// // Navbar Screen
+// // ─────────────────────────────────────────────────────────────
 
 // class NavbarScreen extends StatelessWidget {
 //   const NavbarScreen({super.key});
 
-// static const _pages = [
-//   HomeScreen(),
-//   WishlistScreen(),
-//   BookingScreen(),
-//   MenuScreen(),
-// ];
-
+//   static const _pages = [
+//     HomeScreen(),
+//     WishlistScreen(),
+//     BookingScreen(),
+//     MenuScreen(),
+//   ];
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -230,29 +228,446 @@
 //   }
 // }
 
-// // ─── Placeholder Pages ────────────────────────────────────────────────────────
+// import 'package:brando_app/provider/navbar/navbar_provider.dart';
+// import 'package:brando_app/views/home/booking_screen.dart';
+// import 'package:brando_app/views/home/home_screen.dart';
+// import 'package:brando_app/views/home/menu_screen.dart';
+// import 'package:brando_app/views/home/wishlist_screen.dart';
+// import 'package:flutter/material.dart';
+// import 'package:mobile_scanner/mobile_scanner.dart';
+// import 'package:provider/provider.dart';
 
-// class _PlaceholderPage extends StatelessWidget {
-//   final String label;
+// class _NavItem {
 //   final IconData icon;
+//   final IconData activeIcon;
+//   final String label;
 
-//   const _PlaceholderPage({required this.label, required this.icon});
+//   const _NavItem({
+//     required this.icon,
+//     required this.activeIcon,
+//     required this.label,
+//   });
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // Bottom Navbar
+// // ─────────────────────────────────────────────────────────────
+
+// class CustomBottomNavbar extends StatelessWidget {
+//   const CustomBottomNavbar({super.key});
+
+//   // Only 4 items - Home, Wishlist, Bookings, Discover
+//   // Scanner will be handled by FAB
+//   static const _items = [
+//     _NavItem(
+//       icon: Icons.home_outlined,
+//       activeIcon: Icons.home_rounded,
+//       label: 'Home',
+//     ),
+//     _NavItem(
+//       icon: Icons.favorite_border_rounded,
+//       activeIcon: Icons.favorite_rounded,
+//       label: 'Wishlist',
+//     ),
+//     _NavItem(
+//       icon: Icons.king_bed_outlined,
+//       activeIcon: Icons.king_bed_rounded,
+//       label: 'Bookings',
+//     ),
+//     _NavItem(
+//       icon: Icons.menu_rounded,
+//       activeIcon: Icons.menu_rounded,
+//       label: 'Discover',
+//     ),
+//   ];
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Center(
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           Icon(icon, size: 48, color: const Color(0xFFE84A4A)),
-//           const SizedBox(height: 12),
-//           Text(
-//             label,
-//             style: const TextStyle(
-//               fontSize: 20,
-//               fontWeight: FontWeight.w600,
-//               color: Color(0xFF333333),
+//     final provider = context.watch<BottomNavbarProvider>();
+//     final currentIndex = provider.currentIndex;
+
+//     return Stack(
+//       clipBehavior: Clip.none,
+//       alignment: Alignment.bottomCenter,
+//       children: [
+//         Container(
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             boxShadow: [
+//               BoxShadow(
+//                 color: Colors.black.withOpacity(0.08),
+//                 blurRadius: 20,
+//                 offset: const Offset(0, -4),
+//               ),
+//             ],
+//           ),
+//           child: SafeArea(
+//             top: false,
+//             child: SizedBox(
+//               height: 70,
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                 children: List.generate(_items.length, (index) {
+//                   final item = _items[index];
+//                   final isActive = index == currentIndex;
+
+//                   return Expanded(
+//                     child: _NavBarItem(
+//                       item: item,
+//                       isActive: isActive,
+//                       onTap: () => provider.setIndex(index),
+//                     ),
+//                   );
+//                 }),
+//               ),
 //             ),
+//           ),
+//         ),
+//         // Floating Action Button in Center
+//         Positioned(
+//           top: -30,
+//           child: GestureDetector(
+//             onTap: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => const QRScannerScreen(),
+//                 ),
+//               );
+//             },
+//             child: Container(
+//               width: 60,
+//               height: 60,
+//               decoration: BoxDecoration(
+//                 gradient: const LinearGradient(
+//                   begin: Alignment.topLeft,
+//                   end: Alignment.bottomRight,
+//                   colors: [
+//                     Color(0xFFEF5350),
+//                     Color(0xFFC62828),
+//                     Color(0xFFB71C1C),
+//                   ],
+//                 ),
+//                 shape: BoxShape.circle,
+//                 boxShadow: [
+//                   BoxShadow(
+//                     color: Colors.red.withOpacity(0.4),
+//                     blurRadius: 15,
+//                     spreadRadius: 3,
+//                     offset: const Offset(0, 5),
+//                   ),
+//                 ],
+//               ),
+//               child: const Icon(
+//                 Icons.qr_code_scanner,
+//                 color: Colors.white,
+//                 size: 30,
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // Individual Nav Item
+// // ─────────────────────────────────────────────────────────────
+
+// class _NavBarItem extends StatefulWidget {
+//   final _NavItem item;
+//   final bool isActive;
+//   final VoidCallback onTap;
+
+//   const _NavBarItem({
+//     required this.item,
+//     required this.isActive,
+//     required this.onTap,
+//   });
+
+//   @override
+//   State<_NavBarItem> createState() => _NavBarItemState();
+// }
+
+// class _NavBarItemState extends State<_NavBarItem>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _controller;
+//   late final Animation<double> _scaleAnim;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 150),
+//     );
+//     _scaleAnim = Tween<double>(
+//       begin: 1.0,
+//       end: 0.92,
+//     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   void _handleTap() {
+//     _controller.forward().then((_) => _controller.reverse());
+//     widget.onTap();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     const activeColor = Color(0xFFE84A4A);
+//     const inactiveColor = Color(0xFFB0B0B0);
+
+//     return GestureDetector(
+//       onTap: _handleTap,
+//       behavior: HitTestBehavior.opaque,
+//       child: ScaleTransition(
+//         scale: _scaleAnim,
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Icon(
+//               widget.isActive ? widget.item.activeIcon : widget.item.icon,
+//               color: widget.isActive ? activeColor : inactiveColor,
+//               size: 24,
+//             ),
+//             const SizedBox(height: 4),
+//             Text(
+//               widget.item.label,
+//               style: TextStyle(
+//                 color: widget.isActive ? activeColor : inactiveColor,
+//                 fontSize: 11,
+//                 fontWeight: widget.isActive
+//                     ? FontWeight.w600
+//                     : FontWeight.normal,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // QR Scanner Screen
+// // ─────────────────────────────────────────────────────────────
+
+// class QRScannerScreen extends StatefulWidget {
+//   const QRScannerScreen({super.key});
+
+//   @override
+//   State<QRScannerScreen> createState() => _QRScannerScreenState();
+// }
+
+// class _QRScannerScreenState extends State<QRScannerScreen> {
+//   final MobileScannerController _controller = MobileScannerController();
+//   bool _isScanning = true;
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.black,
+//       appBar: AppBar(
+//         backgroundColor: Colors.black,
+//         elevation: 0,
+//         leading: IconButton(
+//           onPressed: () => Navigator.pop(context),
+//           icon: const Icon(Icons.close, color: Colors.white, size: 28),
+//         ),
+//         title: const Text(
+//           'Scan QR Code',
+//           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+//         ),
+//         centerTitle: true,
+//       ),
+//       body: Stack(
+//         children: [
+//           MobileScanner(
+//             controller: _controller,
+//             onDetect: (capture) {
+//               if (!_isScanning) return;
+
+//               final List<Barcode> barcodes = capture.barcodes;
+//               for (final barcode in barcodes) {
+//                 if (barcode.rawValue != null) {
+//                   _isScanning = false;
+//                   _handleQRCode(barcode.rawValue!);
+//                   break;
+//                 }
+//               }
+//             },
+//           ),
+//           _buildScannerOverlay(),
+//         ],
+//       ),
+//       bottomNavigationBar: Container(
+//         color: Colors.black,
+//         padding: const EdgeInsets.all(20),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//           children: [
+//             Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 IconButton(
+//                   onPressed: () => _controller.toggleTorch(),
+//                   icon: const Icon(Icons.flashlight_on, color: Colors.white),
+//                 ),
+//                 const Text(
+//                   'Flash',
+//                   style: TextStyle(color: Colors.white, fontSize: 12),
+//                 ),
+//               ],
+//             ),
+//             Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 IconButton(
+//                   onPressed: () => _controller.switchCamera(),
+//                   icon: const Icon(Icons.cameraswitch, color: Colors.white),
+//                 ),
+//                 const Text(
+//                   'Switch',
+//                   style: TextStyle(color: Colors.white, fontSize: 12),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildScannerOverlay() {
+//     return Container(
+//       color: Colors.black.withOpacity(0.5),
+//       child: Center(
+//         child: Container(
+//           width: 280,
+//           height: 280,
+//           decoration: BoxDecoration(
+//             border: Border.all(color: Colors.white, width: 2),
+//             borderRadius: BorderRadius.circular(16),
+//           ),
+//           child: Stack(
+//             children: [
+//               Positioned(
+//                 top: -2,
+//                 left: -2,
+//                 child: Container(
+//                   width: 40,
+//                   height: 40,
+//                   decoration: const BoxDecoration(
+//                     border: Border(
+//                       top: BorderSide(color: Colors.red, width: 4),
+//                       left: BorderSide(color: Colors.red, width: 4),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 top: -2,
+//                 right: -2,
+//                 child: Container(
+//                   width: 40,
+//                   height: 40,
+//                   decoration: const BoxDecoration(
+//                     border: Border(
+//                       top: BorderSide(color: Colors.red, width: 4),
+//                       right: BorderSide(color: Colors.red, width: 4),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 bottom: -2,
+//                 left: -2,
+//                 child: Container(
+//                   width: 40,
+//                   height: 40,
+//                   decoration: const BoxDecoration(
+//                     border: Border(
+//                       bottom: BorderSide(color: Colors.red, width: 4),
+//                       left: BorderSide(color: Colors.red, width: 4),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 bottom: -2,
+//                 right: -2,
+//                 child: Container(
+//                   width: 40,
+//                   height: 40,
+//                   decoration: const BoxDecoration(
+//                     border: Border(
+//                       bottom: BorderSide(color: Colors.red, width: 4),
+//                       right: BorderSide(color: Colors.red, width: 4),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   void _handleQRCode(String code) {
+//     debugPrint('Scanned QR Code: $code');
+
+//     showDialog(
+//       context: context,
+//       barrierDismissible: false,
+//       builder: (context) => AlertDialog(
+//         title: const Text('QR Code Scanned'),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             const Text('Successfully scanned QR code!'),
+//             const SizedBox(height: 10),
+//             Container(
+//               padding: const EdgeInsets.all(10),
+//               decoration: BoxDecoration(
+//                 color: Colors.grey.shade100,
+//                 borderRadius: BorderRadius.circular(8),
+//               ),
+//               child: SelectableText(code, style: const TextStyle(fontSize: 12)),
+//             ),
+//           ],
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () {
+//               Navigator.pop(context);
+//               Navigator.pop(context);
+//             },
+//             child: const Text('OK'),
+//           ),
+//           TextButton(
+//             onPressed: () {
+//               Navigator.pop(context);
+//               setState(() {
+//                 _isScanning = true;
+//                 _controller.start();
+//               });
+//             },
+//             child: const Text('Scan Again'),
 //           ),
 //         ],
 //       ),
@@ -260,23 +675,33 @@
 //   }
 // }
 
+// // ─────────────────────────────────────────────────────────────
+// // Navbar Screen
+// // ─────────────────────────────────────────────────────────────
 
+// class NavbarScreen extends StatelessWidget {
+//   const NavbarScreen({super.key});
 
+//   static const _pages = [
+//     HomeScreen(),
+//     WishlistScreen(),
+//     BookingScreen(),
+//     MenuScreen(),
+//   ];
 
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////// Fixed the Bottom bar overflow issueeeeessssssss//////////////////////////////
-
-// ignore_for_file: dangling_library_doc_comments
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer<BottomNavbarProvider>(
+//       builder: (context, provider, _) {
+//         return Scaffold(
+//           backgroundColor: const Color(0xFFF8F8F8),
+//           body: IndexedStack(index: provider.currentIndex, children: _pages),
+//           bottomNavigationBar: const CustomBottomNavbar(),
+//         );
+//       },
+//     );
+//   }
+// }
 
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/home/booking_screen.dart';
@@ -284,7 +709,9 @@ import 'package:brando_app/views/home/home_screen.dart';
 import 'package:brando_app/views/home/menu_screen.dart';
 import 'package:brando_app/views/home/wishlist_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class _NavItem {
   final IconData icon;
@@ -305,6 +732,8 @@ class _NavItem {
 class CustomBottomNavbar extends StatelessWidget {
   const CustomBottomNavbar({super.key});
 
+  // Only 4 items - Home, Wishlist, Bookings, Discover
+  // Scanner will be handled by FAB
   static const _items = [
     _NavItem(
       icon: Icons.home_outlined,
@@ -333,38 +762,87 @@ class CustomBottomNavbar extends StatelessWidget {
     final provider = context.watch<BottomNavbarProvider>();
     final currentIndex = provider.currentIndex;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, -4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            children: List.generate(_items.length, (index) {
-              final item = _items[index];
-              final isActive = index == currentIndex;
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(_items.length, (index) {
+                  final item = _items[index];
+                  final isActive = index == currentIndex;
 
-              // ✅ All items equal width (No flex change)
-              return Expanded(
-                child: _NavBarItem(
-                  item: item,
-                  isActive: isActive,
-                  onTap: () => provider.setIndex(index),
-                ),
-              );
-            }),
+                  return Expanded(
+                    child: _NavBarItem(
+                      item: item,
+                      isActive: isActive,
+                      onTap: () => provider.setIndex(index),
+                    ),
+                  );
+                }),
+              ),
+            ),
           ),
         ),
-      ),
+        // Floating Action Button in Center
+        Positioned(
+          top: -30,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const QRScannerScreen(),
+                ),
+              );
+            },
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFEF5350),
+                    Color(0xFFC62828),
+                    Color(0xFFB71C1C),
+                  ],
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.red.withOpacity(0.4),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.qr_code_scanner,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -400,9 +878,10 @@ class _NavBarItemState extends State<_NavBarItem>
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
-    _scaleAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnim = Tween<double>(
+      begin: 1.0,
+      end: 0.92,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
   @override
@@ -426,53 +905,664 @@ class _NavBarItemState extends State<_NavBarItem>
       behavior: HitTestBehavior.opaque,
       child: ScaleTransition(
         scale: _scaleAnim,
-        child: Center(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: widget.isActive
-                  ? const Color(0xFFFFE5E5)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              widget.isActive ? widget.item.activeIcon : widget.item.icon,
+              color: widget.isActive ? activeColor : inactiveColor,
+              size: 24,
             ),
-            // ✅ Constrain max width so it never overflows
-            constraints: const BoxConstraints(
-              maxWidth: 120,
+            const SizedBox(height: 4),
+            Text(
+              widget.item.label,
+              style: TextStyle(
+                color: widget.isActive ? activeColor : inactiveColor,
+                fontSize: 11,
+                fontWeight: widget.isActive
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+              ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  widget.isActive
-                      ? widget.item.activeIcon
-                      : widget.item.icon,
-                  color: widget.isActive ? activeColor : inactiveColor,
-                  size: 22,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// QR Scanner Screen (Professional)
+// ─────────────────────────────────────────────────────────────
+
+class QRScannerScreen extends StatefulWidget {
+  const QRScannerScreen({super.key});
+
+  @override
+  State<QRScannerScreen> createState() => _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State<QRScannerScreen>
+    with SingleTickerProviderStateMixin {
+  final MobileScannerController _controller = MobileScannerController();
+  bool _isScanning = true;
+  late AnimationController _animationController;
+  late Animation<double> _scanAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    _scanAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.linear),
+    );
+    _animationController.repeat();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.close, color: Colors.white, size: 28),
+        ),
+        title: const Text(
+          'Scan QR Code',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Stack(
+        children: [
+          // Full-screen scanner
+          MobileScanner(
+            controller: _controller,
+            fit: BoxFit.cover,
+            onDetect: (capture) {
+              if (!_isScanning) return;
+
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                if (barcode.rawValue != null) {
+                  _isScanning = false;
+                  _controller.stop();
+                  _handleQRCode(barcode.rawValue!);
+                  break;
+                }
+              }
+            },
+          ),
+          // Scanner overlay with larger scan area
+          _buildScannerOverlay(),
+          // Scan line animation
+          _buildScanLine(),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        color: Colors.black.withOpacity(0.9),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildControlButton(
+              icon: Icons.flashlight_on,
+              label: 'Flash',
+              onPressed: () => _controller.toggleTorch(),
+            ),
+            _buildControlButton(
+              icon: Icons.cameraswitch,
+              label: 'Switch',
+              onPressed: () => _controller.switchCamera(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControlButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            onPressed: onPressed,
+            icon: Icon(icon, color: Colors.white, size: 28),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildScannerOverlay() {
+    return Container(
+      color: Colors.black.withOpacity(0.6),
+      child: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: MediaQuery.of(context).size.width * 0.8,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
+          child: Stack(
+            children: [
+              // Transparent center
+              ClipPath(
+                clipper: _ScannerClipper(
+                  rectSize: MediaQuery.of(context).size.width * 0.8,
                 ),
-                if (widget.isActive) ...[
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      widget.item.label,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        color: activeColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ]
-              ],
-            ),
+                child: Container(color: Colors.transparent),
+              ),
+              // Corner borders
+              _buildCornerBorder(Alignment.topLeft, -1, -1, Alignment.topLeft),
+              _buildCornerBorder(Alignment.topRight, 1, -1, Alignment.topRight),
+              _buildCornerBorder(
+                Alignment.bottomLeft,
+                -1,
+                1,
+                Alignment.bottomLeft,
+              ),
+              _buildCornerBorder(
+                Alignment.bottomRight,
+                1,
+                1,
+                Alignment.bottomRight,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildCornerBorder(
+    Alignment alignment,
+    double xSign,
+    double ySign,
+    Alignment gradientAlignment,
+  ) {
+    return Align(
+      alignment: alignment,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: gradientAlignment,
+            end: Alignment.center,
+            colors: const [Color(0xFFEF5350), Colors.transparent],
+          ),
+        ),
+        child: CustomPaint(painter: _CornerPainter(xSign, ySign)),
+      ),
+    );
+  }
+
+  Widget _buildScanLine() {
+    return AnimatedBuilder(
+      animation: _scanAnimation,
+      builder: (context, child) {
+        final position =
+            MediaQuery.of(context).size.width * 0.1 +
+            (_scanAnimation.value * MediaQuery.of(context).size.width * 0.7);
+        return Positioned(
+          top: position,
+          left: MediaQuery.of(context).size.width * 0.1,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: 2,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Color(0xFFEF5350),
+                  Colors.transparent,
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFEF5350).withOpacity(0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _handleQRCode(String code) async {
+    final isUrl = _isValidUrl(code);
+
+    showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: false,
+      builder: (context) => _QRResultModal(
+        qrCode: code,
+        isUrl: isUrl,
+        onClose: () {
+          Navigator.pop(context); // Close modal
+          Navigator.pop(context); // Close scanner
+        },
+        onScanAgain: () {
+          Navigator.pop(context); // Close modal
+          setState(() {
+            _isScanning = true;
+            _controller.start();
+          });
+        },
+        onOpenUrl: isUrl
+            ? () async {
+                await _launchUrl(code);
+                Navigator.pop(context); // Close modal
+                Navigator.pop(context); // Close scanner
+              }
+            : null,
+      ),
+    );
+  }
+
+  bool _isValidUrl(String url) {
+    // Check if it's a valid URL with http/https scheme
+    try {
+      final uri = Uri.parse(url);
+      return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> _launchUrl(String url) async {
+    Uri uri = Uri.parse(url);
+
+    // Ensure URL has scheme
+    if (!uri.hasScheme) {
+      uri = Uri.parse('https://$url');
+    }
+
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: true,
+            enableDomStorage: true,
+          ),
+        );
+      } else {
+        // Show error if can't launch
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open URL'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error launching URL: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening URL: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Professional QR Result Modal (Compact Version)
+// ─────────────────────────────────────────────────────────────
+
+class _QRResultModal extends StatelessWidget {
+  final String qrCode;
+  final bool isUrl;
+  final VoidCallback onClose;
+  final VoidCallback onScanAgain;
+  final VoidCallback? onOpenUrl;
+
+  const _QRResultModal({
+    required this.qrCode,
+    required this.isUrl,
+    required this.onClose,
+    required this.onScanAgain,
+    this.onOpenUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Success Icon (Smaller)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFEF5350), Color(0xFFC62828)],
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFEF5350).withOpacity(0.3),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Title (Smaller)
+            const Text(
+              'QR Code Scanned!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A1A1A),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+
+            // Subtitle (Smaller)
+            Text(
+              isUrl ? 'Link detected' : 'Data detected',
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+
+            // QR Content Container (Compact)
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.grey[200]!),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isUrl ? Icons.link_rounded : Icons.qr_code,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        isUrl ? 'Scanned Link:' : 'Scanned Content:',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[600],
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  SelectableText(
+                    qrCode,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isUrl ? const Color(0xFFEF5350) : Colors.black87,
+                      fontWeight: isUrl ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Action Buttons (Compact)
+            if (isUrl)
+              Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: onOpenUrl,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF5350),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Open Link',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: onScanAgain,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: const Text(
+                            'Scan Again',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFFEF5350),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: onClose,
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: const Text(
+                            'Close',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: onScanAgain,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFFEF5350),
+                        side: const BorderSide(color: Color(0xFFEF5350)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text(
+                        'Scan Again',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: onClose,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF5350),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text(
+                        'Close',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Custom Painters for Scanner Overlay
+// ─────────────────────────────────────────────────────────────
+
+class _ScannerClipper extends CustomClipper<Path> {
+  final double rectSize;
+
+  _ScannerClipper({required this.rectSize});
+
+  @override
+  Path getClip(Size size) {
+    final path = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..addRect(
+        Rect.fromLTWH(
+          (size.width - rectSize) / 2,
+          (size.height - rectSize) / 2,
+          rectSize,
+          rectSize,
+        ),
+      )
+      ..fillType = PathFillType.evenOdd;
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+}
+
+class _CornerPainter extends CustomPainter {
+  final double xSign;
+  final double ySign;
+
+  _CornerPainter(this.xSign, this.ySign);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFEF5350)
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+
+    if (xSign == -1 && ySign == -1) {
+      // Top-left
+      path.moveTo(0, size.height);
+      path.lineTo(0, size.height * 0.3);
+      path.lineTo(size.width * 0.3, 0);
+      path.lineTo(size.width, 0);
+    } else if (xSign == 1 && ySign == -1) {
+      // Top-right
+      path.moveTo(0, 0);
+      path.lineTo(size.width * 0.7, 0);
+      path.lineTo(size.width, size.height * 0.3);
+      path.lineTo(size.width, size.height);
+    } else if (xSign == -1 && ySign == 1) {
+      // Bottom-left
+      path.moveTo(0, 0);
+      path.lineTo(0, size.height * 0.7);
+      path.lineTo(size.width * 0.3, size.height);
+      path.lineTo(size.width, size.height);
+    } else {
+      // Bottom-right
+      path.moveTo(size.width, 0);
+      path.lineTo(size.width, size.height * 0.7);
+      path.lineTo(size.width * 0.7, size.height);
+      path.lineTo(0, size.height);
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -491,15 +1581,14 @@ class NavbarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentIndex = context.watch<BottomNavbarProvider>().currentIndex;
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
-      body: IndexedStack(
-        index: currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: const CustomBottomNavbar(),
+    return Consumer<BottomNavbarProvider>(
+      builder: (context, provider, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF8F8F8),
+          body: IndexedStack(index: provider.currentIndex, children: _pages),
+          bottomNavigationBar: const CustomBottomNavbar(),
+        );
+      },
     );
   }
 }

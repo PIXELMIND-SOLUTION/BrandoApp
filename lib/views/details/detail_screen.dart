@@ -36,6 +36,8 @@ class HostelModel {
   final int monthlyAdvance;
   final List<SharingOption> sharings;
   final List<String> images;
+  final List<String> features;
+  final String furnishing;
 
   HostelModel({
     required this.id,
@@ -46,6 +48,8 @@ class HostelModel {
     required this.monthlyAdvance,
     required this.sharings,
     required this.images,
+    required this.features,
+    required this.furnishing,
   });
 
   factory HostelModel.fromJson(Map<String, dynamic> json) {
@@ -87,6 +91,8 @@ class HostelModel {
       monthlyAdvance: json['monthlyAdvance'] ?? 0,
       sharings: sharingMap.values.toList(),
       images: List<String>.from(json['images'] ?? []),
+      features: List<String>.from(json['features'] ?? []),
+      furnishing: json['furnishing'] ?? '',
     );
   }
 
@@ -713,6 +719,35 @@ class _DetailScreenState extends State<DetailScreen>
     );
   }
 
+  IconData _getFeatureIcon(String feature) {
+    switch (feature.toLowerCase()) {
+      case 'wifi':
+        return Icons.wifi;
+      case 'parking':
+        return Icons.local_parking;
+      case 'ac':
+        return Icons.ac_unit;
+      case 'geyser':
+        return Icons.water_damage;
+      case 'washing machine':
+        return Icons.local_laundry_service;
+      case 'power backup':
+        return Icons.battery_charging_full;
+      case 'lift':
+        return Icons.elevator;
+      case 'security':
+        return Icons.security;
+      case 'cctv':
+        return Icons.videocam;
+      case 'food':
+        return Icons.restaurant;
+      case 'gym':
+        return Icons.fitness_center;
+      default:
+        return Icons.star;
+    }
+  }
+
   Widget _buildContent() {
     final hostel = _hostel!;
     final dates = _dates;
@@ -982,7 +1017,7 @@ class _DetailScreenState extends State<DetailScreen>
                         ),
                       ),
 
-                      // ── Rating Row ────────────────────────────────────
+                      // ── Rating Row ────────────────────────────────────────────────────
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
@@ -1005,7 +1040,93 @@ class _DetailScreenState extends State<DetailScreen>
                         ),
                       ),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
+
+                      // ── Features & Furnishing Section ─────────────────────────────────
+                      if (hostel.features.isNotEmpty ||
+                          hostel.furnishing.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Furnishing
+                              if (hostel.furnishing.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.king_bed_rounded,
+                                        size: 16,
+                                        color: Color(0xFFE53935),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Furnishing: ',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        hostel.furnishing,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                              // Features (Amenities)
+                              if (hostel.features.isNotEmpty)
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: hostel.features.map((feature) {
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF0F0),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: const Color(0xFFFFCDD2),
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            _getFeatureIcon(feature),
+                                            size: 12,
+                                            color: const Color(0xFFE53935),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            feature,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFFE53935),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                      const SizedBox(height: 16),
 
                       // ── Tab Bar ───────────────────────────────────────
                       Padding(

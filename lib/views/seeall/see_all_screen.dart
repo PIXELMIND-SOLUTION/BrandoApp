@@ -1,656 +1,3 @@
-// // import 'package:brando_app/widgets/wishlist_manager.dart';
-// // import 'package:flutter/material.dart';
-
-// // class SeeAllScreen extends StatefulWidget {
-// //   const SeeAllScreen({super.key});
-
-// //   @override
-// //   State<SeeAllScreen> createState() => _SeeAllScreenState();
-// // }
-
-// // class _SeeAllScreenState extends State<SeeAllScreen>
-// //     with SingleTickerProviderStateMixin {
-// //   late TabController _tabController;
-// //   bool _isAC = true;
-
-// //   final List<Map<String, dynamic>> _menHostels = [
-// //     {
-// //       'id': '1',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '4.5',
-// //       'isNew': true,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '6KM Away',
-// //       'isFavorite': true,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '5,000/-'},
-// //         {'label': '2 SHARE', 'price': '3,500/-'},
-// //         {'label': '3 SHARE', 'price': '3,000/-'},
-// //         {'label': '4 SHARE', 'price': '2,800/-'},
-// //         {'label': '5 SHARE', 'price': '6,000/-'},
-// //       ],
-// //     },
-// //     {
-// //       'id': '2',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '3.5',
-// //       'isNew': false,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '6KM Away',
-// //       'isFavorite': false,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '5,000/-'},
-// //         {'label': '2 SHARE', 'price': '3,500/-'},
-// //         {'label': '3 SHARE', 'price': '3,000/-'},
-// //         {'label': '4 SHARE', 'price': '2,800/-'},
-// //         {'label': '5 SHARE', 'price': '6,000/-'},
-// //       ],
-// //     },
-// //     {
-// //       'id': '3',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '4.0',
-// //       'isNew': true,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '8KM Away',
-// //       'isFavorite': false,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '5,500/-'},
-// //         {'label': '2 SHARE', 'price': '4,000/-'},
-// //         {'label': '3 SHARE', 'price': '3,200/-'},
-// //         {'label': '4 SHARE', 'price': '2,900/-'},
-// //         {'label': '5 SHARE', 'price': '2,500/-'},
-// //       ],
-// //     },
-// //   ];
-
-// //   final List<Map<String, dynamic>> _womenHostels = [
-// //     {
-// //       'id': '4',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '4.8',
-// //       'isNew': true,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '4KM Away',
-// //       'isFavorite': false,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '5,200/-'},
-// //         {'label': '2 SHARE', 'price': '3,800/-'},
-// //         {'label': '3 SHARE', 'price': '3,100/-'},
-// //         {'label': '4 SHARE', 'price': '2,900/-'},
-// //         {'label': '5 SHARE', 'price': '2,600/-'},
-// //       ],
-// //     },
-// //     {
-// //       'id': '5',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '4.2',
-// //       'isNew': false,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '5KM Away',
-// //       'isFavorite': true,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '4,800/-'},
-// //         {'label': '2 SHARE', 'price': '3,400/-'},
-// //         {'label': '3 SHARE', 'price': '2,900/-'},
-// //         {'label': '4 SHARE', 'price': '2,700/-'},
-// //         {'label': '5 SHARE', 'price': '2,400/-'},
-// //       ],
-// //     },
-// //   ];
-
-// //   final List<Map<String, dynamic>> _colivingHostels = [
-// //     {
-// //       'id': '6',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '4.6',
-// //       'isNew': true,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '3KM Away',
-// //       'isFavorite': false,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '6,000/-'},
-// //         {'label': '2 SHARE', 'price': '4,500/-'},
-// //         {'label': '3 SHARE', 'price': '3,800/-'},
-// //         {'label': '4 SHARE', 'price': '3,200/-'},
-// //         {'label': '5 SHARE', 'price': '2,800/-'},
-// //       ],
-// //     },
-// //     {
-// //       'id': '7',
-// //       'name': 'HIFI HOSTELS',
-// //       'rating': '4.3',
-// //       'isNew': false,
-// //       'location': 'Kphb Hyderabad Kukatpally Hyderabad, 12000',
-// //       'tag': '7KM Away',
-// //       'isFavorite': false,
-// //       'shares': [
-// //         {'label': '1 SHARE', 'price': '5,500/-'},
-// //         {'label': '2 SHARE', 'price': '4,000/-'},
-// //         {'label': '3 SHARE', 'price': '3,500/-'},
-// //         {'label': '4 SHARE', 'price': '3,000/-'},
-// //         {'label': '5 SHARE', 'price': '2,600/-'},
-// //       ],
-// //     },
-// //   ];
-
-// //   @override
-// //   void initState() {
-// //     super.initState();
-// //     _tabController = TabController(length: 3, vsync: this); // ✅ Changed to 3
-// //   }
-
-// //   @override
-// //   void dispose() {
-// //     _tabController.dispose();
-// //     super.dispose();
-// //   }
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       backgroundColor: Colors.white,
-// //       appBar: AppBar(
-// //         backgroundColor: Colors.white,
-// //         elevation: 0,
-// //         leading: GestureDetector(
-// //           onTap: () => Navigator.pop(context),
-// //           child: const Icon(Icons.arrow_back, color: Colors.black),
-// //         ),
-// //         title: const Text(
-// //           'Hostels',
-// //           style: TextStyle(
-// //             color: Colors.black,
-// //             fontWeight: FontWeight.bold,
-// //             fontSize: 20,
-// //           ),
-// //         ),
-// //         centerTitle: true,
-// //       ),
-// //       body: SafeArea(
-// //         child: Column(
-// //           children: [
-// //             _buildTopBar(),
-// //             _buildSearchBar(),
-// //             _buildTabBar(),
-// //             Expanded(
-// //               child: TabBarView(
-// //                 controller: _tabController,
-// //                 children: [
-// //                   _buildHostelList(_menHostels),
-// //                   _buildHostelList(_womenHostels),
-// //                   _buildHostelList(_colivingHostels), // ✅ NEW tab view
-// //                 ],
-// //               ),
-// //             ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-
-// //   Widget _buildTabBar() {
-// //     return Padding(
-// //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-// //       child: Container(
-// //         height: 50,
-// //         decoration: BoxDecoration(
-// //           color: Colors.grey.shade200,
-// //           borderRadius: BorderRadius.circular(30),
-// //           boxShadow: [
-// //             BoxShadow(
-// //               color: Colors.black.withOpacity(0.05),
-// //               blurRadius: 8,
-// //               offset: const Offset(0, 4),
-// //             ),
-// //           ],
-// //         ),
-// //         child: TabBar(
-// //           controller: _tabController,
-// //           indicator: BoxDecoration(
-// //             color: const Color(0xFFF80500),
-// //             borderRadius: BorderRadius.circular(30),
-// //           ),
-// //           indicatorSize: TabBarIndicatorSize.tab,
-// //           labelColor: Colors.white,
-// //           unselectedLabelColor: Colors.black87,
-// //           labelStyle: const TextStyle(
-// //             fontWeight: FontWeight.w600,
-// //             fontSize: 13, // ✅ Slightly reduced to fit 3 tabs
-// //           ),
-// //           unselectedLabelStyle: const TextStyle(
-// //             fontWeight: FontWeight.w500,
-// //             fontSize: 13,
-// //           ),
-// //           splashBorderRadius: BorderRadius.circular(30),
-// //           dividerColor: Colors.transparent,
-// //           tabs: const [
-// //             Tab(text: "Men's PG"),
-// //             Tab(text: "Women's PG"),
-// //             Tab(text: "Coliving PG"), // ✅ NEW tab
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-
-// //   Widget _buildHostelList(List<Map<String, dynamic>> hostels) {
-// //     return ListView.builder(
-// //       padding: const EdgeInsets.only(bottom: 20),
-// //       itemCount: hostels.length,
-// //       itemBuilder: (context, index) => _buildHostelCard(hostels[index]),
-// //     );
-// //   }
-
-// //   Widget _buildTopBar() {
-// //     return Padding(
-// //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-// //       child: Row(
-// //         children: [
-// //           const Icon(Icons.location_on, color: Colors.red, size: 18),
-// //           const SizedBox(width: 4),
-// //           Expanded(
-// //             child: Column(
-// //               crossAxisAlignment: CrossAxisAlignment.start,
-// //               children: [
-// //                 const Text(
-// //                   'Location',
-// //                   style: TextStyle(
-// //                     fontSize: 13,
-// //                     fontWeight: FontWeight.bold,
-// //                     color: Color.fromARGB(255, 46, 46, 46),
-// //                   ),
-// //                 ),
-// //                 Row(
-// //                   children: const [
-// //                     Expanded(
-// //                       child: Text(
-// //                         'Kphb Hyderabad Kukatpally ...',
-// //                         style: TextStyle(
-// //                           fontSize: 13,
-// //                           fontWeight: FontWeight.w500,
-// //                         ),
-// //                         overflow: TextOverflow.ellipsis,
-// //                       ),
-// //                     ),
-// //                     Icon(Icons.arrow_drop_down, size: 20),
-// //                   ],
-// //                 ),
-// //               ],
-// //             ),
-// //           ),
-// //           GestureDetector(
-// //             onTap: () => setState(() => _isAC = !_isAC),
-// //             child: AnimatedContainer(
-// //               duration: const Duration(milliseconds: 250),
-// //               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-// //               decoration: BoxDecoration(
-// //                 color: Colors.grey.shade200,
-// //                 borderRadius: BorderRadius.circular(20),
-// //                 border: Border.all(color: Colors.grey.shade300),
-// //               ),
-// //               child: Row(
-// //                 mainAxisSize: MainAxisSize.min,
-// //                 children: [
-// //                   AnimatedContainer(
-// //                     duration: const Duration(milliseconds: 250),
-// //                     padding: const EdgeInsets.symmetric(
-// //                       horizontal: 10,
-// //                       vertical: 4,
-// //                     ),
-// //                     decoration: BoxDecoration(
-// //                       color: _isAC ? Colors.black : Colors.transparent,
-// //                       borderRadius: BorderRadius.circular(16),
-// //                     ),
-// //                     child: Text(
-// //                       'AC',
-// //                       style: TextStyle(
-// //                         color: _isAC ? Colors.white : Colors.black54,
-// //                         fontSize: 12,
-// //                         fontWeight: FontWeight.bold,
-// //                       ),
-// //                     ),
-// //                   ),
-// //                   AnimatedContainer(
-// //                     duration: const Duration(milliseconds: 250),
-// //                     padding: const EdgeInsets.symmetric(
-// //                       horizontal: 10,
-// //                       vertical: 4,
-// //                     ),
-// //                     decoration: BoxDecoration(
-// //                       color: !_isAC ? Colors.black : Colors.transparent,
-// //                       borderRadius: BorderRadius.circular(16),
-// //                     ),
-// //                     child: Text(
-// //                       'Non AC',
-// //                       style: TextStyle(
-// //                         color: !_isAC ? Colors.white : Colors.black54,
-// //                         fontSize: 12,
-// //                         fontWeight: FontWeight.bold,
-// //                       ),
-// //                     ),
-// //                   ),
-// //                 ],
-// //               ),
-// //             ),
-// //           ),
-// //         ],
-// //       ),
-// //     );
-// //   }
-
-// //   Widget _buildSearchBar() {
-// //     return Padding(
-// //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-// //       child: Container(
-// //         decoration: BoxDecoration(
-// //           color: Colors.grey.shade100,
-// //           borderRadius: BorderRadius.circular(10),
-// //           border: Border.all(color: Colors.grey.shade300),
-// //         ),
-// //         child: TextField(
-// //           decoration: InputDecoration(
-// //             hintText: 'Search for "Hifi Hostel"',
-// //             hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-// //             prefixIcon: const Icon(Icons.search, color: Colors.grey),
-// //             border: InputBorder.none,
-// //             contentPadding: const EdgeInsets.symmetric(vertical: 12),
-// //           ),
-// //         ),
-// //       ),
-// //     );
-// //   }
-
-// //   Widget _buildHostelCard(Map<String, dynamic> hostel) {
-// //     return GestureDetector(
-// //       onTap: () {},
-// //       child: Container(
-// //         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-// //         decoration: BoxDecoration(
-// //           color: Colors.white,
-// //           borderRadius: BorderRadius.circular(12),
-// //           boxShadow: [
-// //             BoxShadow(
-// //               color: Colors.grey.shade200,
-// //               blurRadius: 8,
-// //               spreadRadius: 2,
-// //               offset: const Offset(0, 2),
-// //             ),
-// //           ],
-// //           border: Border.all(color: Colors.grey.shade200),
-// //         ),
-// //         child: Column(
-// //           crossAxisAlignment: CrossAxisAlignment.start,
-// //           children: [
-// //             Row(
-// //               crossAxisAlignment: CrossAxisAlignment.start,
-// //               children: [
-// //                 ClipRRect(
-// //                   borderRadius: const BorderRadius.only(
-// //                     topRight: Radius.circular(12),
-// //                     topLeft: Radius.circular(12),
-// //                     bottomLeft: Radius.circular(12),
-// //                     bottomRight: Radius.circular(12),
-// //                   ),
-// //                   child: Image.asset(
-// //                     'assets/hotelimage.png',
-// //                     width: 120,
-// //                     height: 130,
-// //                     fit: BoxFit.cover,
-// //                     errorBuilder: (context, error, stackTrace) => Container(
-// //                       width: 120,
-// //                       height: 130,
-// //                       color: Colors.grey.shade300,
-// //                       child: const Icon(
-// //                         Icons.hotel,
-// //                         size: 40,
-// //                         color: Colors.grey,
-// //                       ),
-// //                     ),
-// //                   ),
-// //                 ),
-// //                 Expanded(
-// //                   child: Padding(
-// //                     padding: const EdgeInsets.all(10),
-// //                     child: Column(
-// //                       crossAxisAlignment: CrossAxisAlignment.start,
-// //                       children: [
-// //                         Row(
-// //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-// //                           children: [
-// //                             RichText(
-// //                               text: TextSpan(
-// //                                 style: const TextStyle(
-// //                                   fontWeight: FontWeight.bold,
-// //                                   fontSize: 14,
-// //                                 ),
-// //                                 children: [
-// //                                   TextSpan(
-// //                                     text: hostel['name'].split(' ')[0] + ' ',
-// //                                     style: const TextStyle(
-// //                                       color: Color(0xFFF80500),
-// //                                     ),
-// //                                   ),
-// //                                   TextSpan(
-// //                                     text: hostel['name'].split(' ').length > 1
-// //                                         ? hostel['name'].split(' ')[1]
-// //                                         : '',
-// //                                     style: const TextStyle(color: Colors.black),
-// //                                   ),
-// //                                 ],
-// //                               ),
-// //                             ),
-// //                             ValueListenableBuilder<List<Map<String, dynamic>>>(
-// //                               valueListenable: WishlistManager().wishlist,
-// //                               builder: (context, _, __) {
-// //                                 return GestureDetector(
-// //                                   onTap: () =>
-// //                                       WishlistManager().toggle(context, hostel),
-// //                                   child: Icon(
-// //                                     WishlistManager().isFavourite(hostel)
-// //                                         ? Icons.favorite
-// //                                         : Icons.favorite_border,
-// //                                     color: WishlistManager().isFavourite(hostel)
-// //                                         ? Colors.red
-// //                                         : Colors.grey,
-// //                                     size: 20,
-// //                                   ),
-// //                                 );
-// //                               },
-// //                             ),
-// //                           ],
-// //                         ),
-// //                         const SizedBox(height: 4),
-// //                         _buildRatingBadge(hostel['rating']),
-// //                         const SizedBox(height: 6),
-// //                         Row(
-// //                           crossAxisAlignment: CrossAxisAlignment.start,
-// //                           children: [
-// //                             const Icon(
-// //                               Icons.location_on,
-// //                               color: Colors.red,
-// //                               size: 12,
-// //                             ),
-// //                             const SizedBox(width: 2),
-// //                             Expanded(
-// //                               child: RichText(
-// //                                 text: TextSpan(
-// //                                   style: const TextStyle(
-// //                                     fontSize: 10,
-// //                                     color: Colors.grey,
-// //                                   ),
-// //                                   children: [
-// //                                     TextSpan(text: hostel['location']),
-// //                                     TextSpan(
-// //                                       text: '  ${hostel['tag']}',
-// //                                       style: const TextStyle(
-// //                                         color: Colors.red,
-// //                                         fontWeight: FontWeight.w500,
-// //                                       ),
-// //                                     ),
-// //                                   ],
-// //                                 ),
-// //                               ),
-// //                             ),
-// //                           ],
-// //                         ),
-// //                         const SizedBox(height: 8),
-// //                         SingleChildScrollView(
-// //                           scrollDirection: Axis.horizontal,
-// //                           child: Row(
-// //                             children: (hostel['shares'] as List).map<Widget>((
-// //                               share,
-// //                             ) {
-// //                               return Padding(
-// //                                 padding: const EdgeInsets.only(right: 6),
-// //                                 child: Column(
-// //                                   children: [
-// //                                     Text(
-// //                                       share['label'],
-// //                                       style: const TextStyle(
-// //                                         fontSize: 8,
-// //                                         fontWeight: FontWeight.bold,
-// //                                         color: Colors.black54,
-// //                                       ),
-// //                                     ),
-// //                                     Text(
-// //                                       share['price'],
-// //                                       style: const TextStyle(
-// //                                         fontSize: 9,
-// //                                         color: Colors.red,
-// //                                         fontWeight: FontWeight.w600,
-// //                                       ),
-// //                                     ),
-// //                                   ],
-// //                                 ),
-// //                               );
-// //                             }).toList(),
-// //                           ),
-// //                         ),
-// //                       ],
-// //                     ),
-// //                   ),
-// //                 ),
-// //               ],
-// //             ),
-// //             Padding(
-// //               padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-// //               child: Row(
-// //                 children: [
-// //                   Expanded(
-// //                     child: OutlinedButton.icon(
-// //                       onPressed: () {},
-// //                       icon: const Icon(Icons.call, size: 14, color: Colors.white),
-// //                       label: const Text(
-// //                         'Call',
-// //                         style: TextStyle(fontSize: 12, color: Colors.white),
-// //                       ),
-// //                       style: OutlinedButton.styleFrom(
-// //                         backgroundColor: Colors.red,
-// //                         foregroundColor: Colors.red,
-// //                         padding: const EdgeInsets.symmetric(vertical: 6),
-// //                         shape: RoundedRectangleBorder(
-// //                           borderRadius: BorderRadius.circular(6),
-// //                         ),
-// //                       ),
-// //                     ),
-// //                   ),
-// //                   const SizedBox(width: 6),
-// //                   Expanded(
-// //                     child: OutlinedButton.icon(
-// //                       onPressed: () {},
-// //                       icon: Image.asset(
-// //                         'assets/whatsapp.png',
-// //                         width: 18,
-// //                         height: 18,
-// //                         errorBuilder: (context, error, stackTrace) =>
-// //                             const Icon(Icons.chat, size: 14, color: Colors.green),
-// //                       ),
-// //                       label: const Text(
-// //                         'Whatsapp',
-// //                         style: TextStyle(fontSize: 12, color: Colors.black),
-// //                       ),
-// //                       style: OutlinedButton.styleFrom(
-// //                         foregroundColor: const Color(0xFFF80500),
-// //                         side: const BorderSide(
-// //                           color: Color.fromARGB(255, 141, 140, 140),
-// //                         ),
-// //                         padding: const EdgeInsets.symmetric(vertical: 6),
-// //                         shape: RoundedRectangleBorder(
-// //                           borderRadius: BorderRadius.circular(6),
-// //                         ),
-// //                       ),
-// //                     ),
-// //                   ),
-// //                   const SizedBox(width: 6),
-// //                   Expanded(
-// //                     child: OutlinedButton.icon(
-// //                       onPressed: () {},
-// //                       icon: const Icon(
-// //                         Icons.location_on,
-// //                         size: 14,
-// //                         color: Colors.red,
-// //                       ),
-// //                       label: const Text(
-// //                         'Location',
-// //                         style: TextStyle(fontSize: 12, color: Colors.black),
-// //                       ),
-// //                       style: OutlinedButton.styleFrom(
-// //                         foregroundColor: Colors.red,
-// //                         side: const BorderSide(color: Colors.red),
-// //                         padding: const EdgeInsets.symmetric(vertical: 6),
-// //                         shape: RoundedRectangleBorder(
-// //                           borderRadius: BorderRadius.circular(6),
-// //                         ),
-// //                       ),
-// //                     ),
-// //                   ),
-// //                 ],
-// //               ),
-// //             ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-
-// //   Widget _buildRatingBadge(String rating) {
-// //     Color color;
-// //     double ratingValue = double.tryParse(rating) ?? 0;
-// //     if (ratingValue >= 4) {
-// //       color = Colors.green;
-// //     } else if (ratingValue >= 3) {
-// //       color = Colors.orange;
-// //     } else {
-// //       color = Colors.red;
-// //     }
-// //     return Container(
-// //       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-// //       decoration: BoxDecoration(
-// //         color: color,
-// //         borderRadius: BorderRadius.circular(4),
-// //       ),
-// //       child: Row(
-// //         mainAxisSize: MainAxisSize.min,
-// //         children: [
-// //           Text(
-// //             rating,
-// //             style: const TextStyle(
-// //               color: Colors.white,
-// //               fontSize: 11,
-// //               fontWeight: FontWeight.bold,
-// //             ),
-// //           ),
-// //           const SizedBox(width: 2),
-// //           const Icon(Icons.star, color: Colors.white, size: 11),
-// //         ],
-// //       ),
-// //     );
-// //   }
-// // }
-
-// ignore_for_file: invalid_use_of_protected_member
-
 // import 'dart:convert';
 // import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 // import 'package:brando_app/views/Map/map_screen.dart';
@@ -782,8 +129,6 @@
 //     }
 //   }
 
-//   // ── Helpers ────────────────────────────────────────────────────────────────
-
 //   String _formatCategoryName(String rawName) {
 //     return rawName
 //         .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (m) => '${m[1]} ${m[2]}')
@@ -817,14 +162,24 @@
 
 //   Future<void> _makePhoneCall(String phone) async {
 //     final uri = Uri(scheme: 'tel', path: phone);
-//     if (await canLaunchUrl(uri)) await launchUrl(uri);
+//     try {
+//       await launchUrl(uri);
+//     } catch (e) {
+//       debugPrint('Could not launch phone call: $e');
+//     }
 //   }
 
 //   Future<void> _openWhatsApp(String phone) async {
+//     String cleaned = phone.replaceAll(RegExp(r'\D'), '');
+//     if (!cleaned.startsWith('91') && cleaned.length == 10) {
+//       cleaned = '91$cleaned';
+//     }
 //     final msg = Uri.encodeComponent('Hello, I am interested in your hostel.');
-//     final url = Uri.parse('https://wa.me/$phone?text=$msg');
-//     if (await canLaunchUrl(url)) {
+//     final url = Uri.parse('https://wa.me/$cleaned?text=$msg');
+//     try {
 //       await launchUrl(url, mode: LaunchMode.externalApplication);
+//     } catch (e) {
+//       debugPrint('Could not open WhatsApp: $e');
 //     }
 //   }
 
@@ -837,8 +192,6 @@
 //       return name.contains(_searchQuery) || address.contains(_searchQuery);
 //     }).toList();
 //   }
-
-//   // ── Build ──────────────────────────────────────────────────────────────────
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -932,8 +285,6 @@
 //     );
 //   }
 
-//   // ── Top bar (AC / Non-AC toggle only) ─────────────────────────────────────
-
 //   Widget _buildTopBar() {
 //     return Padding(
 //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -983,47 +334,6 @@
 //     );
 //   }
 
-//   // ── Search bar ─────────────────────────────────────────────────────────────
-
-//   // Widget _buildSearchBar() {
-//   //   return AnimatedBuilder(
-//   //     animation: _tabController,
-//   //     builder: (context, _) {
-//   //       return Padding(
-//   //         padding:
-//   //             const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-//   //         child: Container(
-//   //           decoration: BoxDecoration(
-//   //             color: Colors.grey.shade100,
-//   //             borderRadius: BorderRadius.circular(10),
-//   //             border: Border.all(color: Colors.grey.shade300),
-//   //           ),
-//   //           child: TextField(
-//   //             controller: _searchController,
-//   //             decoration: InputDecoration(
-//   //               hintText: _getSearchHint(),
-//   //               hintStyle: TextStyle(
-//   //                   color: Colors.grey.shade500, fontSize: 14),
-//   //               prefixIcon:
-//   //                   const Icon(Icons.search, color: Colors.grey),
-//   //               suffixIcon: _searchQuery.isNotEmpty
-//   //                   ? GestureDetector(
-//   //                       onTap: () => _searchController.clear(),
-//   //                       child: const Icon(Icons.close,
-//   //                           color: Colors.grey, size: 18),
-//   //                     )
-//   //                   : null,
-//   //               border: InputBorder.none,
-//   //               contentPadding:
-//   //                   const EdgeInsets.symmetric(vertical: 12),
-//   //             ),
-//   //           ),
-//   //         ),
-//   //       );
-//   //     },
-//   //   );
-//   // }
-
 //   Widget _buildSearchBar() {
 //     return AnimatedBuilder(
 //       animation: _tabController,
@@ -1060,8 +370,6 @@
 //       },
 //     );
 //   }
-
-//   // ── Tab bar ────────────────────────────────────────────────────────────────
 
 //   Widget _buildTabBar() {
 //     return Padding(
@@ -1109,8 +417,6 @@
 //     );
 //   }
 
-//   // ── Hostel list ────────────────────────────────────────────────────────────
-
 //   Widget _buildHostelList(List<Map<String, dynamic>> hostels, String catId) {
 //     return RefreshIndicator(
 //       color: const Color(0xFFF80500),
@@ -1123,8 +429,7 @@
 //     );
 //   }
 
-//   // ── Hostel card ────────────────────────────────────────────────────────────
-
+//   // ── THE FIX: GestureDetector now wraps only the top row, not the entire card ──
 //   Widget _buildHostelCard(Map<String, dynamic> hostel) {
 //     final hostelId = hostel['_id'] as String? ?? '';
 //     final name = hostel['name'] as String? ?? 'Hostel';
@@ -1137,7 +442,6 @@
 //     final latitude = hostel['latitude'] as double?;
 //     final longitude = hostel['longitude'] as double?;
 
-//     // Build share chips from rooms
 //     final rooms = hostel['rooms'] as Map<String, dynamic>?;
 //     List<Map<String, String>> shares = [];
 //     if (rooms != null) {
@@ -1155,34 +459,37 @@
 //           .toList();
 //     }
 
-//     return GestureDetector(
-//       onTap: () {
-//         if (hostelId.isNotEmpty) {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(builder: (_) => DetailScreen(hostelId: hostelId)),
-//           );
-//         }
-//       },
-//       child: Container(
-//         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(12),
-//           boxShadow: [
-//             BoxShadow(
-//               color: Colors.grey.shade200,
-//               blurRadius: 8,
-//               spreadRadius: 2,
-//               offset: const Offset(0, 2),
-//             ),
-//           ],
-//           border: Border.all(color: Colors.grey.shade200),
-//         ),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Row(
+//     return Container(
+//       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(12),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.grey.shade200,
+//             blurRadius: 8,
+//             spreadRadius: 2,
+//             offset: const Offset(0, 2),
+//           ),
+//         ],
+//         border: Border.all(color: Colors.grey.shade200),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // ── Top section tappable → navigates to DetailScreen ──────────────
+//           GestureDetector(
+//             onTap: () {
+//               if (hostelId.isNotEmpty) {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (_) => DetailScreen(hostelId: hostelId),
+//                   ),
+//                 );
+//               }
+//             },
+//             child: Row(
 //               crossAxisAlignment: CrossAxisAlignment.start,
 //               children: [
 //                 // Image
@@ -1218,7 +525,6 @@
 //                         Row(
 //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                           children: [
-//                             // Name
 //                             Expanded(
 //                               child: RichText(
 //                                 text: TextSpan(
@@ -1246,7 +552,7 @@
 //                               ),
 //                             ),
 
-//                             // Wishlist heart — uses WishlistProvider
+//                             // Wishlist heart — must stop propagation to parent GestureDetector
 //                             Selector<WishlistProvider, bool>(
 //                               selector: (_, p) => p.isWishlisted(hostelId),
 //                               builder: (context, wishlisted, _) {
@@ -1258,6 +564,9 @@
 //                                               .read<WishlistProvider>()
 //                                               .toggleWishlist(hostelId);
 //                                         },
+//                                   // Prevent the heart tap from bubbling up to the
+//                                   // parent GestureDetector and triggering navigation
+//                                   behavior: HitTestBehavior.opaque,
 //                                   child: AnimatedSwitcher(
 //                                     duration: const Duration(milliseconds: 300),
 //                                     transitionBuilder: (child, animation) =>
@@ -1349,108 +658,97 @@
 //                 ),
 //               ],
 //             ),
+//           ),
 
-//             // Action buttons
-//             Padding(
-//               padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-//               child: Row(
-//                 children: [
-//                   Expanded(
-//                     child: OutlinedButton.icon(
-//                       onPressed: phone.isNotEmpty
-//                           ? () => _makePhoneCall(phone)
-//                           : null,
-//                       icon: const Icon(
-//                         Icons.call,
-//                         size: 14,
-//                         color: Colors.white,
-//                       ),
-//                       label: const Text(
-//                         'Call',
-//                         style: TextStyle(fontSize: 12, color: Colors.white),
-//                       ),
-//                       style: OutlinedButton.styleFrom(
-//                         backgroundColor: Colors.red,
-//                         foregroundColor: Colors.red,
-//                         padding: const EdgeInsets.symmetric(vertical: 6),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(6),
-//                         ),
+//           // ── Action buttons — outside GestureDetector, taps fire directly ──
+//           Padding(
+//             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+//             child: Row(
+//               children: [
+//                 Expanded(
+//                   child: OutlinedButton.icon(
+//                     onPressed: () => _makePhoneCall(phone),
+//                     icon: const Icon(Icons.call, size: 14, color: Colors.white),
+//                     label: const Text(
+//                       'Call',
+//                       style: TextStyle(fontSize: 12, color: Colors.white),
+//                     ),
+//                     style: OutlinedButton.styleFrom(
+//                       backgroundColor: Colors.red,
+//                       foregroundColor: Colors.red,
+//                       padding: const EdgeInsets.symmetric(vertical: 6),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(6),
 //                       ),
 //                     ),
 //                   ),
-//                   const SizedBox(width: 6),
-//                   Expanded(
-//                     child: OutlinedButton.icon(
-//                       onPressed: phone.isNotEmpty
-//                           ? () => _openWhatsApp(phone)
-//                           : null,
-//                       icon: Image.asset(
-//                         'assets/whatsapp.png',
-//                         width: 18,
-//                         height: 18,
-//                         errorBuilder: (_, __, ___) => const Icon(
-//                           Icons.chat,
-//                           size: 14,
-//                           color: Colors.green,
-//                         ),
+//                 ),
+//                 const SizedBox(width: 6),
+//                 Expanded(
+//                   child: OutlinedButton.icon(
+//                     onPressed: () => _openWhatsApp(phone),
+//                     icon: Image.asset(
+//                       'assets/whatsapp.png',
+//                       width: 18,
+//                       height: 18,
+//                       errorBuilder: (_, __, ___) =>
+//                           const Icon(Icons.chat, size: 14, color: Colors.green),
+//                     ),
+//                     label: const Text(
+//                       'Whatsapp',
+//                       style: TextStyle(fontSize: 12, color: Colors.black),
+//                     ),
+//                     style: OutlinedButton.styleFrom(
+//                       foregroundColor: const Color(0xFFF80500),
+//                       side: const BorderSide(
+//                         color: Color.fromARGB(255, 141, 140, 140),
 //                       ),
-//                       label: const Text(
-//                         'Whatsapp',
-//                         style: TextStyle(fontSize: 12, color: Colors.black),
-//                       ),
-//                       style: OutlinedButton.styleFrom(
-//                         foregroundColor: const Color(0xFFF80500),
-//                         side: const BorderSide(
-//                           color: Color.fromARGB(255, 141, 140, 140),
-//                         ),
-//                         padding: const EdgeInsets.symmetric(vertical: 6),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(6),
-//                         ),
+//                       padding: const EdgeInsets.symmetric(vertical: 6),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(6),
 //                       ),
 //                     ),
 //                   ),
-//                   const SizedBox(width: 6),
-//                   Expanded(
-//                     child: OutlinedButton.icon(
-//                       onPressed: () {
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                             builder: (_) => MapScreen(
-//                               hostelName: name,
-//                               hostelAddress: address,
-//                               hostelLatitude: latitude,
-//                               hostelLongitude: longitude,
-//                             ),
+//                 ),
+//                 const SizedBox(width: 6),
+//                 Expanded(
+//                   child: OutlinedButton.icon(
+//                     onPressed: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (_) => MapScreen(
+//                             hostelName: name,
+//                             hostelAddress: address,
+//                             hostelLatitude: latitude,
+//                             hostelLongitude: longitude,
 //                           ),
-//                         );
-//                       },
-//                       icon: const Icon(
-//                         Icons.location_on,
-//                         size: 14,
-//                         color: Colors.red,
-//                       ),
-//                       label: const Text(
-//                         'Location',
-//                         style: TextStyle(fontSize: 12, color: Colors.black),
-//                       ),
-//                       style: OutlinedButton.styleFrom(
-//                         foregroundColor: Colors.red,
-//                         side: const BorderSide(color: Colors.red),
-//                         padding: const EdgeInsets.symmetric(vertical: 6),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(6),
 //                         ),
+//                       );
+//                     },
+//                     icon: const Icon(
+//                       Icons.location_on,
+//                       size: 14,
+//                       color: Colors.red,
+//                     ),
+//                     label: const Text(
+//                       'Location',
+//                       style: TextStyle(fontSize: 12, color: Colors.black),
+//                     ),
+//                     style: OutlinedButton.styleFrom(
+//                       foregroundColor: Colors.red,
+//                       side: const BorderSide(color: Colors.red),
+//                       padding: const EdgeInsets.symmetric(vertical: 6),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(6),
 //                       ),
 //                     ),
 //                   ),
-//                 ],
-//               ),
+//                 ),
+//               ],
 //             ),
-//           ],
-//         ),
+//           ),
+//         ],
 //       ),
 //     );
 //   }
@@ -1501,13 +799,21 @@ import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/detail_screen.dart';
 import 'package:brando_app/views/search/search_screen.dart';
+import 'package:brando_app/widgets/toast_message.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SeeAllScreen extends StatefulWidget {
-  const SeeAllScreen({super.key});
+  final String? selectedCategoryId;
+  final String? selectedCategoryName;
+
+  const SeeAllScreen({
+    super.key,
+    this.selectedCategoryId,
+    this.selectedCategoryName,
+  });
 
   @override
   State<SeeAllScreen> createState() => _SeeAllScreenState();
@@ -1516,7 +822,7 @@ class SeeAllScreen extends StatefulWidget {
 class _SeeAllScreenState extends State<SeeAllScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isAC = true;
+  String _filterType = 'all'; // 'all', 'ac', 'non-ac'
 
   List<Map<String, dynamic>> _categories = [];
   Map<String, List<Map<String, dynamic>>> _hostelsByCategory = {};
@@ -1555,7 +861,11 @@ class _SeeAllScreenState extends State<SeeAllScreen>
         setState(() {
           _categories = cats;
           _isLoadingCategories = false;
-          _tabController = TabController(length: cats.length, vsync: this);
+          _tabController = TabController(
+            length: cats.length,
+            vsync: this,
+            initialIndex: _getInitialTabIndex(cats),
+          );
           _tabController.addListener(() {
             if (!_tabController.indexIsChanging) {
               _searchController.clear();
@@ -1564,26 +874,79 @@ class _SeeAllScreenState extends State<SeeAllScreen>
           });
         });
         if (cats.isNotEmpty) {
-          _fetchHostelsForCategory(cats[0]['_id']);
+          final selectedIndex = _getInitialTabIndex(cats);
+          await _fetchHostelsForCategory(cats[selectedIndex]['_id']);
         }
+      } else {
+        setState(() => _isLoadingCategories = false);
       }
     } catch (e) {
+      debugPrint('Error fetching categories: $e');
       setState(() => _isLoadingCategories = false);
     }
   }
 
+  int _getInitialTabIndex(List<Map<String, dynamic>> categories) {
+    if (widget.selectedCategoryId != null) {
+      final index = categories.indexWhere(
+        (cat) => cat['_id'] == widget.selectedCategoryId,
+      );
+      if (index != -1) return index;
+    }
+    return 0;
+  }
+
   Future<void> _fetchHostelsForCategory(String categoryId) async {
     if (_hostelsByCategory.containsKey(categoryId)) return;
+
     setState(() => _loadingCategoryIds.add(categoryId));
+
     try {
-      final type = _isAC ? 'AC' : 'Non-AC';
+      String typeParam = '';
+      if (_filterType == 'ac') {
+        typeParam = 'AC';
+      } else if (_filterType == 'non-ac') {
+        typeParam = 'Non-AC';
+      }
+
       final uri = Uri.parse(
-        '$_baseUrl/admin/hostelsbycategory?categoryId=$categoryId&type=$type',
+        '$_baseUrl/admin/hostelsbycategory?categoryId=$categoryId&type=$typeParam',
       );
       final response = await http.get(uri);
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final hostels = List<Map<String, dynamic>>.from(data['hostels'] ?? []);
+        List<Map<String, dynamic>> hostels = [];
+
+        if (_filterType == 'all') {
+          // Fetch both AC and Non-AC and combine
+          final acUri = Uri.parse(
+            '$_baseUrl/admin/hostelsbycategory?categoryId=$categoryId&type=AC',
+          );
+          final nonAcUri = Uri.parse(
+            '$_baseUrl/admin/hostelsbycategory?categoryId=$categoryId&type=Non-AC',
+          );
+
+          final acResponse = await http.get(acUri);
+          final nonAcResponse = await http.get(nonAcUri);
+
+          if (acResponse.statusCode == 200) {
+            final acData = jsonDecode(acResponse.body);
+            hostels.addAll(
+              List<Map<String, dynamic>>.from(acData['hostels'] ?? []),
+            );
+          }
+
+          if (nonAcResponse.statusCode == 200) {
+            final nonAcData = jsonDecode(nonAcResponse.body);
+            hostels.addAll(
+              List<Map<String, dynamic>>.from(nonAcData['hostels'] ?? []),
+            );
+          }
+        } else {
+          hostels = List<Map<String, dynamic>>.from(data['hostels'] ?? []);
+        }
+
         setState(() {
           _hostelsByCategory[categoryId] = hostels;
           _loadingCategoryIds.remove(categoryId);
@@ -1594,7 +957,8 @@ class _SeeAllScreenState extends State<SeeAllScreen>
           _loadingCategoryIds.remove(categoryId);
         });
       }
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Error fetching hostels: $e');
       setState(() {
         _hostelsByCategory[categoryId] = [];
         _loadingCategoryIds.remove(categoryId);
@@ -1617,9 +981,9 @@ class _SeeAllScreenState extends State<SeeAllScreen>
     }
   }
 
-  void _onACToggle(bool isAC) {
+  void _onFilterChange(String filterType) {
     setState(() {
-      _isAC = isAC;
+      _filterType = filterType;
       _hostelsByCategory.clear();
     });
     if (_categories.isNotEmpty) {
@@ -1659,6 +1023,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
   }
 
   Future<void> _makePhoneCall(String phone) async {
+    if (phone.isEmpty) return;
     final uri = Uri(scheme: 'tel', path: phone);
     try {
       await launchUrl(uri);
@@ -1668,6 +1033,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
   }
 
   Future<void> _openWhatsApp(String phone) async {
+    if (phone.isEmpty) return;
     String cleaned = phone.replaceAll(RegExp(r'\D'), '');
     if (!cleaned.startsWith('91') && cleaned.length == 10) {
       cleaned = '91$cleaned';
@@ -1711,20 +1077,23 @@ class _SeeAllScreenState extends State<SeeAllScreen>
           onTap: () => Navigator.pop(context),
           child: const Icon(Icons.arrow_back, color: Colors.black),
         ),
-        title: const Text(
-          'Hostels',
-          style: TextStyle(
+        title: Text(
+          widget.selectedCategoryName ?? 'Hostels',
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: _buildFilterBar(),
+        ),
       ),
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
             _buildSearchBar(),
             if (_categories.isNotEmpty) _buildTabBar(),
             Expanded(
@@ -1770,7 +1139,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                               ),
                             );
                           }
-                          return _buildHostelList(filtered, catId);
+                          return _buildHostelList(filtered);
                         }
 
                         return const SizedBox.shrink();
@@ -1783,107 +1152,94 @@ class _SeeAllScreenState extends State<SeeAllScreen>
     );
   }
 
-  Widget _buildTopBar() {
-    return Padding(
+  Widget _buildFilterBar() {
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          GestureDetector(
-            onTap: () => _onACToggle(!_isAC),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _acToggleChip('AC', _isAC),
-                  _acToggleChip('Non AC', !_isAC),
-                ],
-              ),
-            ),
-          ),
+          _buildFilterChip('All', _filterType == 'all'),
+          const SizedBox(width: 12),
+          _buildFilterChip('AC', _filterType == 'ac'),
+          const SizedBox(width: 12),
+          _buildFilterChip('Non-AC', _filterType == 'non-ac'),
         ],
       ),
     );
   }
 
-  Widget _acToggleChip(String label, bool active) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: active ? Colors.black : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: active ? Colors.white : Colors.black54,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
+  Widget _buildFilterChip(String label, bool isSelected) {
+    return GestureDetector(
+      onTap: () {
+        String filterType = 'all';
+        if (label == 'AC') filterType = 'ac';
+        if (label == 'Non-AC') filterType = 'non-ac';
+        _onFilterChange(filterType);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFF80500) : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: isSelected ? Colors.transparent : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildSearchBar() {
-    return AnimatedBuilder(
-      animation: _tabController,
-      builder: (context, _) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => SearchScreen()),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 10),
-                  Text(
-                    _getSearchHint(),
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => SearchScreen()),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.shade300),
           ),
-        );
-      },
+          child: Row(
+            children: [
+              const Icon(Icons.search, color: Colors.grey),
+              const SizedBox(width: 10),
+              Text(
+                _getSearchHint(),
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildTabBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
-        height: 50,
+        height: 45,
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: TabBar(
           controller: _tabController,
@@ -1902,7 +1258,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
             fontWeight: FontWeight.w500,
             fontSize: 12,
           ),
-          splashBorderRadius: BorderRadius.circular(30),
           dividerColor: Colors.transparent,
           isScrollable: _categories.length > 3,
           tabs: _categories
@@ -1915,7 +1270,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
     );
   }
 
-  Widget _buildHostelList(List<Map<String, dynamic>> hostels, String catId) {
+  Widget _buildHostelList(List<Map<String, dynamic>> hostels) {
     return RefreshIndicator(
       color: const Color(0xFFF80500),
       onRefresh: _refreshCurrentTab,
@@ -1927,7 +1282,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
     );
   }
 
-  // ── THE FIX: GestureDetector now wraps only the top row, not the entire card ──
   Widget _buildHostelCard(Map<String, dynamic> hostel) {
     final hostelId = hostel['_id'] as String? ?? '';
     final name = hostel['name'] as String? ?? 'Hostel';
@@ -1975,7 +1329,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Top section tappable → navigates to DetailScreen ──────────────
           GestureDetector(
             onTap: () {
               if (hostelId.isNotEmpty) {
@@ -1990,7 +1343,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Image
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -2004,16 +1356,8 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => _placeholderImage(),
                         )
-                      : Image.asset(
-                          'assets/hotelimage.png',
-                          width: 120,
-                          height: 130,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _placeholderImage(),
-                        ),
+                      : _placeholderImage(),
                 ),
-
-                // Details
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -2049,8 +1393,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                                 ),
                               ),
                             ),
-
-                            // Wishlist heart — must stop propagation to parent GestureDetector
                             Selector<WishlistProvider, bool>(
                               selector: (_, p) => p.isWishlisted(hostelId),
                               builder: (context, wishlisted, _) {
@@ -2058,12 +1400,25 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                                   onTap: hostelId.isEmpty
                                       ? null
                                       : () {
-                                          context
-                                              .read<WishlistProvider>()
-                                              .toggleWishlist(hostelId);
+                                          final wishlistProvider = context
+                                              .read<WishlistProvider>();
+                                          final isCurrentlyWishlisted =
+                                              wishlistProvider.isWishlisted(
+                                                hostelId,
+                                              );
+                                          wishlistProvider.toggleWishlist(
+                                            hostelId,
+                                          );
+                                          ToastHelper.show(
+                                            context,
+                                            message: isCurrentlyWishlisted
+                                                ? 'Removed from your wishlist'
+                                                : '❤️ Added to wishlist — $name',
+                                            type: isCurrentlyWishlisted
+                                                ? ToastType.warning
+                                                : ToastType.success,
+                                          );
                                         },
-                                  // Prevent the heart tap from bubbling up to the
-                                  // parent GestureDetector and triggering navigation
                                   behavior: HitTestBehavior.opaque,
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 300),
@@ -2088,12 +1443,9 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 4),
                         _buildRatingBadge(rating),
                         const SizedBox(height: 6),
-
-                        // Address
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -2116,10 +1468,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 8),
-
-                        // Share price chips
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -2157,8 +1506,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
               ],
             ),
           ),
-
-          // ── Action buttons — outside GestureDetector, taps fire directly ──
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: Row(
@@ -2172,8 +1519,7 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.red,
+                      backgroundColor: const Color(0xFFF80500),
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
@@ -2197,7 +1543,6 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                       style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFF80500),
                       side: const BorderSide(
                         color: Color.fromARGB(255, 141, 140, 140),
                       ),
@@ -2227,15 +1572,14 @@ class _SeeAllScreenState extends State<SeeAllScreen>
                     icon: const Icon(
                       Icons.location_on,
                       size: 14,
-                      color: Colors.red,
+                      color: Color(0xFFF80500),
                     ),
                     label: const Text(
                       'Location',
                       style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
+                      side: const BorderSide(color: Color(0xFFF80500)),
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),

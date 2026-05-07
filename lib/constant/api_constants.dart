@@ -10,6 +10,8 @@ class ApiConstants {
   static const String updateLocation = '$apiPrefix/auth/update-location';
   static const String updateProfile = '$apiPrefix/auth/update-profile';
   static const String nearbyHostels = '$apiPrefix/auth/nearby-hostels';
+
+  static const String recHostels = '$apiPrefix/auth/recomended-hostels';
   static const String addtowishlist = '$apiPrefix/auth/wishlist/toggle';
   static const String getmywishlist = '$apiPrefix/auth/wishlist';
 
@@ -34,6 +36,8 @@ class ApiConstants {
   static const String getwishlisturl = '$baseUrl$getmywishlist';
   static String nearbyHostelsUrl(String userId) =>
       '$baseUrl$nearbyHostels/$userId';
+
+  static String recHostelsUrl(String userId) => '$baseUrl$recHostels/$userId';
 
   static String getUserProfileUrl(String userId) =>
       '$baseUrl$apiPrefix/auth/user/$userId';
