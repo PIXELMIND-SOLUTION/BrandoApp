@@ -1567,7 +1567,10 @@ class _BookingHistoryState extends State<BookingHistory>
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => EnterDetails(bookingId: _pendingBookings[i].id),
+              builder: (_) => EnterDetails(
+                bookingId: _pendingBookings[i].id,
+                hostelId: _pendingBookings[i].hostelId,
+              ),
             ),
           ),
           child: _buildPendingCard(_pendingBookings[i]),
