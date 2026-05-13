@@ -2,23 +2,25 @@ class HostelBookingRequestModel {
   final String name;
   final String mobileNumber;
   final String roomNo;
-  final String roomType;
-  final String shareType;
-  final String email;
+  final String? roomType;
+  final String? shareType;
+  final String? email;
   final String aadharCardImagePath;
   final String panCardImagePath;
   final String profileImagePath;
+  final String emergencyNumber;
 
   HostelBookingRequestModel({
     required this.name,
     required this.mobileNumber,
     required this.roomNo,
-    required this.roomType,
-    required this.shareType,
-    required this.email,
+    this.roomType,
+    this.shareType,
+    this.email,
     required this.aadharCardImagePath,
     required this.panCardImagePath,
     required this.profileImagePath,
+    required this.emergencyNumber,
   });
 }
 

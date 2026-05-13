@@ -273,11 +273,13 @@
 //   }
 // }
 
+import 'package:brando_app/helper/shared_preference.dart';
 import 'package:brando_app/provider/auth/auth_provider.dart';
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/contact/contact_us.dart';
 import 'package:brando_app/views/delete%20account/delete_account.dart';
 import 'package:brando_app/views/history/booking_history.dart';
+import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -306,38 +308,113 @@ class MenuScreen extends StatelessWidget {
   Future<void> _handleLogout(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Logout',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.black54),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Logout',
-              style: TextStyle(
-                color: Color(0xFFE53935),
-                fontWeight: FontWeight.bold,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Logout icon
+              Image.asset(
+                'assets/logout_2.png', // replace with your 3D icon asset
+                height: 120,
+                width: 120,
               ),
-            ),
+              const SizedBox(height: 24),
+
+              // Message
+              const Text(
+                'Are you sure you want to\nlogout of your account?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // "Naah, Just Kidding" button (gradient filled)
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFE53935), Color(0xFFFF8A80)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Naah, Just Kidding',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // "Yes, Log me out!" button (outlined)
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(
+                      color: Color(0xFFE53935),
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Yes, Log me out!',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
     if (confirmed == true && context.mounted) {
+      // 1. Clear all SharedPreferences
+      await AppPreferences.clearAll();
+
+      // 2. Reset bottom nav to index 0
       context.read<BottomNavbarProvider>().setIndex(0);
+
+      // 3. Clear / reset all provider data
       await context.read<AuthProvider>().logout();
+
+      // Add any other providers that need resetting, e.g.:
+      // context.read<CartProvider>().clear();
+      // context.read<UserProvider>().clear();
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -421,7 +498,9 @@ class MenuScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BookingHistory()),
+                  MaterialPageRoute(
+                    builder: (context) => NavbarScreen(initialIndex: 2),
+                  ),
                 );
               },
               child: _buildMenuItem(

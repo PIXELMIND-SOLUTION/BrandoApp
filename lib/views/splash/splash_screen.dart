@@ -2685,8 +2685,6 @@
 //   }
 // }
 
-
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:brando_app/helper/shared_preference.dart';
@@ -3341,20 +3339,15 @@ class _LoginScreenState extends State<LoginScreen>
     if (!mounted) return;
 
     if (auth.status == AuthStatus.verified) {
-      _showStaySelectionModal();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => NavbarScreen()),
+        (route) => false,
+      );
     } else if (auth.status == AuthStatus.error) {
       _showErrorSnackbar(auth.errorMessage ?? 'OTP verification failed');
       auth.clearError();
     }
-  }
-
-  void _showStaySelectionModal() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const _StaySelectionModal(),
-    );
   }
 
   Future<void> _resendOtp() async {
@@ -3667,300 +3660,300 @@ class _LoginScreenState extends State<LoginScreen>
 // STAY SELECTION MODAL  (API-powered)
 // ═══════════════════════════════════════════════════════
 
-class _StaySelectionModal extends StatefulWidget {
-  const _StaySelectionModal();
+// class _StaySelectionModal extends StatefulWidget {
+//   const _StaySelectionModal();
 
-  @override
-  State<_StaySelectionModal> createState() => _StaySelectionModalState();
-}
+//   @override
+//   State<_StaySelectionModal> createState() => _StaySelectionModalState();
+// }
 
-class _StaySelectionModalState extends State<_StaySelectionModal>
-    with SingleTickerProviderStateMixin {
-  CategoryModel? _selectedCategory;
-  bool _isConfirming = false;
+// class _StaySelectionModalState extends State<_StaySelectionModal>
+//     with SingleTickerProviderStateMixin {
+//   CategoryModel? _selectedCategory;
+//   bool _isConfirming = false;
 
-  // API state
-  List<CategoryModel> _categories = [];
-  bool _isFetchingCategories = true;
-  String? _fetchError;
+//   // API state
+//   List<CategoryModel> _categories = [];
+//   bool _isFetchingCategories = true;
+//   String? _fetchError;
 
-  late AnimationController _animController;
-  late List<Animation<Offset>> _itemSlides;
-  late List<Animation<double>> _itemOpacities;
+//   late AnimationController _animController;
+//   late List<Animation<Offset>> _itemSlides;
+//   late List<Animation<double>> _itemOpacities;
 
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-    // Initialize with empty lists; rebuilt after fetch
-    _itemSlides = [];
-    _itemOpacities = [];
+//   @override
+//   void initState() {
+//     super.initState();
+//     _animController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 600),
+//     );
+//     // Initialize with empty lists; rebuilt after fetch
+//     _itemSlides = [];
+//     _itemOpacities = [];
 
-    _fetchCategories();
-  }
+//     _fetchCategories();
+//   }
 
-  Future<void> _fetchCategories() async {
-    setState(() {
-      _isFetchingCategories = true;
-      _fetchError = null;
-    });
+//   Future<void> _fetchCategories() async {
+//     setState(() {
+//       _isFetchingCategories = true;
+//       _fetchError = null;
+//     });
 
-    try {
-      final categories = await CategoriesService.getAllCategories();
-      if (!mounted) return;
-      setState(() {
-        _categories = categories;
-        _isFetchingCategories = false;
-      });
-      _buildItemAnimations();
-      _animController.forward(from: 0);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _fetchError = 'Failed to load categories. Tap to retry.';
-        _isFetchingCategories = false;
-      });
-    }
-  }
+//     try {
+//       final categories = await CategoriesService.getAllCategories();
+//       if (!mounted) return;
+//       setState(() {
+//         _categories = categories;
+//         _isFetchingCategories = false;
+//       });
+//       _buildItemAnimations();
+//       _animController.forward(from: 0);
+//     } catch (e) {
+//       if (!mounted) return;
+//       setState(() {
+//         _fetchError = 'Failed to load categories. Tap to retry.';
+//         _isFetchingCategories = false;
+//       });
+//     }
+//   }
 
-  void _buildItemAnimations() {
-    _itemSlides = List.generate(
-      _categories.length,
-      (i) =>
-          Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
-            CurvedAnimation(
-              parent: _animController,
-              curve: Interval(
-                0.1 + i * 0.15,
-                0.5 + i * 0.15,
-                curve: Curves.easeOutBack,
-              ),
-            ),
-          ),
-    );
+//   void _buildItemAnimations() {
+//     _itemSlides = List.generate(
+//       _categories.length,
+//       (i) =>
+//           Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+//             CurvedAnimation(
+//               parent: _animController,
+//               curve: Interval(
+//                 0.1 + i * 0.15,
+//                 0.5 + i * 0.15,
+//                 curve: Curves.easeOutBack,
+//               ),
+//             ),
+//           ),
+//     );
 
-    _itemOpacities = List.generate(
-      _categories.length,
-      (i) => Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(
-          parent: _animController,
-          curve: Interval(
-            0.1 + i * 0.15,
-            0.5 + i * 0.15,
-            curve: Curves.easeOut,
-          ),
-        ),
-      ),
-    );
-  }
+//     _itemOpacities = List.generate(
+//       _categories.length,
+//       (i) => Tween<double>(begin: 0, end: 1).animate(
+//         CurvedAnimation(
+//           parent: _animController,
+//           curve: Interval(
+//             0.1 + i * 0.15,
+//             0.5 + i * 0.15,
+//             curve: Curves.easeOut,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _animController.dispose();
+//     super.dispose();
+//   }
 
-  Future<void> _handleConfirm() async {
-    if (_selectedCategory == null) return;
-    setState(() => _isConfirming = true);
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (mounted) {
-      setState(() => _isConfirming = false);
-      Navigator.pop(context);
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => NavbarScreen()),
-        (route) => false,
-      );
-    }
-  }
+//   Future<void> _handleConfirm() async {
+//     if (_selectedCategory == null) return;
+//     setState(() => _isConfirming = true);
+//     await Future.delayed(const Duration(milliseconds: 500));
+//     if (mounted) {
+//       setState(() => _isConfirming = false);
+//       Navigator.pop(context);
+//       Navigator.pushAndRemoveUntil(
+//         context,
+//         MaterialPageRoute(builder: (_) => NavbarScreen()),
+//         (route) => false,
+//       );
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 30,
-            offset: Offset(0, -8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Drag handle
-          Container(
-            width: 40,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 24),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: const BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black12,
+//             blurRadius: 30,
+//             offset: Offset(0, -8),
+//           ),
+//         ],
+//       ),
+//       padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           // Drag handle
+//           Container(
+//             width: 40,
+//             height: 4,
+//             margin: const EdgeInsets.only(bottom: 24),
+//             decoration: BoxDecoration(
+//               color: Colors.grey.shade300,
+//               borderRadius: BorderRadius.circular(2),
+//             ),
+//           ),
 
-          RichText(
-            textAlign: TextAlign.center,
-            text: const TextSpan(
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1A1A2E),
-              ),
-              children: [
-                TextSpan(text: 'Select Your '),
-                TextSpan(
-                  text: 'Perfect',
-                  style: TextStyle(color: Color(0xFFE53935)),
-                ),
-                TextSpan(text: ' Stay'),
-              ],
-            ),
-          ),
+//           RichText(
+//             textAlign: TextAlign.center,
+//             text: const TextSpan(
+//               style: TextStyle(
+//                 fontSize: 22,
+//                 fontWeight: FontWeight.w700,
+//                 color: Color(0xFF1A1A2E),
+//               ),
+//               children: [
+//                 TextSpan(text: 'Select Your '),
+//                 TextSpan(
+//                   text: 'Perfect',
+//                   style: TextStyle(color: Color(0xFFE53935)),
+//                 ),
+//                 TextSpan(text: ' Stay'),
+//               ],
+//             ),
+//           ),
 
-          const SizedBox(height: 24),
+//           const SizedBox(height: 24),
 
-          // ── Body: loading / error / list ──────────────────────────────
-          if (_isFetchingCategories)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: CircularProgressIndicator(
-                color: Color(0xFFE53935),
-                strokeWidth: 2.5,
-              ),
-            )
-          else if (_fetchError != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: GestureDetector(
-                onTap: _fetchCategories,
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.wifi_off_rounded,
-                      color: Color(0xFFBDBDBD),
-                      size: 40,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      _fetchError!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF7A7A8C),
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Tap to retry',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFFE53935),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else
-            ...List.generate(_categories.length, (i) {
-              final category = _categories[i];
-              final isSelected = _selectedCategory?.id == category.id;
+//           // ── Body: loading / error / list ──────────────────────────────
+//           if (_isFetchingCategories)
+//             const Padding(
+//               padding: EdgeInsets.symmetric(vertical: 32),
+//               child: CircularProgressIndicator(
+//                 color: Color(0xFFE53935),
+//                 strokeWidth: 2.5,
+//               ),
+//             )
+//           else if (_fetchError != null)
+//             Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 24),
+//               child: GestureDetector(
+//                 onTap: _fetchCategories,
+//                 child: Column(
+//                   children: [
+//                     const Icon(
+//                       Icons.wifi_off_rounded,
+//                       color: Color(0xFFBDBDBD),
+//                       size: 40,
+//                     ),
+//                     const SizedBox(height: 12),
+//                     Text(
+//                       _fetchError!,
+//                       textAlign: TextAlign.center,
+//                       style: const TextStyle(
+//                         fontSize: 14,
+//                         color: Color(0xFF7A7A8C),
+//                         height: 1.5,
+//                       ),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     const Text(
+//                       'Tap to retry',
+//                       style: TextStyle(
+//                         fontSize: 13,
+//                         color: Color(0xFFE53935),
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             )
+//           else
+//             ...List.generate(_categories.length, (i) {
+//               final category = _categories[i];
+//               final isSelected = _selectedCategory?.id == category.id;
 
-              // Guard: animations may not be ready yet
-              if (i >= _itemSlides.length) return const SizedBox.shrink();
+//               // Guard: animations may not be ready yet
+//               if (i >= _itemSlides.length) return const SizedBox.shrink();
 
-              return SlideTransition(
-                position: _itemSlides[i],
-                child: FadeTransition(
-                  opacity: _itemOpacities[i],
-                  child: GestureDetector(
-                    onTap: () => setState(() => _selectedCategory = category),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      curve: Curves.easeOut,
-                      margin: const EdgeInsets.only(bottom: 12),
-                      height: 54,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFF80500)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(13),
-                        border: Border.all(
-                          color: isSelected
-                              ? const Color(0xFFF80500)
-                              : const Color(0xFFE0E0E0),
-                          width: isSelected ? 0 : 1.4,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFFE53935,
-                                  ).withOpacity(0.35),
-                                  blurRadius: 14,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ]
-                            : [],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            child: Icon(
-                              category.icon,
-                              key: ValueKey(isSelected),
-                              color: isSelected
-                                  ? Colors.white
-                                  : const Color(0xFF9E9E9E),
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            category.displayName,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected
-                                  ? Colors.white
-                                  : const Color(0xFF1A1A2E),
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
+//               return SlideTransition(
+//                 position: _itemSlides[i],
+//                 child: FadeTransition(
+//                   opacity: _itemOpacities[i],
+//                   child: GestureDetector(
+//                     onTap: () => setState(() => _selectedCategory = category),
+//                     child: AnimatedContainer(
+//                       duration: const Duration(milliseconds: 220),
+//                       curve: Curves.easeOut,
+//                       margin: const EdgeInsets.only(bottom: 12),
+//                       height: 54,
+//                       decoration: BoxDecoration(
+//                         color: isSelected
+//                             ? const Color(0xFFF80500)
+//                             : Colors.white,
+//                         borderRadius: BorderRadius.circular(13),
+//                         border: Border.all(
+//                           color: isSelected
+//                               ? const Color(0xFFF80500)
+//                               : const Color(0xFFE0E0E0),
+//                           width: isSelected ? 0 : 1.4,
+//                         ),
+//                         boxShadow: isSelected
+//                             ? [
+//                                 BoxShadow(
+//                                   color: const Color(
+//                                     0xFFE53935,
+//                                   ).withOpacity(0.35),
+//                                   blurRadius: 14,
+//                                   offset: const Offset(0, 5),
+//                                 ),
+//                               ]
+//                             : [],
+//                       ),
+//                       child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           AnimatedSwitcher(
+//                             duration: const Duration(milliseconds: 200),
+//                             child: Icon(
+//                               category.icon,
+//                               key: ValueKey(isSelected),
+//                               color: isSelected
+//                                   ? Colors.white
+//                                   : const Color(0xFF9E9E9E),
+//                               size: 20,
+//                             ),
+//                           ),
+//                           const SizedBox(width: 8),
+//                           Text(
+//                             category.displayName,
+//                             style: TextStyle(
+//                               fontSize: 15,
+//                               fontWeight: FontWeight.w600,
+//                               color: isSelected
+//                                   ? Colors.white
+//                                   : const Color(0xFF1A1A2E),
+//                               letterSpacing: 0.2,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             }),
 
-          const SizedBox(height: 8),
+//           const SizedBox(height: 8),
 
-          _RedButton(
-            label: _isConfirming ? '' : 'Login',
-            isLoading: _isConfirming,
-            onTap: _handleConfirm,
-            enabled: _selectedCategory != null && !_isFetchingCategories,
-          ),
-        ],
-      ),
-    );
-  }
-}
+//           _RedButton(
+//             label: _isConfirming ? '' : 'Login',
+//             isLoading: _isConfirming,
+//             onTap: _handleConfirm,
+//             enabled: _selectedCategory != null && !_isFetchingCategories,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 // ═══════════════════════════════════════════════════════
 // SHARED WIDGETS

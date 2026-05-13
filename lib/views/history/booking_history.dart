@@ -49,6 +49,9 @@
 //   final String? vendorName;
 //   final String? vendorMobile;
 
+//   // ✅ New fields from completed API
+//   final String? roomNo;
+
 //   final List<PaymentHistoryEntry> paymentHistory;
 
 //   BookingModel({
@@ -72,6 +75,7 @@
 //     this.vendorId,
 //     this.vendorName,
 //     this.vendorMobile,
+//     this.roomNo,
 //   });
 
 //   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -102,6 +106,7 @@
 //       vendorId: vendor?['_id'],
 //       vendorName: vendor?['name'],
 //       vendorMobile: vendor?['mobileNumber'],
+//       roomNo: json['roomNo'],
 //       paymentHistory: (json['paymentHistory'] as List<dynamic>? ?? [])
 //           .map((e) => PaymentHistoryEntry.fromJson(e as Map<String, dynamic>))
 //           .toList(),
@@ -160,6 +165,28 @@
 //     }
 //     return [];
 //   }
+
+//   // ✅ NEW: Fetch completed bookings
+//   static Future<List<BookingModel>> fetchCompletedBookings(
+//     String userId,
+//   ) async {
+//     final uri = Uri.parse('$_baseUrl/$userId/completed-bookings');
+//     final response = await http.get(uri, headers: await _authHeaders());
+
+//     print('Completed bookings status: ${response.statusCode}');
+//     print('Completed bookings body: ${response.body}');
+
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body) as Map<String, dynamic>;
+//       if (data['success'] == true && data['bookings'] != null) {
+//         final list = data['bookings'] as List<dynamic>;
+//         return list
+//             .map((e) => BookingModel.fromJson(e as Map<String, dynamic>))
+//             .toList();
+//       }
+//     }
+//     return [];
+//   }
 // }
 
 // // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -177,6 +204,7 @@
 
 //   List<BookingModel> _pendingBookings = [];
 //   List<BookingModel> _runningBookings = [];
+//   List<BookingModel> _completedBookings = []; // ✅ NEW
 
 //   bool _isLoading = true;
 //   String? _errorMessage;
@@ -206,14 +234,17 @@
 //         return;
 //       }
 
+//       // ✅ Fetch all three in parallel
 //       final results = await Future.wait([
 //         BookingApiService.fetchPendingBookings(userId),
 //         BookingApiService.fetchRunningBookings(userId),
+//         BookingApiService.fetchCompletedBookings(userId),
 //       ]);
 
 //       setState(() {
 //         _pendingBookings = results[0];
 //         _runningBookings = results[1];
+//         _completedBookings = results[2];
 //         _isLoading = false;
 //       });
 //     } catch (e) {
@@ -246,8 +277,9 @@
 //       backgroundColor: Colors.white,
 //       appBar: AppBar(
 //         backgroundColor: Colors.white,
+//         automaticallyImplyLeading: false,
+
 //         elevation: 0,
-//         leading: const BackButton(color: Colors.black),
 //         title: RichText(
 //           text: const TextSpan(
 //             children: [
@@ -344,20 +376,6 @@
 
 //   // ─── Tabs ─────────────────────────────────────────────────────────────────
 
-//   // Widget _buildPendingTab() {
-//   //   if (_pendingBookings.isEmpty) return _buildEmptyTab('No Pending Bookings');
-//   //   return RefreshIndicator(
-//   //     color: Colors.red,
-//   //     onRefresh: _loadBookings,
-//   //     child: ListView.separated(
-//   //       padding: const EdgeInsets.all(16),
-//   //       itemCount: _pendingBookings.length,
-//   //       separatorBuilder: (_, __) => const SizedBox(height: 12),
-//   //       itemBuilder: (_, i) => _buildPendingCard(_pendingBookings[i]),
-//   //     ),
-//   //   );
-//   // }
-
 //   Widget _buildPendingTab() {
 //     if (_pendingBookings.isEmpty) return _buildEmptyTab('No Pending Bookings');
 //     return RefreshIndicator(
@@ -367,12 +385,14 @@
 //         padding: const EdgeInsets.all(16),
 //         itemCount: _pendingBookings.length,
 //         separatorBuilder: (_, __) => const SizedBox(height: 12),
-//         // ✅ Navigate to EnterDetails on tap
 //         itemBuilder: (_, i) => GestureDetector(
 //           onTap: () => Navigator.push(
 //             context,
 //             MaterialPageRoute(
-//               builder: (_) => EnterDetails(bookingId: _pendingBookings[i].id),
+//               builder: (_) => EnterDetails(
+//                 bookingId: _pendingBookings[i].id,
+//                 hostelId: _pendingBookings[i].hostelId,
+//               ),
 //             ),
 //           ),
 //           child: _buildPendingCard(_pendingBookings[i]),
@@ -380,31 +400,6 @@
 //       ),
 //     );
 //   }
-
-//   // Widget _buildRunningTab() {
-//   //   if (_runningBookings.isEmpty) return _buildEmptyTab('No Running Bookings');
-//   //   return RefreshIndicator(
-//   //     color: Colors.red,
-//   //     onRefresh: _loadBookings,
-//   //     child: ListView.separated(
-//   //       padding: const EdgeInsets.all(16),
-//   //       itemCount: _runningBookings.length,
-//   //       separatorBuilder: (_, __) => const SizedBox(height: 12),
-//   //       // ✅ Wrap each running card in GestureDetector to navigate with bookingId
-//   //       itemBuilder: (_, i) => GestureDetector(
-//   //         onTap: () => Navigator.push(
-//   //           context,
-//   //           MaterialPageRoute(
-//   //             builder: (_) => EnterDetails(
-//   //               bookingId: _runningBookings[i].id, // ✅ pass bookingId
-//   //             ),
-//   //           ),
-//   //         ),
-//   //         child: _buildRunningCard(_runningBookings[i]),
-//   //       ),
-//   //     ),
-//   //   );
-//   // }
 
 //   Widget _buildRunningTab() {
 //     if (_runningBookings.isEmpty) return _buildEmptyTab('No Running Bookings');
@@ -415,26 +410,74 @@
 //         padding: const EdgeInsets.all(16),
 //         itemCount: _runningBookings.length,
 //         separatorBuilder: (_, __) => const SizedBox(height: 12),
-//         // ✅ No navigation on running cards
 //         itemBuilder: (_, i) => _buildRunningCard(_runningBookings[i]),
 //       ),
 //     );
 //   }
 
+//   // ✅ NEW: Completed tab now loads from API
 //   Widget _buildCompletedTab() {
-//     return _buildEmptyTab('No Completed Bookings');
-//   }
-
-//   Widget _buildEmptyTab(String message) {
-//     return Center(
-//       child: Text(
-//         message,
-//         style: const TextStyle(color: Colors.grey, fontSize: 16),
+//     if (_completedBookings.isEmpty) {
+//       return _buildEmptyTab('No Completed Bookings');
+//     }
+//     return RefreshIndicator(
+//       color: Colors.red,
+//       onRefresh: _loadBookings,
+//       child: ListView.separated(
+//         padding: const EdgeInsets.all(16),
+//         itemCount: _completedBookings.length,
+//         separatorBuilder: (_, __) => const SizedBox(height: 12),
+//         itemBuilder: (_, i) => _buildCompletedCard(_completedBookings[i]),
 //       ),
 //     );
 //   }
 
-//   // ─── Pending Card — NOT tappable, no navigation ───────────────────────────
+//   // Widget _buildEmptyTab(String message) {
+//   //   return Center(
+//   //     child: Text(
+//   //       message,
+//   //       style: const TextStyle(color: Colors.grey, fontSize: 16),
+//   //     ),
+//   //   );
+//   // }
+
+//   Widget _buildEmptyTab(String message) {
+//     return RefreshIndicator(
+//       color: Colors.red,
+//       onRefresh: _loadBookings,
+//       child: ListView(
+//         // ListView is required for RefreshIndicator to work
+//         physics: const AlwaysScrollableScrollPhysics(),
+//         children: [
+//           SizedBox(
+//             height: 400,
+//             child: Center(
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   const Icon(
+//                     Icons.inbox_outlined,
+//                     color: Colors.grey,
+//                     size: 48,
+//                   ),
+//                   const SizedBox(height: 12),
+//                   Text(
+//                     message,
+//                     style: const TextStyle(color: Colors.grey, fontSize: 16),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   const Text(
+//                     'Pull down to refresh',
+//                     style: TextStyle(color: Colors.grey, fontSize: 12),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
 //   Widget _buildPendingCard(BookingModel booking) {
 //     final imageUrl = booking.hostelImages.isNotEmpty
@@ -461,7 +504,6 @@
 //             Row(
 //               crossAxisAlignment: CrossAxisAlignment.start,
 //               children: [
-//                 // ✅ Pending card image — not tappable
 //                 ClipRRect(
 //                   borderRadius: BorderRadius.circular(8),
 //                   child: imageUrl != null
@@ -626,11 +668,8 @@
 //                     ),
 //                   ),
 //                 ),
-
-//                 // ✅ Add this at the bottom of _buildPendingCard, after the action buttons Row:
 //               ],
 //             ),
-
 //             const SizedBox(height: 10),
 //             Row(
 //               mainAxisAlignment: MainAxisAlignment.end,
@@ -653,7 +692,7 @@
 //     );
 //   }
 
-//   // ─── Running Card — tappable via parent GestureDetector ───────────────────
+//   // ─── Running Card ──────────────────────────────────────────────────────────
 
 //   Widget _buildRunningCard(BookingModel booking) {
 //     final imageUrl = booking.hostelImages.isNotEmpty
@@ -828,7 +867,6 @@
 //                     ),
 //                     if (booking.vendorMobile != null) ...[
 //                       const Spacer(),
-//                       // ✅ stopPropagation via absorbing the tap so card tap still works
 //                       GestureDetector(
 //                         onTap: () => _callNumber(booking.vendorMobile!),
 //                         behavior: HitTestBehavior.opaque,
@@ -853,149 +891,430 @@
 //                 ),
 //               ),
 //             ],
-
-//             // After the vendor info block (if booking.vendorName != null), add:
 //             if (booking.paymentHistory.isNotEmpty) ...[
 //               const SizedBox(height: 10),
-//               Container(
-//                 padding: const EdgeInsets.all(10),
-//                 decoration: BoxDecoration(
-//                   color: Colors.grey[50],
-//                   borderRadius: BorderRadius.circular(8),
-//                   border: Border.all(color: Colors.grey.shade200),
-//                 ),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     const Row(
-//                       children: [
-//                         Icon(Icons.receipt_long, size: 14, color: Colors.red),
-//                         SizedBox(width: 6),
-//                         Text(
-//                           'Payment History',
-//                           style: TextStyle(
-//                             fontSize: 12,
-//                             fontWeight: FontWeight.w700,
-//                             color: Colors.black87,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                     const SizedBox(height: 8),
-//                     // Header row
-//                     Row(
-//                       children: const [
-//                         Expanded(
-//                           flex: 3,
-//                           child: Text(
-//                             'Date',
-//                             style: TextStyle(
-//                               fontSize: 10,
-//                               fontWeight: FontWeight.w600,
-//                               color: Colors.grey,
-//                             ),
-//                           ),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             'Amount',
-//                             textAlign: TextAlign.center,
-//                             style: TextStyle(
-//                               fontSize: 10,
-//                               fontWeight: FontWeight.w600,
-//                               color: Colors.grey,
-//                             ),
-//                           ),
-//                         ),
-//                         Expanded(
-//                           flex: 2,
-//                           child: Text(
-//                             'Status',
-//                             textAlign: TextAlign.end,
-//                             style: TextStyle(
-//                               fontSize: 10,
-//                               fontWeight: FontWeight.w600,
-//                               color: Colors.grey,
-//                             ),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                     const Divider(height: 8, thickness: 0.5),
-//                     ...booking.paymentHistory.map(
-//                       (p) => Padding(
-//                         padding: const EdgeInsets.symmetric(vertical: 3),
-//                         child: Row(
-//                           children: [
-//                             Expanded(
-//                               flex: 3,
-//                               child: Text(
-//                                 _formatDate(p.date),
-//                                 style: const TextStyle(
-//                                   fontSize: 11,
-//                                   color: Colors.black87,
-//                                 ),
-//                               ),
-//                             ),
-//                             Expanded(
-//                               flex: 2,
-//                               child: Text(
-//                                 '₹${p.amount.toStringAsFixed(0)}',
-//                                 textAlign: TextAlign.center,
-//                                 style: const TextStyle(
-//                                   fontSize: 11,
-//                                   fontWeight: FontWeight.w600,
-//                                   color: Colors.black87,
-//                                 ),
-//                               ),
-//                             ),
-//                             Expanded(
-//                               flex: 2,
-//                               child: Align(
-//                                 alignment: Alignment.centerRight,
-//                                 child: Container(
-//                                   padding: const EdgeInsets.symmetric(
-//                                     horizontal: 6,
-//                                     vertical: 2,
-//                                   ),
-//                                   decoration: BoxDecoration(
-//                                     color: p.status.toLowerCase() == 'paid'
-//                                         ? Colors.green.shade50
-//                                         : Colors.orange.shade50,
-//                                     borderRadius: BorderRadius.circular(4),
-//                                     border: Border.all(
-//                                       color: p.status.toLowerCase() == 'paid'
-//                                           ? Colors.green.shade300
-//                                           : Colors.orange.shade300,
-//                                     ),
-//                                   ),
-//                                   child: Text(
-//                                     p.status.toUpperCase(),
-//                                     style: TextStyle(
-//                                       fontSize: 9,
-//                                       fontWeight: FontWeight.w700,
-//                                       color: p.status.toLowerCase() == 'paid'
-//                                           ? Colors.green.shade700
-//                                           : Colors.orange.shade700,
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
+//               _buildPaymentHistoryWidget(booking.paymentHistory),
 //             ],
 //           ],
 //         ),
 //       ),
 //     );
 //   }
+
+//   // ✅ NEW: Completed Card
+//   Widget _buildCompletedCard(BookingModel booking) {
+//     final imageUrl = booking.hostelImages.isNotEmpty
+//         ? booking.hostelImages.first
+//         : null;
+
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(12),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.grey.withOpacity(0.15),
+//             blurRadius: 10,
+//             offset: const Offset(0, 4),
+//           ),
+//         ],
+//       ),
+//       child: Padding(
+//         padding: const EdgeInsets.all(12),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // ── Header row ──────────────────────────────────────────────────
+//             Row(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 ClipRRect(
+//                   borderRadius: BorderRadius.circular(8),
+//                   child: imageUrl != null
+//                       ? Image.network(
+//                           imageUrl,
+//                           width: 80,
+//                           height: 80,
+//                           fit: BoxFit.cover,
+//                           errorBuilder: (_, __, ___) => _placeholderImage(),
+//                         )
+//                       : _placeholderImage(),
+//                 ),
+//                 const SizedBox(width: 12),
+//                 Expanded(
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Row(
+//                         children: [
+//                           Flexible(
+//                             child: RichText(
+//                               overflow: TextOverflow.ellipsis,
+//                               text: TextSpan(
+//                                 children: _hostelNameSpans(booking.hostelName),
+//                               ),
+//                             ),
+//                           ),
+//                           const SizedBox(width: 8),
+//                           _roomTypeBadge(booking.roomType),
+//                         ],
+//                       ),
+//                       const SizedBox(height: 4),
+//                       Row(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           const Icon(
+//                             Icons.location_on,
+//                             size: 12,
+//                             color: Colors.red,
+//                           ),
+//                           const SizedBox(width: 2),
+//                           Expanded(
+//                             child: Text(
+//                               booking.hostelAddress,
+//                               style: const TextStyle(
+//                                 color: Colors.grey,
+//                                 fontSize: 11,
+//                               ),
+//                               maxLines: 2,
+//                               overflow: TextOverflow.ellipsis,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(height: 6),
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           _buildInfoChip(
+//                             label: booking.shareType,
+//                             icon: Icons.people,
+//                           ),
+//                           // ✅ Completed status badge
+//                           Container(
+//                             padding: const EdgeInsets.symmetric(
+//                               horizontal: 8,
+//                               vertical: 3,
+//                             ),
+//                             decoration: BoxDecoration(
+//                               color: Colors.green.shade50,
+//                               borderRadius: BorderRadius.circular(12),
+//                               border: Border.all(color: Colors.green.shade300),
+//                             ),
+//                             child: Row(
+//                               mainAxisSize: MainAxisSize.min,
+//                               children: [
+//                                 Icon(
+//                                   Icons.check_circle,
+//                                   size: 10,
+//                                   color: Colors.green.shade700,
+//                                 ),
+//                                 const SizedBox(width: 3),
+//                                 Text(
+//                                   'COMPLETED',
+//                                   style: TextStyle(
+//                                     fontSize: 9,
+//                                     fontWeight: FontWeight.w700,
+//                                     color: Colors.green.shade700,
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(height: 4),
+//             // Booking reference
+//             Align(
+//               alignment: Alignment.centerRight,
+//               child: Text(
+//                 booking.bookingReference,
+//                 style: const TextStyle(
+//                   fontSize: 10,
+//                   color: Colors.grey,
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 10),
+//             Container(
+//               decoration: BoxDecoration(
+//                 color: Colors.green.shade600,
+//                 borderRadius: BorderRadius.circular(8),
+//               ),
+//               child: Column(
+//                 children: [
+//                   IntrinsicHeight(
+//                     child: Row(
+//                       children: [
+//                         Expanded(
+//                           child: _buildDetailCell(
+//                             label: 'Share Type :',
+//                             value: booking.shareType,
+//                             borderRight: true,
+//                             borderBottom: true,
+//                           ),
+//                         ),
+//                         Expanded(
+//                           child: _buildDetailCell(
+//                             label: 'Total Amount :',
+//                             value:
+//                                 '₹${booking.totalAmount.toStringAsFixed(0)}/-',
+//                             borderBottom: true,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                   IntrinsicHeight(
+//                     child: Row(
+//                       children: [
+//                         Expanded(
+//                           child: _buildDetailCell(
+//                             label: 'Start Date :',
+//                             value: _formatDate(booking.startDate),
+//                             valueColor: Colors.yellow,
+//                             borderRight: true,
+//                             borderBottom: true,
+//                           ),
+//                         ),
+//                         Expanded(
+//                           child: _buildDetailCell(
+//                             label: 'Booking Type :',
+//                             value: booking.bookingType.toUpperCase(),
+//                             valueColor: Colors.yellow,
+//                             borderBottom: true,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                   IntrinsicHeight(
+//                     child: Row(
+//                       children: [
+//                         Expanded(
+//                           child: _buildDetailCell(
+//                             label: 'Room No :',
+//                             value: booking.roomNo ?? 'N/A',
+//                             borderRight: true,
+//                           ),
+//                         ),
+//                         Expanded(
+//                           child: _buildDetailCell(
+//                             label: 'Booked On :',
+//                             value: _formatDate(booking.createdAt),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             // ── Vendor info ─────────────────────────────────────────────────
+//             if (booking.vendorName != null) ...[
+//               const SizedBox(height: 10),
+//               Container(
+//                 padding: const EdgeInsets.symmetric(
+//                   horizontal: 10,
+//                   vertical: 8,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   color: Colors.grey[50],
+//                   borderRadius: BorderRadius.circular(8),
+//                   border: Border.all(color: Colors.grey.shade200),
+//                 ),
+//                 child: Row(
+//                   children: [
+//                     const Icon(Icons.person, size: 14, color: Colors.green),
+//                     const SizedBox(width: 6),
+//                     Text(
+//                       'Vendor: ${booking.vendorName}',
+//                       style: const TextStyle(
+//                         fontSize: 12,
+//                         fontWeight: FontWeight.w600,
+//                         color: Colors.black87,
+//                       ),
+//                     ),
+//                     if (booking.vendorMobile != null) ...[
+//                       const Spacer(),
+//                       GestureDetector(
+//                         onTap: () => _callNumber(booking.vendorMobile!),
+//                         behavior: HitTestBehavior.opaque,
+//                         child: const Icon(
+//                           Icons.call,
+//                           size: 16,
+//                           color: Colors.red,
+//                         ),
+//                       ),
+//                       const SizedBox(width: 12),
+//                       GestureDetector(
+//                         onTap: () => _openWhatsApp(booking.vendorMobile!),
+//                         behavior: HitTestBehavior.opaque,
+//                         child: const Icon(
+//                           Icons.chat,
+//                           size: 16,
+//                           color: Colors.green,
+//                         ),
+//                       ),
+//                     ],
+//                   ],
+//                 ),
+//               ),
+//             ],
+//             // ── Payment history ─────────────────────────────────────────────
+//             if (booking.paymentHistory.isNotEmpty) ...[
+//               const SizedBox(height: 10),
+//               _buildPaymentHistoryWidget(booking.paymentHistory),
+//             ],
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   // ✅ Extracted shared payment history widget (used by running + completed)
+//   Widget _buildPaymentHistoryWidget(List<PaymentHistoryEntry> history) {
+//     return Container(
+//       padding: const EdgeInsets.all(10),
+//       decoration: BoxDecoration(
+//         color: Colors.grey[50],
+//         borderRadius: BorderRadius.circular(8),
+//         border: Border.all(color: Colors.grey.shade200),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           const Row(
+//             children: [
+//               Icon(Icons.receipt_long, size: 14, color: Colors.red),
+//               SizedBox(width: 6),
+//               Text(
+//                 'Payment History',
+//                 style: TextStyle(
+//                   fontSize: 12,
+//                   fontWeight: FontWeight.w700,
+//                   color: Colors.black87,
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 8),
+//           Row(
+//             children: const [
+//               Expanded(
+//                 flex: 3,
+//                 child: Text(
+//                   'Date',
+//                   style: TextStyle(
+//                     fontSize: 10,
+//                     fontWeight: FontWeight.w600,
+//                     color: Colors.grey,
+//                   ),
+//                 ),
+//               ),
+//               Expanded(
+//                 flex: 2,
+//                 child: Text(
+//                   'Amount',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     fontSize: 10,
+//                     fontWeight: FontWeight.w600,
+//                     color: Colors.grey,
+//                   ),
+//                 ),
+//               ),
+//               Expanded(
+//                 flex: 2,
+//                 child: Text(
+//                   'Status',
+//                   textAlign: TextAlign.end,
+//                   style: TextStyle(
+//                     fontSize: 10,
+//                     fontWeight: FontWeight.w600,
+//                     color: Colors.grey,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const Divider(height: 8, thickness: 0.5),
+//           ...history.map(
+//             (p) => Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 3),
+//               child: Row(
+//                 children: [
+//                   Expanded(
+//                     flex: 3,
+//                     child: Text(
+//                       _formatDate(p.date),
+//                       style: const TextStyle(
+//                         fontSize: 11,
+//                         color: Colors.black87,
+//                       ),
+//                     ),
+//                   ),
+//                   Expanded(
+//                     flex: 2,
+//                     child: Text(
+//                       '₹${p.amount.toStringAsFixed(0)}',
+//                       textAlign: TextAlign.center,
+//                       style: const TextStyle(
+//                         fontSize: 11,
+//                         fontWeight: FontWeight.w600,
+//                         color: Colors.black87,
+//                       ),
+//                     ),
+//                   ),
+//                   Expanded(
+//                     flex: 2,
+//                     child: Align(
+//                       alignment: Alignment.centerRight,
+//                       child: Container(
+//                         padding: const EdgeInsets.symmetric(
+//                           horizontal: 6,
+//                           vertical: 2,
+//                         ),
+//                         decoration: BoxDecoration(
+//                           color: p.status.toLowerCase() == 'paid'
+//                               ? Colors.green.shade50
+//                               : Colors.orange.shade50,
+//                           borderRadius: BorderRadius.circular(4),
+//                           border: Border.all(
+//                             color: p.status.toLowerCase() == 'paid'
+//                                 ? Colors.green.shade300
+//                                 : Colors.orange.shade300,
+//                           ),
+//                         ),
+//                         child: Text(
+//                           p.status.toUpperCase(),
+//                           style: TextStyle(
+//                             fontSize: 9,
+//                             fontWeight: FontWeight.w700,
+//                             color: p.status.toLowerCase() == 'paid'
+//                                 ? Colors.green.shade700
+//                                 : Colors.orange.shade700,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   // ─── Shared helpers ────────────────────────────────────────────────────────
 
 //   Widget _roomTypeBadge(String roomType) {
 //     return Container(
@@ -1161,23 +1480,39 @@
 //     }
 //   }
 
-//   Future<void> _openWhatsApp(String phone) async {
-//     final cleaned = phone.trim().replaceAll(RegExp(r'\D'), '');
-//     final full = cleaned.startsWith('91') ? cleaned : '91$cleaned';
-//     final uri = Uri.parse('https://wa.me/$full');
-//     if (await canLaunchUrl(uri)) {
-//       await launchUrl(uri, mode: LaunchMode.externalApplication);
-//     } else if (mounted) {
-//       ScaffoldMessenger.of(
-//         context,
-//       ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp')));
+//   // Future<void> _openWhatsApp(String phone) async {
+//   //   final cleaned = phone.trim().replaceAll(RegExp(r'\D'), '');
+//   //   final full = cleaned.startsWith('91') ? cleaned : '91$cleaned';
+//   //   final uri = Uri.parse('https://wa.me/$full');
+//   //   if (await canLaunchUrl(uri)) {
+//   //     await launchUrl(uri, mode: LaunchMode.externalApplication);
+//   //   } else if (mounted) {
+//   //     ScaffoldMessenger.of(
+//   //       context,
+//   //     ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp')));
+//   //   }
+//   // }
+
+//   Future<void> _openWhatsApp(String phoneNumber) async {
+//     final message = Uri.encodeComponent(
+//       "Hello, I am interested in your hostel.",
+//     );
+//     final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
+
+//     try {
+//       await launchUrl(url, mode: LaunchMode.externalApplication);
+//     } catch (e) {
+//       if (mounted) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           const SnackBar(content: Text('Could not open WhatsApp.')),
+//         );
+//       }
 //     }
 //   }
 // }
 
-///////////////////////// Added the new code for showing completed orders/////////
-
 import 'dart:convert';
+import 'package:brando_app/config/theme_config.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/enter_details.dart';
 import 'package:flutter/material.dart';
@@ -1453,18 +1788,18 @@ class _BookingHistoryState extends State<BookingHistory>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.lightBackground,
+        automaticallyImplyLeading: false,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
         title: RichText(
-          text: const TextSpan(
+          text: TextSpan(
             children: [
               TextSpan(
                 text: 'Booking ',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: AppColors.primary,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
@@ -1472,7 +1807,7 @@ class _BookingHistoryState extends State<BookingHistory>
               TextSpan(
                 text: 'History',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: AppColors.lightText,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
@@ -1488,18 +1823,18 @@ class _BookingHistoryState extends State<BookingHistory>
             child: Container(
               height: 44,
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: AppColors.lightSurface,
                 borderRadius: BorderRadius.circular(30),
               ),
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(
-                  color: Colors.red,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
-                unselectedLabelColor: Colors.red,
+                unselectedLabelColor: AppColors.primary,
                 labelStyle: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -1515,7 +1850,9 @@ class _BookingHistoryState extends State<BookingHistory>
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.red))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : _errorMessage != null
           ? _buildErrorState()
           : TabBarView(
@@ -1534,17 +1871,17 @@ class _BookingHistoryState extends State<BookingHistory>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 48),
+          Icon(Icons.error_outline, color: AppColors.error, size: 48),
           const SizedBox(height: 12),
           Text(
             _errorMessage!,
-            style: const TextStyle(color: Colors.grey, fontSize: 15),
+            style: TextStyle(color: AppColors.lightTextSecondary, fontSize: 15),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadBookings,
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
             child: const Text('Retry', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -1557,7 +1894,7 @@ class _BookingHistoryState extends State<BookingHistory>
   Widget _buildPendingTab() {
     if (_pendingBookings.isEmpty) return _buildEmptyTab('No Pending Bookings');
     return RefreshIndicator(
-      color: Colors.red,
+      color: AppColors.primary,
       onRefresh: _loadBookings,
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -1582,7 +1919,7 @@ class _BookingHistoryState extends State<BookingHistory>
   Widget _buildRunningTab() {
     if (_runningBookings.isEmpty) return _buildEmptyTab('No Running Bookings');
     return RefreshIndicator(
-      color: Colors.red,
+      color: AppColors.primary,
       onRefresh: _loadBookings,
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -1593,13 +1930,12 @@ class _BookingHistoryState extends State<BookingHistory>
     );
   }
 
-  // ✅ NEW: Completed tab now loads from API
   Widget _buildCompletedTab() {
     if (_completedBookings.isEmpty) {
       return _buildEmptyTab('No Completed Bookings');
     }
     return RefreshIndicator(
-      color: Colors.red,
+      color: AppColors.primary,
       onRefresh: _loadBookings,
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -1610,21 +1946,11 @@ class _BookingHistoryState extends State<BookingHistory>
     );
   }
 
-  // Widget _buildEmptyTab(String message) {
-  //   return Center(
-  //     child: Text(
-  //       message,
-  //       style: const TextStyle(color: Colors.grey, fontSize: 16),
-  //     ),
-  //   );
-  // }
-
   Widget _buildEmptyTab(String message) {
     return RefreshIndicator(
-      color: Colors.red,
+      color: AppColors.primary,
       onRefresh: _loadBookings,
       child: ListView(
-        // ListView is required for RefreshIndicator to work
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
           SizedBox(
@@ -1633,20 +1959,26 @@ class _BookingHistoryState extends State<BookingHistory>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.inbox_outlined,
-                    color: Colors.grey,
+                    color: AppColors.lightTextSecondary,
                     size: 48,
                   ),
                   const SizedBox(height: 12),
                   Text(
                     message,
-                    style: const TextStyle(color: Colors.grey, fontSize: 16),
+                    style: TextStyle(
+                      color: AppColors.lightTextSecondary,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Pull down to refresh',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(
+                      color: AppColors.lightTextSecondary,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -1664,7 +1996,7 @@ class _BookingHistoryState extends State<BookingHistory>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.lightBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -1717,17 +2049,17 @@ class _BookingHistoryState extends State<BookingHistory>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on,
                             size: 12,
-                            color: Colors.red,
+                            color: AppColors.primary,
                           ),
                           const SizedBox(width: 2),
                           Expanded(
                             child: Text(
                               booking.hostelAddress,
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              style: TextStyle(
+                                color: AppColors.lightTextSecondary,
                                 fontSize: 11,
                               ),
                               maxLines: 2,
@@ -1746,9 +2078,9 @@ class _BookingHistoryState extends State<BookingHistory>
                           ),
                           Text(
                             booking.bookingReference,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
-                              color: Colors.grey,
+                              color: AppColors.lightTextSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -1762,7 +2094,7 @@ class _BookingHistoryState extends State<BookingHistory>
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -1851,17 +2183,21 @@ class _BookingHistoryState extends State<BookingHistory>
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
+              children: [
                 Text(
                   'Tap to fill details',
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.red,
+                    color: AppColors.primary,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_forward_ios, size: 10, color: Colors.red),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 10,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ],
@@ -1879,7 +2215,7 @@ class _BookingHistoryState extends State<BookingHistory>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.lightBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -1932,17 +2268,17 @@ class _BookingHistoryState extends State<BookingHistory>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on,
                             size: 12,
-                            color: Colors.red,
+                            color: AppColors.primary,
                           ),
                           const SizedBox(width: 2),
                           Expanded(
                             child: Text(
                               booking.hostelAddress,
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              style: TextStyle(
+                                color: AppColors.lightTextSecondary,
                                 fontSize: 11,
                               ),
                               maxLines: 2,
@@ -1954,9 +2290,9 @@ class _BookingHistoryState extends State<BookingHistory>
                       const SizedBox(height: 6),
                       Text(
                         booking.bookingReference,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
-                          color: Colors.grey,
+                          color: AppColors.lightTextSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1968,7 +2304,7 @@ class _BookingHistoryState extends State<BookingHistory>
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -2027,20 +2363,20 @@ class _BookingHistoryState extends State<BookingHistory>
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: AppColors.lightSurface,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: AppColors.lightBorder),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.person, size: 14, color: Colors.red),
+                    Icon(Icons.person, size: 14, color: AppColors.primary),
                     const SizedBox(width: 6),
                     Text(
                       'Vendor: ${booking.vendorName}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.lightText,
                       ),
                     ),
                     if (booking.vendorMobile != null) ...[
@@ -2048,10 +2384,10 @@ class _BookingHistoryState extends State<BookingHistory>
                       GestureDetector(
                         onTap: () => _callNumber(booking.vendorMobile!),
                         behavior: HitTestBehavior.opaque,
-                        child: const Icon(
+                        child: Icon(
                           Icons.call,
                           size: 16,
-                          color: Colors.red,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -2061,7 +2397,7 @@ class _BookingHistoryState extends State<BookingHistory>
                         child: const Icon(
                           Icons.chat,
                           size: 16,
-                          color: Colors.green,
+                          color: AppColors.success,
                         ),
                       ),
                     ],
@@ -2087,7 +2423,7 @@ class _BookingHistoryState extends State<BookingHistory>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.lightBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -2141,17 +2477,17 @@ class _BookingHistoryState extends State<BookingHistory>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on,
                             size: 12,
-                            color: Colors.red,
+                            color: AppColors.primary,
                           ),
                           const SizedBox(width: 2),
                           Expanded(
                             child: Text(
                               booking.hostelAddress,
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              style: TextStyle(
+                                color: AppColors.lightTextSecondary,
                                 fontSize: 11,
                               ),
                               maxLines: 2,
@@ -2175,9 +2511,11 @@ class _BookingHistoryState extends State<BookingHistory>
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.shade50,
+                              color: AppColors.success.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.green.shade300),
+                              border: Border.all(
+                                color: AppColors.success.withOpacity(0.3),
+                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -2185,7 +2523,7 @@ class _BookingHistoryState extends State<BookingHistory>
                                 Icon(
                                   Icons.check_circle,
                                   size: 10,
-                                  color: Colors.green.shade700,
+                                  color: AppColors.success,
                                 ),
                                 const SizedBox(width: 3),
                                 Text(
@@ -2193,7 +2531,7 @@ class _BookingHistoryState extends State<BookingHistory>
                                   style: TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.green.shade700,
+                                    color: AppColors.success,
                                   ),
                                 ),
                               ],
@@ -2212,9 +2550,9 @@ class _BookingHistoryState extends State<BookingHistory>
               alignment: Alignment.centerRight,
               child: Text(
                 booking.bookingReference,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
-                  color: Colors.grey,
+                  color: AppColors.lightTextSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -2222,7 +2560,7 @@ class _BookingHistoryState extends State<BookingHistory>
             const SizedBox(height: 10),
             Container(
               decoration: BoxDecoration(
-                color: Colors.green.shade600,
+                color: AppColors.success,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -2303,20 +2641,20 @@ class _BookingHistoryState extends State<BookingHistory>
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: AppColors.lightSurface,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: AppColors.lightBorder),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.person, size: 14, color: Colors.green),
+                    Icon(Icons.person, size: 14, color: AppColors.success),
                     const SizedBox(width: 6),
                     Text(
                       'Vendor: ${booking.vendorName}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.lightText,
                       ),
                     ),
                     if (booking.vendorMobile != null) ...[
@@ -2324,10 +2662,10 @@ class _BookingHistoryState extends State<BookingHistory>
                       GestureDetector(
                         onTap: () => _callNumber(booking.vendorMobile!),
                         behavior: HitTestBehavior.opaque,
-                        child: const Icon(
+                        child: Icon(
                           Icons.call,
                           size: 16,
-                          color: Colors.red,
+                          color: AppColors.primary,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -2337,7 +2675,7 @@ class _BookingHistoryState extends State<BookingHistory>
                         child: const Icon(
                           Icons.chat,
                           size: 16,
-                          color: Colors.green,
+                          color: AppColors.success,
                         ),
                       ),
                     ],
@@ -2361,23 +2699,23 @@ class _BookingHistoryState extends State<BookingHistory>
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppColors.lightSurface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: AppColors.lightBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.receipt_long, size: 14, color: Colors.red),
-              SizedBox(width: 6),
+              Icon(Icons.receipt_long, size: 14, color: AppColors.primary),
+              const SizedBox(width: 6),
               Text(
                 'Payment History',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: AppColors.lightText,
                 ),
               ),
             ],
@@ -2432,9 +2770,9 @@ class _BookingHistoryState extends State<BookingHistory>
                     flex: 3,
                     child: Text(
                       _formatDate(p.date),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Colors.black87,
+                        color: AppColors.lightText,
                       ),
                     ),
                   ),
@@ -2443,10 +2781,10 @@ class _BookingHistoryState extends State<BookingHistory>
                     child: Text(
                       '₹${p.amount.toStringAsFixed(0)}',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.lightText,
                       ),
                     ),
                   ),
@@ -2461,12 +2799,12 @@ class _BookingHistoryState extends State<BookingHistory>
                         ),
                         decoration: BoxDecoration(
                           color: p.status.toLowerCase() == 'paid'
-                              ? Colors.green.shade50
+                              ? AppColors.success.withOpacity(0.1)
                               : Colors.orange.shade50,
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: p.status.toLowerCase() == 'paid'
-                                ? Colors.green.shade300
+                                ? AppColors.success.withOpacity(0.3)
                                 : Colors.orange.shade300,
                           ),
                         ),
@@ -2476,7 +2814,7 @@ class _BookingHistoryState extends State<BookingHistory>
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: p.status.toLowerCase() == 'paid'
-                                ? Colors.green.shade700
+                                ? AppColors.success
                                 : Colors.orange.shade700,
                           ),
                         ),
@@ -2498,7 +2836,7 @@ class _BookingHistoryState extends State<BookingHistory>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.red,
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -2561,10 +2899,10 @@ class _BookingHistoryState extends State<BookingHistory>
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: AppColors.lightSurface,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Icon(Icons.hotel, color: Colors.grey),
+      child: Icon(Icons.hotel, color: AppColors.lightTextSecondary),
     );
   }
 
@@ -2574,8 +2912,8 @@ class _BookingHistoryState extends State<BookingHistory>
       return [
         TextSpan(
           text: name,
-          style: const TextStyle(
-            color: Colors.red,
+          style: TextStyle(
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -2585,16 +2923,16 @@ class _BookingHistoryState extends State<BookingHistory>
     return [
       TextSpan(
         text: '${parts.first} ',
-        style: const TextStyle(
-          color: Colors.red,
+        style: TextStyle(
+          color: AppColors.primary,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),
       ),
       TextSpan(
         text: parts.skip(1).join(' '),
-        style: const TextStyle(
-          color: Colors.black,
+        style: TextStyle(
+          color: AppColors.lightText,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),
@@ -2606,14 +2944,14 @@ class _BookingHistoryState extends State<BookingHistory>
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 12, color: Colors.red),
+        Icon(icon, size: 12, color: AppColors.primary),
         const SizedBox(width: 4),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: AppColors.lightText,
           ),
         ),
       ],
@@ -2630,18 +2968,24 @@ class _BookingHistoryState extends State<BookingHistory>
       icon: Icon(
         icon,
         size: 16,
-        color: onPressed != null ? Colors.red : Colors.grey,
+        color: onPressed != null
+            ? AppColors.primary
+            : AppColors.lightTextSecondary,
       ),
       label: Text(
         label,
         style: TextStyle(
-          color: onPressed != null ? Colors.red : Colors.grey,
+          color: onPressed != null
+              ? AppColors.primary
+              : AppColors.lightTextSecondary,
           fontSize: 13,
         ),
       ),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 6),
-        side: BorderSide(color: onPressed != null ? Colors.red : Colors.grey),
+        side: BorderSide(
+          color: onPressed != null ? AppColors.primary : AppColors.lightBorder,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -2657,19 +3001,6 @@ class _BookingHistoryState extends State<BookingHistory>
       ).showSnackBar(const SnackBar(content: Text('Could not open dialer')));
     }
   }
-
-  // Future<void> _openWhatsApp(String phone) async {
-  //   final cleaned = phone.trim().replaceAll(RegExp(r'\D'), '');
-  //   final full = cleaned.startsWith('91') ? cleaned : '91$cleaned';
-  //   final uri = Uri.parse('https://wa.me/$full');
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } else if (mounted) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(const SnackBar(content: Text('Could not open WhatsApp')));
-  //   }
-  // }
 
   Future<void> _openWhatsApp(String phoneNumber) async {
     final message = Uri.encodeComponent(

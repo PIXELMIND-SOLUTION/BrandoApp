@@ -35,10 +35,9 @@ class HostelBookingService {
       final formData = FormData.fromMap({
         'name': request.name,
         'mobileNumber': request.mobileNumber,
+        'emergencyNumber': request.emergencyNumber,
+
         'roomNo': request.roomNo,
-        'roomType': request.roomType,
-        'shareType': request.shareType,
-        'email': request.email,
         'aadharCardImage': await _toMultipartFile(request.aadharCardImagePath),
         'panCardImage': await _toMultipartFile(request.panCardImagePath),
         'profileImage': await _toMultipartFile(request.profileImagePath),

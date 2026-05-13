@@ -1,241 +1,13 @@
-// /////////////////////////// Fixed the Bottom bar overflow issueeeeessssssss//////////////////////////////
-
-// // ignore_for_file: dangling_library_doc_comments
-
 // import 'package:brando_app/provider/navbar/navbar_provider.dart';
-// import 'package:brando_app/views/home/booking_screen.dart';
-// import 'package:brando_app/views/home/home_screen.dart';
-// import 'package:brando_app/views/home/menu_screen.dart';
-// import 'package:brando_app/views/home/wishlist_screen.dart';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-
-// class _NavItem {
-//   final IconData icon;
-//   final IconData activeIcon;
-//   final String label;
-
-//   const _NavItem({
-//     required this.icon,
-//     required this.activeIcon,
-//     required this.label,
-//   });
-// }
-
-// // ─────────────────────────────────────────────────────────────
-// // Bottom Navbar
-// // ─────────────────────────────────────────────────────────────
-
-// class CustomBottomNavbar extends StatelessWidget {
-//   const CustomBottomNavbar({super.key});
-
-//   static const _items = [
-//     _NavItem(
-//       icon: Icons.home_outlined,
-//       activeIcon: Icons.home_rounded,
-//       label: 'Home',
-//     ),
-//     _NavItem(
-//       icon: Icons.favorite_border_rounded,
-//       activeIcon: Icons.favorite_rounded,
-//       label: 'Wishlist',
-//     ),
-//     _NavItem(
-//       icon: Icons.king_bed_outlined,
-//       activeIcon: Icons.king_bed_rounded,
-//       label: 'Bookings',
-//     ),
-//     _NavItem(
-//       icon: Icons.menu_rounded,
-//       activeIcon: Icons.menu_rounded,
-//       label: 'Discover',
-//     ),
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final provider = context.watch<BottomNavbarProvider>();
-//     final currentIndex = provider.currentIndex;
-
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.08),
-//             blurRadius: 20,
-//             offset: const Offset(0, -4),
-//           ),
-//         ],
-//       ),
-//       child: SafeArea(
-//         top: false,
-//         child: SizedBox(
-//           height: 64,
-//           child: Row(
-//             children: List.generate(_items.length, (index) {
-//               final item = _items[index];
-//               final isActive = index == currentIndex;
-
-//               // ✅ All items equal width (No flex change)
-//               return Expanded(
-//                 child: _NavBarItem(
-//                   item: item,
-//                   isActive: isActive,
-//                   onTap: () => provider.setIndex(index),
-//                 ),
-//               );
-//             }),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// // ─────────────────────────────────────────────────────────────
-// // Individual Nav Item
-// // ─────────────────────────────────────────────────────────────
-
-// class _NavBarItem extends StatefulWidget {
-//   final _NavItem item;
-//   final bool isActive;
-//   final VoidCallback onTap;
-
-//   const _NavBarItem({
-//     required this.item,
-//     required this.isActive,
-//     required this.onTap,
-//   });
-
-//   @override
-//   State<_NavBarItem> createState() => _NavBarItemState();
-// }
-
-// class _NavBarItemState extends State<_NavBarItem>
-//     with SingleTickerProviderStateMixin {
-//   late final AnimationController _controller;
-//   late final Animation<double> _scaleAnim;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _controller = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 150),
-//     );
-//     _scaleAnim = Tween<double>(begin: 1.0, end: 0.92).animate(
-//       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-//     );
-//   }
-
-//   @override
-//   void dispose() {
-//     _controller.dispose();
-//     super.dispose();
-//   }
-
-//   void _handleTap() {
-//     _controller.forward().then((_) => _controller.reverse());
-//     widget.onTap();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     const activeColor = Color(0xFFE84A4A);
-//     const inactiveColor = Color(0xFFB0B0B0);
-
-//     return GestureDetector(
-//       onTap: _handleTap,
-//       behavior: HitTestBehavior.opaque,
-//       child: ScaleTransition(
-//         scale: _scaleAnim,
-//         child: Center(
-//           child: AnimatedContainer(
-//             duration: const Duration(milliseconds: 250),
-//             curve: Curves.easeInOut,
-//             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-//             decoration: BoxDecoration(
-//               color: widget.isActive
-//                   ? const Color(0xFFFFE5E5)
-//                   : Colors.transparent,
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//             // ✅ Constrain max width so it never overflows
-//             constraints: const BoxConstraints(
-//               maxWidth: 120,
-//             ),
-//             child: Row(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 Icon(
-//                   widget.isActive
-//                       ? widget.item.activeIcon
-//                       : widget.item.icon,
-//                   color: widget.isActive ? activeColor : inactiveColor,
-//                   size: 22,
-//                 ),
-//                 if (widget.isActive) ...[
-//                   const SizedBox(width: 4),
-//                   Flexible(
-//                     child: Text(
-//                       widget.item.label,
-//                       overflow: TextOverflow.ellipsis,
-//                       maxLines: 1,
-//                       style: const TextStyle(
-//                         color: activeColor,
-//                         fontSize: 13,
-//                         fontWeight: FontWeight.w600,
-//                       ),
-//                     ),
-//                   ),
-//                 ]
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// // ─────────────────────────────────────────────────────────────
-// // Navbar Screen
-// // ─────────────────────────────────────────────────────────────
-
-// class NavbarScreen extends StatelessWidget {
-//   const NavbarScreen({super.key});
-
-//   static const _pages = [
-//     HomeScreen(),
-//     WishlistScreen(),
-//     BookingScreen(),
-//     MenuScreen(),
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final currentIndex = context.watch<BottomNavbarProvider>().currentIndex;
-
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFF8F8F8),
-//       body: IndexedStack(
-//         index: currentIndex,
-//         children: _pages,
-//       ),
-//       bottomNavigationBar: const CustomBottomNavbar(),
-//     );
-//   }
-// }
-
-// import 'package:brando_app/provider/navbar/navbar_provider.dart';
-// import 'package:brando_app/views/home/booking_screen.dart';
+// import 'package:brando_app/views/history/booking_history.dart';
+// // import 'package:brando_app/views/home/booking_screen.dart';
 // import 'package:brando_app/views/home/home_screen.dart';
 // import 'package:brando_app/views/home/menu_screen.dart';
 // import 'package:brando_app/views/home/wishlist_screen.dart';
 // import 'package:flutter/material.dart';
 // import 'package:mobile_scanner/mobile_scanner.dart';
 // import 'package:provider/provider.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 // class _NavItem {
 //   final IconData icon;
@@ -456,7 +228,7 @@
 // }
 
 // // ─────────────────────────────────────────────────────────────
-// // QR Scanner Screen
+// // QR Scanner Screen (Professional)
 // // ─────────────────────────────────────────────────────────────
 
 // class QRScannerScreen extends StatefulWidget {
@@ -466,12 +238,29 @@
 //   State<QRScannerScreen> createState() => _QRScannerScreenState();
 // }
 
-// class _QRScannerScreenState extends State<QRScannerScreen> {
+// class _QRScannerScreenState extends State<QRScannerScreen>
+//     with SingleTickerProviderStateMixin {
 //   final MobileScannerController _controller = MobileScannerController();
 //   bool _isScanning = true;
+//   late AnimationController _animationController;
+//   late Animation<double> _scanAnimation;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _animationController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(seconds: 2),
+//     );
+//     _scanAnimation = Tween<double>(begin: 0, end: 1).animate(
+//       CurvedAnimation(parent: _animationController, curve: Curves.linear),
+//     );
+//     _animationController.repeat();
+//   }
 
 //   @override
 //   void dispose() {
+//     _animationController.dispose();
 //     _controller.dispose();
 //     super.dispose();
 //   }
@@ -481,7 +270,7 @@
 //     return Scaffold(
 //       backgroundColor: Colors.black,
 //       appBar: AppBar(
-//         backgroundColor: Colors.black,
+//         backgroundColor: Colors.transparent,
 //         elevation: 0,
 //         leading: IconButton(
 //           onPressed: () => Navigator.pop(context),
@@ -489,14 +278,20 @@
 //         ),
 //         title: const Text(
 //           'Scan QR Code',
-//           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+//           style: TextStyle(
+//             color: Colors.white,
+//             fontWeight: FontWeight.bold,
+//             fontSize: 20,
+//           ),
 //         ),
 //         centerTitle: true,
 //       ),
 //       body: Stack(
 //         children: [
+//           // Full-screen scanner
 //           MobileScanner(
 //             controller: _controller,
+//             fit: BoxFit.cover,
 //             onDetect: (capture) {
 //               if (!_isScanning) return;
 
@@ -504,46 +299,34 @@
 //               for (final barcode in barcodes) {
 //                 if (barcode.rawValue != null) {
 //                   _isScanning = false;
+//                   _controller.stop();
 //                   _handleQRCode(barcode.rawValue!);
 //                   break;
 //                 }
 //               }
 //             },
 //           ),
+//           // Scanner overlay with larger scan area
 //           _buildScannerOverlay(),
+//           // Scan line animation
+//           _buildScanLine(),
 //         ],
 //       ),
 //       bottomNavigationBar: Container(
-//         color: Colors.black,
-//         padding: const EdgeInsets.all(20),
+//         color: Colors.black.withOpacity(0.9),
+//         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
 //         child: Row(
 //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //           children: [
-//             Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 IconButton(
-//                   onPressed: () => _controller.toggleTorch(),
-//                   icon: const Icon(Icons.flashlight_on, color: Colors.white),
-//                 ),
-//                 const Text(
-//                   'Flash',
-//                   style: TextStyle(color: Colors.white, fontSize: 12),
-//                 ),
-//               ],
+//             _buildControlButton(
+//               icon: Icons.flashlight_on,
+//               label: 'Flash',
+//               onPressed: () => _controller.toggleTorch(),
 //             ),
-//             Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 IconButton(
-//                   onPressed: () => _controller.switchCamera(),
-//                   icon: const Icon(Icons.cameraswitch, color: Colors.white),
-//                 ),
-//                 const Text(
-//                   'Switch',
-//                   style: TextStyle(color: Colors.white, fontSize: 12),
-//                 ),
-//               ],
+//             _buildControlButton(
+//               icon: Icons.cameraswitch,
+//               label: 'Switch',
+//               onPressed: () => _controller.switchCamera(),
 //             ),
 //           ],
 //         ),
@@ -551,74 +334,64 @@
 //     );
 //   }
 
+//   Widget _buildControlButton({
+//     required IconData icon,
+//     required String label,
+//     required VoidCallback onPressed,
+//   }) {
+//     return Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Container(
+//           padding: const EdgeInsets.all(12),
+//           decoration: BoxDecoration(
+//             color: Colors.white.withOpacity(0.1),
+//             shape: BoxShape.circle,
+//           ),
+//           child: IconButton(
+//             onPressed: onPressed,
+//             icon: Icon(icon, color: Colors.white, size: 28),
+//             padding: EdgeInsets.zero,
+//             constraints: const BoxConstraints(),
+//           ),
+//         ),
+//         const SizedBox(height: 8),
+//         Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
+//       ],
+//     );
+//   }
+
 //   Widget _buildScannerOverlay() {
 //     return Container(
-//       color: Colors.black.withOpacity(0.5),
+//       color: Colors.black.withOpacity(0.6),
 //       child: Center(
 //         child: Container(
-//           width: 280,
-//           height: 280,
-//           decoration: BoxDecoration(
-//             border: Border.all(color: Colors.white, width: 2),
-//             borderRadius: BorderRadius.circular(16),
-//           ),
+//           width: MediaQuery.of(context).size.width * 0.8,
+//           height: MediaQuery.of(context).size.width * 0.8,
+//           decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
 //           child: Stack(
 //             children: [
-//               Positioned(
-//                 top: -2,
-//                 left: -2,
-//                 child: Container(
-//                   width: 40,
-//                   height: 40,
-//                   decoration: const BoxDecoration(
-//                     border: Border(
-//                       top: BorderSide(color: Colors.red, width: 4),
-//                       left: BorderSide(color: Colors.red, width: 4),
-//                     ),
-//                   ),
+//               // Transparent center
+//               ClipPath(
+//                 clipper: _ScannerClipper(
+//                   rectSize: MediaQuery.of(context).size.width * 0.8,
 //                 ),
+//                 child: Container(color: Colors.transparent),
 //               ),
-//               Positioned(
-//                 top: -2,
-//                 right: -2,
-//                 child: Container(
-//                   width: 40,
-//                   height: 40,
-//                   decoration: const BoxDecoration(
-//                     border: Border(
-//                       top: BorderSide(color: Colors.red, width: 4),
-//                       right: BorderSide(color: Colors.red, width: 4),
-//                     ),
-//                   ),
-//                 ),
+//               // Corner borders
+//               _buildCornerBorder(Alignment.topLeft, -1, -1, Alignment.topLeft),
+//               _buildCornerBorder(Alignment.topRight, 1, -1, Alignment.topRight),
+//               _buildCornerBorder(
+//                 Alignment.bottomLeft,
+//                 -1,
+//                 1,
+//                 Alignment.bottomLeft,
 //               ),
-//               Positioned(
-//                 bottom: -2,
-//                 left: -2,
-//                 child: Container(
-//                   width: 40,
-//                   height: 40,
-//                   decoration: const BoxDecoration(
-//                     border: Border(
-//                       bottom: BorderSide(color: Colors.red, width: 4),
-//                       left: BorderSide(color: Colors.red, width: 4),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               Positioned(
-//                 bottom: -2,
-//                 right: -2,
-//                 child: Container(
-//                   width: 40,
-//                   height: 40,
-//                   decoration: const BoxDecoration(
-//                     border: Border(
-//                       bottom: BorderSide(color: Colors.red, width: 4),
-//                       right: BorderSide(color: Colors.red, width: 4),
-//                     ),
-//                   ),
-//                 ),
+//               _buildCornerBorder(
+//                 Alignment.bottomRight,
+//                 1,
+//                 1,
+//                 Alignment.bottomRight,
 //               ),
 //             ],
 //           ),
@@ -627,67 +400,498 @@
 //     );
 //   }
 
-//   void _handleQRCode(String code) {
-//     debugPrint('Scanned QR Code: $code');
-
-//     showDialog(
-//       context: context,
-//       barrierDismissible: false,
-//       builder: (context) => AlertDialog(
-//         title: const Text('QR Code Scanned'),
-//         content: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const Text('Successfully scanned QR code!'),
-//             const SizedBox(height: 10),
-//             Container(
-//               padding: const EdgeInsets.all(10),
-//               decoration: BoxDecoration(
-//                 color: Colors.grey.shade100,
-//                 borderRadius: BorderRadius.circular(8),
-//               ),
-//               child: SelectableText(code, style: const TextStyle(fontSize: 12)),
-//             ),
-//           ],
-//         ),
-//         actions: [
-//           TextButton(
-//             onPressed: () {
-//               Navigator.pop(context);
-//               Navigator.pop(context);
-//             },
-//             child: const Text('OK'),
+//   Widget _buildCornerBorder(
+//     Alignment alignment,
+//     double xSign,
+//     double ySign,
+//     Alignment gradientAlignment,
+//   ) {
+//     return Align(
+//       alignment: alignment,
+//       child: Container(
+//         width: 50,
+//         height: 50,
+//         decoration: BoxDecoration(
+//           gradient: LinearGradient(
+//             begin: gradientAlignment,
+//             end: Alignment.center,
+//             colors: const [Color(0xFFEF5350), Colors.transparent],
 //           ),
-//           TextButton(
-//             onPressed: () {
-//               Navigator.pop(context);
-//               setState(() {
-//                 _isScanning = true;
-//                 _controller.start();
-//               });
-//             },
-//             child: const Text('Scan Again'),
+//         ),
+//         child: CustomPaint(painter: _CornerPainter(xSign, ySign)),
+//       ),
+//     );
+//   }
+
+//   Widget _buildScanLine() {
+//     return AnimatedBuilder(
+//       animation: _scanAnimation,
+//       builder: (context, child) {
+//         final position =
+//             MediaQuery.of(context).size.width * 0.1 +
+//             (_scanAnimation.value * MediaQuery.of(context).size.width * 0.7);
+//         return Positioned(
+//           top: position,
+//           left: MediaQuery.of(context).size.width * 0.1,
+//           child: Container(
+//             width: MediaQuery.of(context).size.width * 0.8,
+//             height: 2,
+//             decoration: BoxDecoration(
+//               gradient: const LinearGradient(
+//                 colors: [
+//                   Colors.transparent,
+//                   Color(0xFFEF5350),
+//                   Colors.transparent,
+//                 ],
+//               ),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: const Color(0xFFEF5350).withOpacity(0.5),
+//                   blurRadius: 10,
+//                   spreadRadius: 2,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+
+//   void _handleQRCode(String code) async {
+//     final isUrl = _isValidUrl(code);
+
+//     showModalBottomSheet(
+//       context: context,
+//       isDismissible: true,
+//       enableDrag: true,
+//       backgroundColor: Colors.transparent,
+//       isScrollControlled: false,
+//       builder: (context) => _QRResultModal(
+//         qrCode: code,
+//         isUrl: isUrl,
+//         onClose: () {
+//           Navigator.pop(context); // Close modal
+//           Navigator.pop(context); // Close scanner
+//         },
+//         onScanAgain: () {
+//           Navigator.pop(context); // Close modal
+//           setState(() {
+//             _isScanning = true;
+//             _controller.start();
+//           });
+//         },
+//         onOpenUrl: isUrl
+//             ? () async {
+//                 await _launchUrl(code);
+//                 Navigator.pop(context); // Close modal
+//                 Navigator.pop(context); // Close scanner
+//               }
+//             : null,
+//       ),
+//     );
+//   }
+
+//   bool _isValidUrl(String url) {
+//     // Check if it's a valid URL with http/https scheme
+//     try {
+//       final uri = Uri.parse(url);
+//       return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
+//     } catch (e) {
+//       return false;
+//     }
+//   }
+
+//   Future<void> _launchUrl(String url) async {
+//     Uri uri = Uri.parse(url);
+
+//     // Ensure URL has scheme
+//     if (!uri.hasScheme) {
+//       uri = Uri.parse('https://$url');
+//     }
+
+//     try {
+//       if (await canLaunchUrl(uri)) {
+//         await launchUrl(
+//           uri,
+//           mode: LaunchMode.externalApplication,
+//           webViewConfiguration: const WebViewConfiguration(
+//             enableJavaScript: true,
+//             enableDomStorage: true,
+//           ),
+//         );
+//       } else {
+//         // Show error if can't launch
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(
+//               content: Text('Could not open URL'),
+//               backgroundColor: Colors.red,
+//             ),
+//           );
+//         }
+//       }
+//     } catch (e) {
+//       debugPrint('Error launching URL: $e');
+//       if (mounted) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(
+//             content: Text('Error opening URL: $e'),
+//             backgroundColor: Colors.red,
+//           ),
+//         );
+//       }
+//     }
+//   }
+// }
+
+// // ─────────────────────────────────────────────────────────────
+// // Professional QR Result Modal (Compact Version)
+// // ─────────────────────────────────────────────────────────────
+
+// class _QRResultModal extends StatelessWidget {
+//   final String qrCode;
+//   final bool isUrl;
+//   final VoidCallback onClose;
+//   final VoidCallback onScanAgain;
+//   final VoidCallback? onOpenUrl;
+
+//   const _QRResultModal({
+//     required this.qrCode,
+//     required this.isUrl,
+//     required this.onClose,
+//     required this.onScanAgain,
+//     this.onOpenUrl,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.all(16),
+//       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(28),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.15),
+//             blurRadius: 20,
+//             offset: const Offset(0, -2),
 //           ),
 //         ],
+//       ),
+//       child: SingleChildScrollView(
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             // Success Icon (Smaller)
+//             Container(
+//               padding: const EdgeInsets.all(12),
+//               decoration: BoxDecoration(
+//                 gradient: const LinearGradient(
+//                   colors: [Color(0xFFEF5350), Color(0xFFC62828)],
+//                 ),
+//                 shape: BoxShape.circle,
+//                 boxShadow: [
+//                   BoxShadow(
+//                     color: const Color(0xFFEF5350).withOpacity(0.3),
+//                     blurRadius: 10,
+//                     spreadRadius: 1,
+//                   ),
+//                 ],
+//               ),
+//               child: const Icon(
+//                 Icons.check_rounded,
+//                 color: Colors.white,
+//                 size: 32,
+//               ),
+//             ),
+//             const SizedBox(height: 16),
+
+//             // Title (Smaller)
+//             const Text(
+//               'QR Code Scanned!',
+//               style: TextStyle(
+//                 fontSize: 20,
+//                 fontWeight: FontWeight.bold,
+//                 color: Color(0xFF1A1A1A),
+//               ),
+//               textAlign: TextAlign.center,
+//             ),
+//             const SizedBox(height: 8),
+
+//             // Subtitle (Smaller)
+//             Text(
+//               isUrl ? 'Link detected' : 'Data detected',
+//               style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+//               textAlign: TextAlign.center,
+//             ),
+//             const SizedBox(height: 20),
+
+//             // QR Content Container (Compact)
+//             Container(
+//               padding: const EdgeInsets.all(12),
+//               decoration: BoxDecoration(
+//                 color: Colors.grey[50],
+//                 borderRadius: BorderRadius.circular(14),
+//                 border: Border.all(color: Colors.grey[200]!),
+//               ),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     children: [
+//                       Icon(
+//                         isUrl ? Icons.link_rounded : Icons.qr_code,
+//                         size: 14,
+//                         color: Colors.grey[600],
+//                       ),
+//                       const SizedBox(width: 6),
+//                       Text(
+//                         isUrl ? 'Scanned Link:' : 'Scanned Content:',
+//                         style: TextStyle(
+//                           fontSize: 11,
+//                           fontWeight: FontWeight.w600,
+//                           color: Colors.grey[600],
+//                           letterSpacing: 0.3,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 6),
+//                   SelectableText(
+//                     qrCode,
+//                     style: TextStyle(
+//                       fontSize: 12,
+//                       color: isUrl ? const Color(0xFFEF5350) : Colors.black87,
+//                       fontWeight: isUrl ? FontWeight.w600 : FontWeight.normal,
+//                     ),
+//                     maxLines: 2,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const SizedBox(height: 20),
+
+//             // Action Buttons (Compact)
+//             if (isUrl)
+//               Column(
+//                 children: [
+//                   SizedBox(
+//                     width: double.infinity,
+//                     child: ElevatedButton(
+//                       onPressed: onOpenUrl,
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor: const Color(0xFFEF5350),
+//                         foregroundColor: Colors.white,
+//                         padding: const EdgeInsets.symmetric(vertical: 12),
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(14),
+//                         ),
+//                         elevation: 0,
+//                       ),
+//                       child: const Text(
+//                         'Open Link',
+//                         style: TextStyle(
+//                           fontSize: 15,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 10),
+//                   Row(
+//                     children: [
+//                       Expanded(
+//                         child: TextButton(
+//                           onPressed: onScanAgain,
+//                           style: TextButton.styleFrom(
+//                             padding: const EdgeInsets.symmetric(vertical: 10),
+//                           ),
+//                           child: const Text(
+//                             'Scan Again',
+//                             style: TextStyle(
+//                               fontSize: 13,
+//                               color: Color(0xFFEF5350),
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                       Expanded(
+//                         child: TextButton(
+//                           onPressed: onClose,
+//                           style: TextButton.styleFrom(
+//                             padding: const EdgeInsets.symmetric(vertical: 10),
+//                           ),
+//                           child: const Text(
+//                             'Close',
+//                             style: TextStyle(
+//                               fontSize: 13,
+//                               color: Colors.grey,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               )
+//             else
+//               Row(
+//                 children: [
+//                   Expanded(
+//                     child: OutlinedButton(
+//                       onPressed: onScanAgain,
+//                       style: OutlinedButton.styleFrom(
+//                         foregroundColor: const Color(0xFFEF5350),
+//                         side: const BorderSide(color: Color(0xFFEF5350)),
+//                         padding: const EdgeInsets.symmetric(vertical: 12),
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(14),
+//                         ),
+//                       ),
+//                       child: const Text(
+//                         'Scan Again',
+//                         style: TextStyle(fontSize: 14),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(width: 12),
+//                   Expanded(
+//                     child: ElevatedButton(
+//                       onPressed: onClose,
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor: const Color(0xFFEF5350),
+//                         padding: const EdgeInsets.symmetric(vertical: 12),
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(14),
+//                         ),
+//                       ),
+//                       child: const Text(
+//                         'Close',
+//                         style: TextStyle(fontSize: 14),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//           ],
+//         ),
 //       ),
 //     );
 //   }
 // }
 
 // // ─────────────────────────────────────────────────────────────
+// // Custom Painters for Scanner Overlay
+// // ─────────────────────────────────────────────────────────────
+
+// class _ScannerClipper extends CustomClipper<Path> {
+//   final double rectSize;
+
+//   _ScannerClipper({required this.rectSize});
+
+//   @override
+//   Path getClip(Size size) {
+//     final path = Path()
+//       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+//       ..addRect(
+//         Rect.fromLTWH(
+//           (size.width - rectSize) / 2,
+//           (size.height - rectSize) / 2,
+//           rectSize,
+//           rectSize,
+//         ),
+//       )
+//       ..fillType = PathFillType.evenOdd;
+//     return path;
+//   }
+
+//   @override
+//   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+// }
+
+// class _CornerPainter extends CustomPainter {
+//   final double xSign;
+//   final double ySign;
+
+//   _CornerPainter(this.xSign, this.ySign);
+
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..color = const Color(0xFFEF5350)
+//       ..strokeWidth = 4
+//       ..style = PaintingStyle.stroke;
+
+//     final path = Path();
+
+//     if (xSign == -1 && ySign == -1) {
+//       // Top-left
+//       path.moveTo(0, size.height);
+//       path.lineTo(0, size.height * 0.3);
+//       path.lineTo(size.width * 0.3, 0);
+//       path.lineTo(size.width, 0);
+//     } else if (xSign == 1 && ySign == -1) {
+//       // Top-right
+//       path.moveTo(0, 0);
+//       path.lineTo(size.width * 0.7, 0);
+//       path.lineTo(size.width, size.height * 0.3);
+//       path.lineTo(size.width, size.height);
+//     } else if (xSign == -1 && ySign == 1) {
+//       // Bottom-left
+//       path.moveTo(0, 0);
+//       path.lineTo(0, size.height * 0.7);
+//       path.lineTo(size.width * 0.3, size.height);
+//       path.lineTo(size.width, size.height);
+//     } else {
+//       // Bottom-right
+//       path.moveTo(size.width, 0);
+//       path.lineTo(size.width, size.height * 0.7);
+//       path.lineTo(size.width * 0.7, size.height);
+//       path.lineTo(0, size.height);
+//     }
+
+//     canvas.drawPath(path, paint);
+//   }
+
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+// }
+
+// // ─────────────────────────────────────────────────────────────
 // // Navbar Screen
 // // ─────────────────────────────────────────────────────────────
 
-// class NavbarScreen extends StatelessWidget {
-//   const NavbarScreen({super.key});
+// class NavbarScreen extends StatefulWidget {
+//   final int initialIndex;
+
+//   const NavbarScreen({super.key, this.initialIndex = 0});
 
 //   static const _pages = [
 //     HomeScreen(),
 //     WishlistScreen(),
-//     BookingScreen(),
+
+//     // BookingScreen(),
+//     BookingHistory(),
 //     MenuScreen(),
 //   ];
+
+//   @override
+//   State<NavbarScreen> createState() => _NavbarScreenState();
+// }
+
+// class _NavbarScreenState extends State<NavbarScreen> {
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       context.read<BottomNavbarProvider>().setIndex(widget.initialIndex);
+//     });
+//   }
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -695,7 +899,10 @@
 //       builder: (context, provider, _) {
 //         return Scaffold(
 //           backgroundColor: const Color(0xFFF8F8F8),
-//           body: IndexedStack(index: provider.currentIndex, children: _pages),
+//           body: IndexedStack(
+//             index: provider.currentIndex,
+//             children: NavbarScreen._pages,
+//           ),
 //           bottomNavigationBar: const CustomBottomNavbar(),
 //         );
 //       },
@@ -703,8 +910,10 @@
 //   }
 // }
 
+import 'package:brando_app/config/theme_config.dart';
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
-import 'package:brando_app/views/home/booking_screen.dart';
+import 'package:brando_app/provider/theme_provider.dart';
+import 'package:brando_app/views/history/booking_history.dart';
 import 'package:brando_app/views/home/home_screen.dart';
 import 'package:brando_app/views/home/menu_screen.dart';
 import 'package:brando_app/views/home/wishlist_screen.dart';
@@ -732,8 +941,6 @@ class _NavItem {
 class CustomBottomNavbar extends StatelessWidget {
   const CustomBottomNavbar({super.key});
 
-  // Only 4 items - Home, Wishlist, Bookings, Discover
-  // Scanner will be handled by FAB
   static const _items = [
     _NavItem(
       icon: Icons.home_outlined,
@@ -761,6 +968,7 @@ class CustomBottomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<BottomNavbarProvider>();
     final currentIndex = provider.currentIndex;
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -768,7 +976,7 @@ class CustomBottomNavbar extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDarkMode ? AppColors.darkCard : AppColors.lightBackground,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.08),
@@ -799,7 +1007,6 @@ class CustomBottomNavbar extends StatelessWidget {
             ),
           ),
         ),
-        // Floating Action Button in Center
         Positioned(
           top: -30,
           child: GestureDetector(
@@ -818,16 +1025,12 @@ class CustomBottomNavbar extends StatelessWidget {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFEF5350),
-                    Color(0xFFC62828),
-                    Color(0xFFB71C1C),
-                  ],
+                  colors: AppColors.primaryGradient,
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.red.withOpacity(0.4),
+                    color: AppColors.primary.withOpacity(0.4),
                     blurRadius: 15,
                     spreadRadius: 3,
                     offset: const Offset(0, 5),
@@ -897,8 +1100,11 @@ class _NavBarItemState extends State<_NavBarItem>
 
   @override
   Widget build(BuildContext context) {
-    const activeColor = Color(0xFFE84A4A);
-    const inactiveColor = Color(0xFFB0B0B0);
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+    const activeColor = AppColors.primary;
+    final inactiveColor = isDarkMode
+        ? AppColors.darkTextSecondary
+        : const Color(0xFFB0B0B0);
 
     return GestureDetector(
       onTap: _handleTap,
@@ -992,7 +1198,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
       ),
       body: Stack(
         children: [
-          // Full-screen scanner
           MobileScanner(
             controller: _controller,
             fit: BoxFit.cover,
@@ -1010,9 +1215,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
               }
             },
           ),
-          // Scanner overlay with larger scan area
           _buildScannerOverlay(),
-          // Scan line animation
           _buildScanLine(),
         ],
       ),
@@ -1075,14 +1278,12 @@ class _QRScannerScreenState extends State<QRScannerScreen>
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
           child: Stack(
             children: [
-              // Transparent center
               ClipPath(
                 clipper: _ScannerClipper(
                   rectSize: MediaQuery.of(context).size.width * 0.8,
                 ),
                 child: Container(color: Colors.transparent),
               ),
-              // Corner borders
               _buildCornerBorder(Alignment.topLeft, -1, -1, Alignment.topLeft),
               _buildCornerBorder(Alignment.topRight, 1, -1, Alignment.topRight),
               _buildCornerBorder(
@@ -1119,7 +1320,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
           gradient: LinearGradient(
             begin: gradientAlignment,
             end: Alignment.center,
-            colors: const [Color(0xFFEF5350), Colors.transparent],
+            colors: [AppColors.primary, Colors.transparent],
           ),
         ),
         child: CustomPaint(painter: _CornerPainter(xSign, ySign)),
@@ -1141,16 +1342,16 @@ class _QRScannerScreenState extends State<QRScannerScreen>
             width: MediaQuery.of(context).size.width * 0.8,
             height: 2,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  Color(0xFFEF5350),
+                  AppColors.primary,
                   Colors.transparent,
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFEF5350).withOpacity(0.5),
+                  color: AppColors.primary.withOpacity(0.5),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -1175,11 +1376,11 @@ class _QRScannerScreenState extends State<QRScannerScreen>
         qrCode: code,
         isUrl: isUrl,
         onClose: () {
-          Navigator.pop(context); // Close modal
-          Navigator.pop(context); // Close scanner
+          Navigator.pop(context);
+          Navigator.pop(context);
         },
         onScanAgain: () {
-          Navigator.pop(context); // Close modal
+          Navigator.pop(context);
           setState(() {
             _isScanning = true;
             _controller.start();
@@ -1188,8 +1389,8 @@ class _QRScannerScreenState extends State<QRScannerScreen>
         onOpenUrl: isUrl
             ? () async {
                 await _launchUrl(code);
-                Navigator.pop(context); // Close modal
-                Navigator.pop(context); // Close scanner
+                Navigator.pop(context);
+                Navigator.pop(context);
               }
             : null,
       ),
@@ -1197,7 +1398,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
   }
 
   bool _isValidUrl(String url) {
-    // Check if it's a valid URL with http/https scheme
     try {
       final uri = Uri.parse(url);
       return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
@@ -1208,8 +1408,6 @@ class _QRScannerScreenState extends State<QRScannerScreen>
 
   Future<void> _launchUrl(String url) async {
     Uri uri = Uri.parse(url);
-
-    // Ensure URL has scheme
     if (!uri.hasScheme) {
       uri = Uri.parse('https://$url');
     }
@@ -1225,12 +1423,11 @@ class _QRScannerScreenState extends State<QRScannerScreen>
           ),
         );
       } else {
-        // Show error if can't launch
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Could not open URL'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
           );
         }
@@ -1241,7 +1438,7 @@ class _QRScannerScreenState extends State<QRScannerScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error opening URL: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -1270,11 +1467,13 @@ class _QRResultModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? AppColors.darkCard : AppColors.lightBackground,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
@@ -1288,17 +1487,16 @@ class _QRResultModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Success Icon (Smaller)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFEF5350), Color(0xFFC62828)],
+                  colors: AppColors.primaryGradient,
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFEF5350).withOpacity(0.3),
+                    color: AppColors.primary.withOpacity(0.3),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
@@ -1311,34 +1509,37 @@ class _QRResultModal extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Title (Smaller)
-            const Text(
+            Text(
               'QR Code Scanned!',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1A1A1A),
+                color: isDarkMode
+                    ? AppColors.darkText
+                    : const Color(0xFF1A1A1A),
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-
-            // Subtitle (Smaller)
             Text(
               isUrl ? 'Link detected' : 'Data detected',
-              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: 13,
+                color: isDarkMode
+                    ? AppColors.darkTextSecondary
+                    : Colors.grey[600],
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-
-            // QR Content Container (Compact)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: isDarkMode ? AppColors.darkSurface : Colors.grey[50],
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(
+                  color: isDarkMode ? AppColors.darkBorder : Colors.grey[200]!,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1348,7 +1549,9 @@ class _QRResultModal extends StatelessWidget {
                       Icon(
                         isUrl ? Icons.link_rounded : Icons.qr_code,
                         size: 14,
-                        color: Colors.grey[600],
+                        color: isDarkMode
+                            ? AppColors.darkTextSecondary
+                            : Colors.grey[600],
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -1356,7 +1559,9 @@ class _QRResultModal extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[600],
+                          color: isDarkMode
+                              ? AppColors.darkTextSecondary
+                              : Colors.grey[600],
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -1367,7 +1572,9 @@ class _QRResultModal extends StatelessWidget {
                     qrCode,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isUrl ? const Color(0xFFEF5350) : Colors.black87,
+                      color: isUrl
+                          ? AppColors.primary
+                          : (isDarkMode ? AppColors.darkText : Colors.black87),
                       fontWeight: isUrl ? FontWeight.w600 : FontWeight.normal,
                     ),
                     maxLines: 2,
@@ -1376,8 +1583,6 @@ class _QRResultModal extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Action Buttons (Compact)
             if (isUrl)
               Column(
                 children: [
@@ -1386,7 +1591,7 @@ class _QRResultModal extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: onOpenUrl,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF5350),
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -1412,11 +1617,11 @@ class _QRResultModal extends StatelessWidget {
                           style: TextButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Scan Again',
                             style: TextStyle(
                               fontSize: 13,
-                              color: Color(0xFFEF5350),
+                              color: AppColors.primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -1428,11 +1633,13 @@ class _QRResultModal extends StatelessWidget {
                           style: TextButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Close',
                             style: TextStyle(
                               fontSize: 13,
-                              color: Colors.grey,
+                              color: isDarkMode
+                                  ? AppColors.darkTextSecondary
+                                  : Colors.grey,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -1449,8 +1656,8 @@ class _QRResultModal extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: onScanAgain,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFFEF5350),
-                        side: const BorderSide(color: Color(0xFFEF5350)),
+                        foregroundColor: AppColors.primary,
+                        side: BorderSide(color: AppColors.primary),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -1467,7 +1674,7 @@ class _QRResultModal extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: onClose,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF5350),
+                        backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -1526,32 +1733,28 @@ class _CornerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFEF5350)
+      ..color = AppColors.primary
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
 
     final path = Path();
 
     if (xSign == -1 && ySign == -1) {
-      // Top-left
       path.moveTo(0, size.height);
       path.lineTo(0, size.height * 0.3);
       path.lineTo(size.width * 0.3, 0);
       path.lineTo(size.width, 0);
     } else if (xSign == 1 && ySign == -1) {
-      // Top-right
       path.moveTo(0, 0);
       path.lineTo(size.width * 0.7, 0);
       path.lineTo(size.width, size.height * 0.3);
       path.lineTo(size.width, size.height);
     } else if (xSign == -1 && ySign == 1) {
-      // Bottom-left
       path.moveTo(0, 0);
       path.lineTo(0, size.height * 0.7);
       path.lineTo(size.width * 0.3, size.height);
       path.lineTo(size.width, size.height);
     } else {
-      // Bottom-right
       path.moveTo(size.width, 0);
       path.lineTo(size.width, size.height * 0.7);
       path.lineTo(size.width * 0.7, size.height);
@@ -1569,23 +1772,45 @@ class _CornerPainter extends CustomPainter {
 // Navbar Screen
 // ─────────────────────────────────────────────────────────────
 
-class NavbarScreen extends StatelessWidget {
-  const NavbarScreen({super.key});
+class NavbarScreen extends StatefulWidget {
+  final int initialIndex;
+
+  const NavbarScreen({super.key, this.initialIndex = 0});
 
   static const _pages = [
     HomeScreen(),
     WishlistScreen(),
-    BookingScreen(),
+    BookingHistory(),
     MenuScreen(),
   ];
 
   @override
+  State<NavbarScreen> createState() => _NavbarScreenState();
+}
+
+class _NavbarScreenState extends State<NavbarScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BottomNavbarProvider>().setIndex(widget.initialIndex);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+
     return Consumer<BottomNavbarProvider>(
       builder: (context, provider, _) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF8F8F8),
-          body: IndexedStack(index: provider.currentIndex, children: _pages),
+          backgroundColor: isDarkMode
+              ? AppColors.darkBackground
+              : const Color(0xFFF8F8F8),
+          body: IndexedStack(
+            index: provider.currentIndex,
+            children: NavbarScreen._pages,
+          ),
           bottomNavigationBar: const CustomBottomNavbar(),
         );
       },

@@ -52,6 +52,7 @@ dependencies:
   mobile_scanner: ^7.2.0
   cached_network_image: ^3.4.1
   webview_flutter: ^4.13.1
+  camera: ^0.11.2+1
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +92,7 @@ flutter:
     - assets\profile.png
     - assets\booking.png
     - assets\logo.jpg
+    - assets\logout_2.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
