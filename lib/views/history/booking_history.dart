@@ -1840,9 +1840,9 @@ class _BookingHistoryState extends State<BookingHistory>
                   fontSize: 14,
                 ),
                 tabs: const [
-                  Tab(text: 'Pending'),
-                  Tab(text: 'Running'),
-                  Tab(text: 'Completed'),
+                  Tab(text: 'Booked'),
+                  Tab(text: 'Staying'),
+                  Tab(text: 'Vacated'),
                 ],
               ),
             ),
@@ -2184,12 +2184,21 @@ class _BookingHistoryState extends State<BookingHistory>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  'Tap to fill details',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: AppColors.primary,
-                    fontStyle: FontStyle.italic,
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.primary,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Once you reach '),
+                      TextSpan(
+                        text: booking.hostelName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const TextSpan(text: ' Tap to fill details'),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 4),

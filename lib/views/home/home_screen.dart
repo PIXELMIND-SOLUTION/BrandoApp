@@ -1897,7 +1897,9 @@ import 'package:brando_app/provider/theme_provider.dart';
 import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/detail_screen.dart';
+import 'package:brando_app/views/home/qrscanner.dart';
 import 'package:brando_app/views/location/location_screen.dart';
+import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:brando_app/views/notifications/notification_screen.dart';
 import 'package:brando_app/views/search/search_screen.dart';
 import 'package:brando_app/views/seeall/see_all_screen.dart';
@@ -2403,6 +2405,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: const Icon(
                           Icons.notifications_none,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const QRScannerScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.qr_code,
                           size: 20,
                           color: Colors.white,
                         ),

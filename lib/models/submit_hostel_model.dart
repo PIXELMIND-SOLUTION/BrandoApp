@@ -5,10 +5,12 @@ class HostelBookingRequestModel {
   final String? roomType;
   final String? shareType;
   final String? email;
-  final String aadharCardImagePath;
-  final String panCardImagePath;
-  final String profileImagePath;
+  final List<String> aadharCardImage; // Changed to List
+  final List<String> panCardImage; // Changed to List
+  final String profileImage;
   final String emergencyNumber;
+  final String bookingType; // 'monthly' or 'daily'
+  final int totalAmount; // Selected amount
 
   HostelBookingRequestModel({
     required this.name,
@@ -17,10 +19,12 @@ class HostelBookingRequestModel {
     this.roomType,
     this.shareType,
     this.email,
-    required this.aadharCardImagePath,
-    required this.panCardImagePath,
-    required this.profileImagePath,
+    required this.aadharCardImage,
+    required this.panCardImage,
+    required this.profileImage,
     required this.emergencyNumber,
+    required this.bookingType,
+    required this.totalAmount,
   });
 }
 
@@ -57,8 +61,8 @@ class BookingDetails {
   final String name;
   final String mobileNumber;
   final String email;
-  final String aadharCardImage;
-  final String panCardImage;
+  final List<String> aadharCardImages; // Changed to List
+  final List<String> panCardImages; // Changed to List
   final String profileImage;
   final String paymentStatus;
   final num price;
@@ -78,8 +82,8 @@ class BookingDetails {
     required this.name,
     required this.mobileNumber,
     required this.email,
-    required this.aadharCardImage,
-    required this.panCardImage,
+    required this.aadharCardImages,
+    required this.panCardImages,
     required this.profileImage,
     required this.paymentStatus,
     required this.price,
@@ -90,6 +94,14 @@ class BookingDetails {
   });
 
   factory BookingDetails.fromJson(Map<String, dynamic> json) {
+    // Handle both single image (string) and multiple images (list) responses
+    List<String> parseImages(dynamic images) {
+      if (images == null) return [];
+      if (images is String) return [images];
+      if (images is List) return images.map((e) => e.toString()).toList();
+      return [];
+    }
+
     return BookingDetails(
       id: json['_id'] ?? '',
       userId: json['userId'] ?? '',
@@ -101,8 +113,10 @@ class BookingDetails {
       name: json['name'] ?? '',
       mobileNumber: json['mobileNumber'] ?? '',
       email: json['email'] ?? '',
-      aadharCardImage: json['aadharCardImage'] ?? '',
-      panCardImage: json['panCardImage'] ?? '',
+      aadharCardImages: parseImages(
+        json['aadharCardImages'] ?? json['aadharCardImage'],
+      ),
+      panCardImages: parseImages(json['panCardImages'] ?? json['panCardImage']),
       profileImage: json['profileImage'] ?? '',
       paymentStatus: json['paymentStatus'] ?? '',
       price: json['price'] ?? 0,

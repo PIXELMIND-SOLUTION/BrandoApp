@@ -279,6 +279,7 @@ import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/contact/contact_us.dart';
 import 'package:brando_app/views/delete%20account/delete_account.dart';
 import 'package:brando_app/views/history/booking_history.dart';
+import 'package:brando_app/views/home/orders.dart';
 import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
@@ -493,6 +494,15 @@ class MenuScreen extends StatelessWidget {
                 icon: Icons.person_outline,
                 title: 'Personal Information',
               ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrderHistoryScreen()),
+                );
+              },
+              child: _buildMenuItem(icon: Icons.history, title: 'My Orders'),
             ),
             GestureDetector(
               onTap: () {

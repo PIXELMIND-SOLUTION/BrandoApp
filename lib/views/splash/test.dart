@@ -69,6 +69,11 @@ class CategoriesService {
       headers: {'Content-Type': 'application/json'},
     );
 
+    print('Response status code for get all categories ${response.statusCode}');
+    print(
+      'Response bodyyyyyyyyyyyyyyy for get all categories ${response.body}',
+    );
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       if (data['success'] == true) {
@@ -270,14 +275,25 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  // ── Opens a bottom sheet instead of navigating to a new screen ──
   void _goToLogin() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // allows sheet to resize above keyboard
-      backgroundColor: Colors.transparent,
-      enableDrag: true,
-      builder: (_) => const _LoginSheet(),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const LoginScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+                .animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  ),
+                ),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
     );
   }
 
@@ -290,7 +306,6 @@ class _SplashScreenState extends State<SplashScreen>
       body: SafeArea(
         child: Stack(
           children: [
-            // Top-right decorative image
             Positioned(
               top: -10,
               right: -20,
@@ -312,7 +327,7 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
                 child: const _OvalImage(
-                  imagePath: 'assets/home.png',
+                  imagePath: 'assets/splashimage.png',
                   width: 120,
                   height: 155,
                   borderRadius: 65,
@@ -321,7 +336,6 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
 
-            // Bottom-left decorative image
             Positioned(
               top: size.height * 0.28,
               left: -25,
@@ -343,7 +357,7 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
                 child: const _OvalImage(
-                  imagePath: 'assets/home.png',
+                  imagePath: 'assets/splashimage.png',
                   width: 110,
                   height: 140,
                   borderRadius: 60,
@@ -352,7 +366,6 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
 
-            // Center main image
             Positioned(
               top: size.height * 0.04,
               left: size.width * 0.08,
@@ -384,7 +397,6 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
 
-            // Floating red arrow FAB
             Positioned(
               top: size.height * 0.33,
               right: size.width * 0.12,
@@ -426,7 +438,6 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
 
-            // Bottom text + button (only when not logged in)
             if (!AppPreferences.isLoggedIn())
               Positioned(
                 bottom: 0,
@@ -487,7 +498,7 @@ class _SplashScreenState extends State<SplashScreen>
                           opacity: _buttonOpacity,
                           child: _RedButton(
                             label: "Let's Get Started",
-                            onTap: _goToLogin, // ← opens bottom sheet
+                            onTap: _goToLogin,
                           ),
                         ),
                       ),
@@ -504,17 +515,17 @@ class _SplashScreenState extends State<SplashScreen>
 }
 
 // ═══════════════════════════════════════════════════════
-// LOGIN BOTTOM SHEET  (replaces LoginScreen navigation)
+// LOGIN SCREEN
 // ═══════════════════════════════════════════════════════
 
-class _LoginSheet extends StatefulWidget {
-  const _LoginSheet();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<_LoginSheet> createState() => _LoginSheetState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginSheetState extends State<_LoginSheet>
+class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
@@ -524,18 +535,43 @@ class _LoginSheetState extends State<_LoginSheet>
   int _resendSeconds = 0;
   Timer? _resendTimer;
 
+  late AnimationController _sheetController;
   late AnimationController _otpAnimController;
   late Animation<double> _otpFieldAnim;
   late Animation<Offset> _otpSlide;
+
+  late AnimationController _floatController;
+  late Animation<double> _floatY;
+
+  late Animation<Offset> _sheetSlide;
+  late Animation<double> _sheetOpacity;
 
   @override
   void initState() {
     super.initState();
 
+    _sheetController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
     _otpAnimController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 450),
     );
+    _floatController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3200),
+    )..repeat(reverse: true);
+
+    _sheetSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _sheetController, curve: Curves.easeOutCubic),
+        );
+    _sheetOpacity = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _sheetController, curve: Curves.easeOut));
+
     _otpSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
         .animate(
           CurvedAnimation(
@@ -547,9 +583,12 @@ class _LoginSheetState extends State<_LoginSheet>
       CurvedAnimation(parent: _otpAnimController, curve: Curves.easeOut),
     );
 
-    // Auto-open keyboard on phone field after sheet finishes sliding up
-    Future.delayed(const Duration(milliseconds: 350), () {
-      if (mounted) _phoneFocus.requestFocus();
+    _floatY = Tween<double>(begin: -10, end: 10).animate(
+      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
+    );
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) _sheetController.forward();
     });
   }
 
@@ -559,7 +598,9 @@ class _LoginSheetState extends State<_LoginSheet>
     _otpController.dispose();
     _phoneFocus.dispose();
     _otpFocus.dispose();
+    _sheetController.dispose();
     _otpAnimController.dispose();
+    _floatController.dispose();
     _resendTimer?.cancel();
     super.dispose();
   }
@@ -611,15 +652,9 @@ class _LoginSheetState extends State<_LoginSheet>
     if (!mounted) return;
 
     if (auth.status == AuthStatus.verified) {
-      Navigator.of(context).pushAndRemoveUntil(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              NavbarScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 500),
-        ),
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => NavbarScreen()),
         (route) => false,
       );
     } else if (auth.status == AuthStatus.error) {
@@ -665,163 +700,573 @@ class _LoginSheetState extends State<_LoginSheet>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     final auth = context.watch<AuthProvider>();
     final isLoading = auth.isLoading;
     final otpSent =
         auth.status == AuthStatus.otpSent ||
         auth.status == AuthStatus.verified ||
-        (auth.status == AuthStatus.error && _otpAnimController.value > 0);
+        auth.status == AuthStatus.error && _otpAnimController.value > 0;
 
-    return Padding(
-      // ← KEY: pushes the sheet above the keyboard as it opens
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 30,
-              offset: Offset(0, -8),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // ← shrinks to content height
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Drag handle
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 24),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          Positioned(
+            top: -10,
+            right: -20,
+            child: AnimatedBuilder(
+              animation: _floatController,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(0, _floatY.value * 0.5),
+                child: child,
+              ),
+              child: const _OvalImage(
+                imagePath: 'assets/splashimage.png',
+                width: 130,
+                height: 160,
+                borderRadius: 65,
+                rotate: 0.15,
+                blur: true,
               ),
             ),
+          ),
 
-            // Title
-            RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A2E),
-                ),
-                children: [
-                  TextSpan(text: 'Find Your '),
-                  TextSpan(
-                    text: 'Perfect',
-                    style: TextStyle(color: Color(0xFFE53935)),
+          Positioned(
+            top: size.height * 0.18,
+            left: -30,
+            child: AnimatedBuilder(
+              animation: _floatController,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(0, -_floatY.value * 0.7),
+                child: child,
+              ),
+              child: const _OvalImage(
+                imagePath: 'assets/splashimage.png',
+                width: 120,
+                height: 150,
+                borderRadius: 60,
+                rotate: -0.1,
+                blur: true,
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: size.height * 0.02,
+            left: size.width * 0.08,
+            right: size.width * 0.08,
+            child: AnimatedBuilder(
+              animation: _floatController,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(0, _floatY.value * 0.35),
+                child: child,
+              ),
+              child: _OvalImage(
+                imagePath: 'assets/splashimage.png',
+                width: double.infinity,
+                height: size.height * 0.36,
+                borderRadius: 999,
+                rotate: 0,
+                blur: true,
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: size.height * 0.28,
+            right: size.width * 0.14,
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE53935),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFE53935).withOpacity(0.4),
+                    blurRadius: 16,
+                    offset: const Offset(0, 5),
                   ),
-                  TextSpan(text: ' Stay'),
                 ],
               ),
-            ),
-
-            const SizedBox(height: 28),
-
-            // Phone number field
-            _InputField(
-              controller: _phoneController,
-              focusNode: _phoneFocus,
-              hint: 'Mobile Number',
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
-              ],
-              prefixIcon: const Icon(
-                Icons.phone_outlined,
-                color: Color(0xFF9E9E9E),
-                size: 20,
+              child: const Icon(
+                Icons.arrow_outward_rounded,
+                color: Colors.white,
+                size: 24,
               ),
-              onChanged: (_) => setState(() {}),
             ),
+          ),
 
-            // OTP field — animates in after Get OTP is tapped
-            if (otpSent) ...[
-              const SizedBox(height: 14),
-              SlideTransition(
-                position: _otpSlide,
-                child: FadeTransition(
-                  opacity: _otpFieldAnim,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _InputField(
-                        controller: _otpController,
-                        focusNode: _otpFocus,
-                        hint: 'Enter OTP',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(6),
-                        ],
-                        prefixIcon: const Icon(
-                          Icons.lock_outline,
-                          color: Color(0xFF9E9E9E),
-                          size: 20,
-                        ),
-                        onChanged: (_) => setState(() {}),
-                      ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: _resendOtp,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Resend ',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey.shade600,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            Text(
-                              _resendSeconds > 0 ? _timerText : 'Now',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: _resendSeconds > 0
-                                    ? const Color(0xFFE53935)
-                                    : const Color(0xFF1565C0),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SlideTransition(
+              position: _sheetSlide,
+              child: FadeTransition(
+                opacity: _sheetOpacity,
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(28),
+                      topRight: Radius.circular(28),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 30,
+                        offset: Offset(0, -8),
                       ),
                     ],
                   ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 32,
+                        bottom: MediaQuery.of(context).viewInsets.bottom + 36,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 4,
+                              margin: const EdgeInsets.only(bottom: 24),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+
+                          RichText(
+                            text: const TextSpan(
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1A1A2E),
+                              ),
+                              children: [
+                                TextSpan(text: 'Find Your '),
+                                TextSpan(
+                                  text: 'Perfect',
+                                  style: TextStyle(color: Color(0xFFE53935)),
+                                ),
+                                TextSpan(text: ' Stay'),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 28),
+
+                          _InputField(
+                            controller: _phoneController,
+                            focusNode: _phoneFocus,
+                            hint: 'Mobile Number',
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                            prefixIcon: const Icon(
+                              Icons.phone_outlined,
+                              color: Color(0xFF9E9E9E),
+                              size: 20,
+                            ),
+                            onChanged: (_) => setState(() {}),
+                          ),
+
+                          if (otpSent) ...[
+                            const SizedBox(height: 14),
+                            SlideTransition(
+                              position: _otpSlide,
+                              child: FadeTransition(
+                                opacity: _otpFieldAnim,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    _InputField(
+                                      controller: _otpController,
+                                      focusNode: _otpFocus,
+                                      hint: 'Enter OTP',
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(6),
+                                      ],
+                                      prefixIcon: const Icon(
+                                        Icons.lock_outline,
+                                        color: Color(0xFF9E9E9E),
+                                        size: 20,
+                                      ),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    GestureDetector(
+                                      onTap: _resendOtp,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Resend ',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          Text(
+                                            _resendSeconds > 0
+                                                ? _timerText
+                                                : 'Now',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: _resendSeconds > 0
+                                                  ? const Color(0xFFE53935)
+                                                  : const Color(0xFF1565C0),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 28),
+
+                          _RedButton(
+                            label: isLoading
+                                ? ''
+                                : (otpSent ? 'Login' : 'Get OTP'),
+                            isLoading: isLoading,
+                            onTap: otpSent ? _handleLogin : _handleGetOtp,
+                            enabled: otpSent
+                                ? _otpController.text.length >= 4
+                                : _phoneController.text.length == 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ],
-
-            const SizedBox(height: 28),
-
-            // Get OTP / Login button
-            _RedButton(
-              label: isLoading ? '' : (otpSent ? 'Login' : 'Get OTP'),
-              isLoading: isLoading,
-              onTap: otpSent ? _handleLogin : _handleGetOtp,
-              enabled: otpSent
-                  ? _otpController.text.length >= 4
-                  : _phoneController.text.length == 10,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
+// ═══════════════════════════════════════════════════════
+// STAY SELECTION MODAL  (API-powered)
+// ═══════════════════════════════════════════════════════
+
+// class _StaySelectionModal extends StatefulWidget {
+//   const _StaySelectionModal();
+
+//   @override
+//   State<_StaySelectionModal> createState() => _StaySelectionModalState();
+// }
+
+// class _StaySelectionModalState extends State<_StaySelectionModal>
+//     with SingleTickerProviderStateMixin {
+//   CategoryModel? _selectedCategory;
+//   bool _isConfirming = false;
+
+//   // API state
+//   List<CategoryModel> _categories = [];
+//   bool _isFetchingCategories = true;
+//   String? _fetchError;
+
+//   late AnimationController _animController;
+//   late List<Animation<Offset>> _itemSlides;
+//   late List<Animation<double>> _itemOpacities;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _animController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 600),
+//     );
+//     // Initialize with empty lists; rebuilt after fetch
+//     _itemSlides = [];
+//     _itemOpacities = [];
+
+//     _fetchCategories();
+//   }
+
+//   Future<void> _fetchCategories() async {
+//     setState(() {
+//       _isFetchingCategories = true;
+//       _fetchError = null;
+//     });
+
+//     try {
+//       final categories = await CategoriesService.getAllCategories();
+//       if (!mounted) return;
+//       setState(() {
+//         _categories = categories;
+//         _isFetchingCategories = false;
+//       });
+//       _buildItemAnimations();
+//       _animController.forward(from: 0);
+//     } catch (e) {
+//       if (!mounted) return;
+//       setState(() {
+//         _fetchError = 'Failed to load categories. Tap to retry.';
+//         _isFetchingCategories = false;
+//       });
+//     }
+//   }
+
+//   void _buildItemAnimations() {
+//     _itemSlides = List.generate(
+//       _categories.length,
+//       (i) =>
+//           Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+//             CurvedAnimation(
+//               parent: _animController,
+//               curve: Interval(
+//                 0.1 + i * 0.15,
+//                 0.5 + i * 0.15,
+//                 curve: Curves.easeOutBack,
+//               ),
+//             ),
+//           ),
+//     );
+
+//     _itemOpacities = List.generate(
+//       _categories.length,
+//       (i) => Tween<double>(begin: 0, end: 1).animate(
+//         CurvedAnimation(
+//           parent: _animController,
+//           curve: Interval(
+//             0.1 + i * 0.15,
+//             0.5 + i * 0.15,
+//             curve: Curves.easeOut,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   @override
+//   void dispose() {
+//     _animController.dispose();
+//     super.dispose();
+//   }
+
+//   Future<void> _handleConfirm() async {
+//     if (_selectedCategory == null) return;
+//     setState(() => _isConfirming = true);
+//     await Future.delayed(const Duration(milliseconds: 500));
+//     if (mounted) {
+//       setState(() => _isConfirming = false);
+//       Navigator.pop(context);
+//       Navigator.pushAndRemoveUntil(
+//         context,
+//         MaterialPageRoute(builder: (_) => NavbarScreen()),
+//         (route) => false,
+//       );
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: const BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black12,
+//             blurRadius: 30,
+//             offset: Offset(0, -8),
+//           ),
+//         ],
+//       ),
+//       padding: const EdgeInsets.fromLTRB(24, 16, 24, 36),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           // Drag handle
+//           Container(
+//             width: 40,
+//             height: 4,
+//             margin: const EdgeInsets.only(bottom: 24),
+//             decoration: BoxDecoration(
+//               color: Colors.grey.shade300,
+//               borderRadius: BorderRadius.circular(2),
+//             ),
+//           ),
+
+//           RichText(
+//             textAlign: TextAlign.center,
+//             text: const TextSpan(
+//               style: TextStyle(
+//                 fontSize: 22,
+//                 fontWeight: FontWeight.w700,
+//                 color: Color(0xFF1A1A2E),
+//               ),
+//               children: [
+//                 TextSpan(text: 'Select Your '),
+//                 TextSpan(
+//                   text: 'Perfect',
+//                   style: TextStyle(color: Color(0xFFE53935)),
+//                 ),
+//                 TextSpan(text: ' Stay'),
+//               ],
+//             ),
+//           ),
+
+//           const SizedBox(height: 24),
+
+//           // ── Body: loading / error / list ──────────────────────────────
+//           if (_isFetchingCategories)
+//             const Padding(
+//               padding: EdgeInsets.symmetric(vertical: 32),
+//               child: CircularProgressIndicator(
+//                 color: Color(0xFFE53935),
+//                 strokeWidth: 2.5,
+//               ),
+//             )
+//           else if (_fetchError != null)
+//             Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 24),
+//               child: GestureDetector(
+//                 onTap: _fetchCategories,
+//                 child: Column(
+//                   children: [
+//                     const Icon(
+//                       Icons.wifi_off_rounded,
+//                       color: Color(0xFFBDBDBD),
+//                       size: 40,
+//                     ),
+//                     const SizedBox(height: 12),
+//                     Text(
+//                       _fetchError!,
+//                       textAlign: TextAlign.center,
+//                       style: const TextStyle(
+//                         fontSize: 14,
+//                         color: Color(0xFF7A7A8C),
+//                         height: 1.5,
+//                       ),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     const Text(
+//                       'Tap to retry',
+//                       style: TextStyle(
+//                         fontSize: 13,
+//                         color: Color(0xFFE53935),
+//                         fontWeight: FontWeight.w600,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             )
+//           else
+//             ...List.generate(_categories.length, (i) {
+//               final category = _categories[i];
+//               final isSelected = _selectedCategory?.id == category.id;
+
+//               // Guard: animations may not be ready yet
+//               if (i >= _itemSlides.length) return const SizedBox.shrink();
+
+//               return SlideTransition(
+//                 position: _itemSlides[i],
+//                 child: FadeTransition(
+//                   opacity: _itemOpacities[i],
+//                   child: GestureDetector(
+//                     onTap: () => setState(() => _selectedCategory = category),
+//                     child: AnimatedContainer(
+//                       duration: const Duration(milliseconds: 220),
+//                       curve: Curves.easeOut,
+//                       margin: const EdgeInsets.only(bottom: 12),
+//                       height: 54,
+//                       decoration: BoxDecoration(
+//                         color: isSelected
+//                             ? const Color(0xFFF80500)
+//                             : Colors.white,
+//                         borderRadius: BorderRadius.circular(13),
+//                         border: Border.all(
+//                           color: isSelected
+//                               ? const Color(0xFFF80500)
+//                               : const Color(0xFFE0E0E0),
+//                           width: isSelected ? 0 : 1.4,
+//                         ),
+//                         boxShadow: isSelected
+//                             ? [
+//                                 BoxShadow(
+//                                   color: const Color(
+//                                     0xFFE53935,
+//                                   ).withOpacity(0.35),
+//                                   blurRadius: 14,
+//                                   offset: const Offset(0, 5),
+//                                 ),
+//                               ]
+//                             : [],
+//                       ),
+//                       child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           AnimatedSwitcher(
+//                             duration: const Duration(milliseconds: 200),
+//                             child: Icon(
+//                               category.icon,
+//                               key: ValueKey(isSelected),
+//                               color: isSelected
+//                                   ? Colors.white
+//                                   : const Color(0xFF9E9E9E),
+//                               size: 20,
+//                             ),
+//                           ),
+//                           const SizedBox(width: 8),
+//                           Text(
+//                             category.displayName,
+//                             style: TextStyle(
+//                               fontSize: 15,
+//                               fontWeight: FontWeight.w600,
+//                               color: isSelected
+//                                   ? Colors.white
+//                                   : const Color(0xFF1A1A2E),
+//                               letterSpacing: 0.2,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             }),
+
+//           const SizedBox(height: 8),
+
+//           _RedButton(
+//             label: _isConfirming ? '' : 'Login',
+//             isLoading: _isConfirming,
+//             onTap: _handleConfirm,
+//             enabled: _selectedCategory != null && !_isFetchingCategories,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 // ═══════════════════════════════════════════════════════
 // SHARED WIDGETS
@@ -853,6 +1298,13 @@ class _OvalImage extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black.withOpacity(blur ? 0.10 : 0.18),
+          //     blurRadius: 24,
+          //     offset: const Offset(0, 10),
+          //   ),
+          // ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(borderRadius),

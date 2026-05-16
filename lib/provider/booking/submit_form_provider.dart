@@ -9,7 +9,7 @@ class HostelBookingProvider extends ChangeNotifier {
   final HostelBookingService _service;
 
   HostelBookingProvider({HostelBookingService? service})
-      : _service = service ?? HostelBookingService();
+    : _service = service ?? HostelBookingService();
 
   BookingStatus _status = BookingStatus.idle;
   BookingDetails? _bookingDetails;
@@ -61,13 +61,12 @@ class HostelBookingProvider extends ChangeNotifier {
   //   }
   // }
 
-
-
-
   Future<bool> submitBooking({
-    required String bookingId,   // ✅ changed from hostelId to bookingId
+    required String bookingId, // ✅ changed from hostelId to bookingId
     required HostelBookingRequestModel request,
   }) async {
+    print('Status Code [submitBooking]:');
+
     final userId = AppPreferences.getUserId();
 
     if (userId == null || userId.isEmpty) {
@@ -78,9 +77,11 @@ class HostelBookingProvider extends ChangeNotifier {
     _setLoading();
 
     try {
+      print('Status Code [submitBooking]dddddd:');
+
       final response = await _service.submitBooking(
         userId: userId,
-        bookingId: bookingId,    // ✅
+        bookingId: bookingId, // ✅
         request: request,
       );
 
@@ -91,9 +92,11 @@ class HostelBookingProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _setError(response.message.isNotEmpty
-            ? response.message
-            : 'Submission failed. Please try again.');
+        _setError(
+          response.message.isNotEmpty
+              ? response.message
+              : 'Submission failed. Please try again.',
+        );
         return false;
       }
     } catch (e) {
