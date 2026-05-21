@@ -276,10 +276,10 @@
 import 'package:brando_app/helper/shared_preference.dart';
 import 'package:brando_app/provider/auth/auth_provider.dart';
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
+import 'package:brando_app/views/Ecommerce/all_hostel_screen.dart';
 import 'package:brando_app/views/contact/contact_us.dart';
 import 'package:brando_app/views/delete%20account/delete_account.dart';
 import 'package:brando_app/views/history/booking_history.dart';
-import 'package:brando_app/views/home/orders.dart';
 import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
@@ -504,20 +504,20 @@ class MenuScreen extends StatelessWidget {
               },
               child: _buildMenuItem(icon: Icons.history, title: 'My Orders'),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NavbarScreen(initialIndex: 2),
-                  ),
-                );
-              },
-              child: _buildMenuItem(
-                icon: Icons.history,
-                title: 'Booking History',
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => NavbarScreen(initialIndex: 2),
+            //       ),
+            //     );
+            //   },
+            //   child: _buildMenuItem(
+            //     icon: Icons.history,
+            //     title: 'Booking History',
+            //   ),
+            // ),
             GestureDetector(
               onTap: () => _launchURL(
                 context,
