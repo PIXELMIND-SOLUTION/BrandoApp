@@ -594,371 +594,274 @@
 //   }
 // }
 
-import 'package:flutter/material.dart';
 
-class AdminOffersScreen extends StatelessWidget {
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class AdminOffersScreen extends StatefulWidget {
   const AdminOffersScreen({super.key});
 
-  static const List<Map<String, dynamic>> _offers = [
-    {
-      'title': 'Summer Special',
-      'description': 'Get 20% off on all hostel bookings',
-      'discount': '20% off',
-      'validUntil': 'Till Aug 31, 2024',
-      'code': 'SUMMER20',
-      'isActive': true,
-      'icon': Icons.beach_access_outlined,
-      'iconBg': Color(0xFFFAEEDA),
-      'iconColor': Color(0xFFBA7517),
-      'badgeBg': Color(0xFFEAF3DE),
-      'badgeColor': Color(0xFF3B6D11),
-    },
-    {
-      'title': 'Early Bird',
-      'description': 'Book 7 days in advance and save 15%',
-      'discount': '15% off',
-      'validUntil': 'Till Dec 31, 2024',
-      'code': 'EARLY15',
-      'isActive': true,
-      'icon': Icons.alarm_outlined,
-      'iconBg': Color(0xFFEAF3DE),
-      'iconColor': Color(0xFF3B6D11),
-      'badgeBg': Color(0xFFEAF3DE),
-      'badgeColor': Color(0xFF3B6D11),
-    },
-    {
-      'title': 'Group Booking',
-      'description': 'Book for 5+ people and get 25% off',
-      'discount': '25% off',
-      'validUntil': 'Till Oct 15, 2024',
-      'code': 'GROUP25',
-      'isActive': false,
-      'icon': Icons.group_outlined,
-      'iconBg': Color(0xFFEEEDFE),
-      'iconColor': Color(0xFF534AB7),
-      'badgeBg': Color(0xFFEEEDFE),
-      'badgeColor': Color(0xFF534AB7),
-    },
-    {
-      'title': 'Weekend Getaway',
-      'description': 'Flat ₹500 off on weekend stays',
-      'discount': '₹500 off',
-      'validUntil': 'Till Sep 30, 2024',
-      'code': 'WEEKEND500',
-      'isActive': true,
-      'icon': Icons.weekend_outlined,
-      'iconBg': Color(0xFFE6F1FB),
-      'iconColor': Color(0xFF185FA5),
-      'badgeBg': Color(0xFFE6F1FB),
-      'badgeColor': Color(0xFF185FA5),
-    },
-    {
-      'title': 'First Booking',
-      'description': 'Special 30% off for first time users',
-      'discount': '30% off',
-      'validUntil': 'Till Nov 30, 2024',
-      'code': 'FIRST30',
-      'isActive': true,
-      'icon': Icons.star_outline,
-      'iconBg': Color(0xFFFAEEDA),
-      'iconColor': Color(0xFFBA7517),
-      'badgeBg': Color(0xFFEAF3DE),
-      'badgeColor': Color(0xFF3B6D11),
-    },
-  ];
+  @override
+  State<AdminOffersScreen> createState() => _AdminOffersScreenState();
+}
+
+class _AdminOffersScreenState extends State<AdminOffersScreen> {
+  List<dynamic> _offers = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOffers();
+  }
+
+  Future<void> _fetchOffers() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://187.127.146.52:2003/api/admin/offers'),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        if (jsonData['success'] == true) {
+          setState(() {
+            _offers = jsonData['data'] ?? [];
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _errorMessage = 'Failed to load offers';
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'Error: ${response.statusCode}';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Network error: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final activeCount = _offers.where((o) => o['isActive'] == true).length;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
       appBar: AppBar(
         title: const Text(
-          'Manage offers',
+          'Offers',
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
         ),
         centerTitle: true,
         elevation: 0,
-        // backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0.5),
           child: Container(height: 0.5, color: const Color(0xFFE0E0E0)),
         ),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.local_offer_outlined,
-                      iconColor: const Color(0xFF3B6D11),
-                      value: '$activeCount',
-                      label: 'Active offers',
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.layers_outlined,
-                      iconColor: const Color(0xFF185FA5),
-                      value: '${_offers.length}',
-                      label: 'Total offers',
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: _StatCard(
-                      icon: Icons.timer_outlined,
-                      iconColor: Color(0xFFBA7517),
-                      value: '3',
-                      label: 'Expiring soon',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 6),
-              child: Text(
-                'ALL OFFERS',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF888780),
-                  letterSpacing: 0.8,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            sliver: SliverList.separated(
-              itemCount: _offers.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (context, index) =>
-                  _OfferCard(offer: _offers[index]),
-            ),
-          ),
-        ],
-      ),
+      body: _buildBody(),
     );
   }
-}
 
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String value;
-  final String label;
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
-  const _StatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-    required this.label,
-  });
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage!,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _fetchOffers,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE5E5E5), width: 0.5),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: iconColor,
+    if (_offers.isEmpty) {
+      return const Center(
+        child: Text(
+          'No offers available',
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+      );
+    }
+
+    return CustomScrollView(
+      slivers: [
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 12, 16, 6),
+            child: Text(
+              'ALL OFFERS',
+              style: TextStyle(
+                fontSize: 11,
+                color: Color(0xFF888780),
+                letterSpacing: 0.8,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-          const SizedBox(height: 3),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 10, color: Color(0xFF888780)),
-            textAlign: TextAlign.center,
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          sliver: SliverList.separated(
+            itemCount: _offers.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (context, index) =>
+                _OfferCard(offer: _offers[index]),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
 class _OfferCard extends StatelessWidget {
-  final Map<String, dynamic> offer;
+  final dynamic offer;
 
   const _OfferCard({required this.offer});
 
+
   @override
   Widget build(BuildContext context) {
-    final bool isActive = offer['isActive'] as bool;
+    final String title = offer['title'] ?? 'No title';
+    final String description = offer['description'] ?? 'No description';
+    final String imageUrl = offer['image'] ?? '';
+    print("kkkkkkkkkkkkkkkk$imageUrl");
 
-    return Opacity(
-      opacity: isActive ? 1.0 : 0.55,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFE5E5E5), width: 0.5),
-        ),
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top row: icon + title + discount badge + status pill
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: offer['iconBg'] as Color,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    offer['icon'] as IconData,
-                    color: offer['iconColor'] as Color,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    offer['title'] as String,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF1A1A1A),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE5E5E5), width: 0.5),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                imageUrl,
+                height: 180,
+                fit: BoxFit.cover,
+        
+                errorBuilder: (context, error, stackTrace) {
+                  print('Image loading error: $error');
+                  print('Image URL: $imageUrl');
+                  return Container(
+                    height: 180,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Discount badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: offer['badgeBg'] as Color,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    offer['discount'] as String,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: offer['badgeColor'] as Color,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Active / Inactive pill
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isActive
-                        ? const Color(0xFFEAF3DE)
-                        : const Color(0xFFF1EFE8),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isActive)
-                        Container(
-                          width: 6,
-                          height: 6,
-                          margin: const EdgeInsets.only(right: 4),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF3B6D11),
-                            shape: BoxShape.circle,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.broken_image,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Failed to load image',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
                           ),
                         ),
-                      Text(
-                        isActive ? 'Active' : 'Inactive',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: isActive
-                              ? const Color(0xFF3B6D11)
-                              : const Color(0xFF5F5E5A),
-                        ),
+                      ],
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    height: 180,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / 
+                              loadingProgress.expectedTotalBytes!
+                            : null,
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // Description
-            Text(
-              offer['description'] as String,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Color(0xFF5F5E5A),
-                height: 1.5,
+                    ),
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 10),
-            // Divider
-            const Divider(height: 1, thickness: 0.5, color: Color(0xFFE5E5E5)),
-            const SizedBox(height: 10),
-            // Meta row: code + validity
-            Row(
-              children: [
-                const Icon(
-                  Icons.confirmation_number_outlined,
-                  size: 14,
-                  color: Color(0xFF888780),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  offer['code'] as String,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF5F5E5A),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Icon(
-                  Icons.calendar_today_outlined,
-                  size: 14,
-                  color: Color(0xFF888780),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  offer['validUntil'] as String,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF5F5E5A),
-                  ),
-                ),
-              ],
+          if (imageUrl.isEmpty)
+            Container(
+              height: 180,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.image_not_supported,
+                size: 40,
+                color: Colors.grey,
+              ),
             ),
-          ],
-        ),
+          const SizedBox(height: 12),
+          // Title
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF1A1A1A),
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8),
+          // Description
+          Text(
+            description,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF5F5E5A),
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
   }
