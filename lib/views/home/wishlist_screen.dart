@@ -1,601 +1,3 @@
-// import 'package:brando_app/config/theme_config.dart';
-// import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
-// import 'package:brando_app/views/Map/map_screen.dart';
-// import 'package:brando_app/views/details/detail_screen.dart';
-// import 'package:brando_app/widgets/toast_message.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:lottie/lottie.dart';
-// import 'package:provider/provider.dart';
-// import 'package:url_launcher/url_launcher.dart';
-
-// class WishlistScreen extends StatefulWidget {
-//   const WishlistScreen({super.key});
-
-//   @override
-//   State<WishlistScreen> createState() => _WishlistScreenState();
-// }
-
-// class _WishlistScreenState extends State<WishlistScreen> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       if (mounted) {
-//         context.read<WishlistProvider>().fetchWishlist();
-//       }
-//     });
-//   }
-
-//   Future<void> _makePhoneCall(String phoneNumber) async {
-//     final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-//     if (await canLaunchUrl(phoneUri)) {
-//       await launchUrl(phoneUri);
-//     }
-//   }
-
-//   Future<void> _openWhatsApp(String phoneNumber) async {
-//     final message = Uri.encodeComponent(
-//       "Hello, I am interested in your hostel.",
-//     );
-//     final url = Uri.parse("https://wa.me/$phoneNumber?text=$message");
-
-//     try {
-//       await launchUrl(url, mode: LaunchMode.externalApplication);
-//     } catch (e) {
-//       if (mounted) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           const SnackBar(content: Text('Could not open WhatsApp.')),
-//         );
-//       }
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return WillPopScope(
-//       onWillPop: () async {
-//         final shouldExit = await showDialog<bool>(
-//           context: context,
-//           builder: (context) => AlertDialog(
-//             title: const Text('Exit App'),
-//             content: const Text('Are you sure you want to exit?'),
-//             actions: [
-//               TextButton(
-//                 onPressed: () => Navigator.pop(context, false),
-//                 child: const Text('Cancel'),
-//               ),
-//               TextButton(
-//                 onPressed: () => Navigator.pop(context, true),
-//                 child: const Text(
-//                   'Exit',
-//                   style: TextStyle(color: AppColors.primary),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-
-//         if (shouldExit == true) {
-//           if (mounted) {
-//             SystemNavigator.pop();
-//           }
-//           return true;
-//         }
-//         return false;
-//       },
-//       child: Scaffold(
-//         backgroundColor: AppColors.lightBackground,
-//         appBar: AppBar(
-//           backgroundColor: AppColors.lightBackground,
-//           elevation: 0,
-//           automaticallyImplyLeading: false,
-//           title: const Text(
-//             'Favourites',
-//             style: TextStyle(
-//               color: AppColors.lightText,
-//               fontWeight: FontWeight.bold,
-//               fontSize: 20,
-//             ),
-//           ),
-//           centerTitle: true,
-//         ),
-//         body: Consumer<WishlistProvider>(
-//           builder: (context, wishlistProvider, _) {
-//             if (wishlistProvider.status == WishlistStatus.loading) {
-//               return const Center(
-//                 child: CircularProgressIndicator(color: AppColors.primary),
-//               );
-//             }
-
-//             if (wishlistProvider.status == WishlistStatus.error) {
-//               return Center(
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     Icon(
-//                       Icons.error_outline,
-//                       color: AppColors.primary.withOpacity(0.5),
-//                       size: 56,
-//                     ),
-//                     const SizedBox(height: 12),
-//                     Text(
-//                       wishlistProvider.errorMessage ?? 'Something went wrong.',
-//                       textAlign: TextAlign.center,
-//                       style: TextStyle(
-//                         color: AppColors.lightTextSecondary,
-//                         fontSize: 14,
-//                       ),
-//                     ),
-//                     const SizedBox(height: 16),
-//                     ElevatedButton(
-//                       onPressed: () => wishlistProvider.fetchWishlist(),
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: AppColors.primary,
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(8),
-//                         ),
-//                       ),
-//                       child: const Text(
-//                         'Retry',
-//                         style: TextStyle(color: Colors.white),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               );
-//             }
-
-//             if (wishlistProvider.wishlistItems.isEmpty) {
-//               return Center(
-//                 child: Padding(
-//                   padding: const EdgeInsets.symmetric(horizontal: 32),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Lottie.network(
-//                         'https://assets9.lottiefiles.com/packages/lf20_ydo1amjm.json',
-//                         width: 220,
-//                         height: 220,
-//                         fit: BoxFit.contain,
-//                         repeat: true,
-//                         errorBuilder: (_, __, ___) => Icon(
-//                           Icons.favorite_border,
-//                           size: 64,
-//                           color: AppColors.primary.withOpacity(0.5),
-//                         ),
-//                       ),
-//                       const SizedBox(height: 12),
-//                       const Text(
-//                         'No Favourites Yet',
-//                         style: TextStyle(
-//                           fontSize: 18,
-//                           fontWeight: FontWeight.bold,
-//                           color: AppColors.lightText,
-//                         ),
-//                       ),
-//                       const SizedBox(height: 8),
-//                       Text(
-//                         'Tap the ❤️ on any hostel to\nsave it here for later.',
-//                         textAlign: TextAlign.center,
-//                         style: TextStyle(
-//                           fontSize: 13,
-//                           color: AppColors.lightTextSecondary,
-//                           height: 1.5,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             }
-
-//             return RefreshIndicator(
-//               color: AppColors.primary,
-//               onRefresh: () => wishlistProvider.fetchWishlist(),
-//               child: ListView.builder(
-//                 padding: const EdgeInsets.symmetric(vertical: 8),
-//                 itemCount: wishlistProvider.wishlistItems.length,
-//                 itemBuilder: (context, index) {
-//                   final item = wishlistProvider.wishlistItems[index];
-//                   final hostel = item.hostel;
-//                   if (hostel == null) return const SizedBox.shrink();
-//                   return GestureDetector(
-//                     onTap: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) =>
-//                               DetailScreen(hostelId: hostel.id),
-//                         ),
-//                       );
-//                     },
-//                     child: _buildHostelCard(hostel, wishlistProvider),
-//                   );
-//                 },
-//               ),
-//             );
-//           },
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildHostelCard(dynamic hostel, WishlistProvider wishlistProvider) {
-//     final String hostelId = hostel.id ?? '';
-//     final String name = hostel.name ?? 'Unknown';
-//     final String rating = hostel.rating.toString();
-//     final String address = hostel.address ?? '';
-//     final List sharings = hostel.sharings ?? [];
-//     final String firstImage =
-//         (hostel.images != null && hostel.images.isNotEmpty)
-//         ? hostel.images[0]
-//         : '';
-//     final String categoryName = hostel.category?.name ?? '';
-
-//     final double? latitude = hostel.location?.latitude;
-//     final double? longitude = hostel.location?.longitude;
-
-//     return Container(
-//       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-//       decoration: BoxDecoration(
-//         color: AppColors.lightBackground,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: AppColors.lightBorder,
-//             blurRadius: 8,
-//             spreadRadius: 2,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//         border: Border.all(color: AppColors.lightBorder),
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               ClipRRect(
-//                 borderRadius: const BorderRadius.only(
-//                   topLeft: Radius.circular(12),
-//                   bottomLeft: Radius.circular(12),
-//                 ),
-//                 child: firstImage.isNotEmpty
-//                     ? Image.network(
-//                         firstImage,
-//                         width: 120,
-//                         height: 130,
-//                         fit: BoxFit.cover,
-//                         errorBuilder: (_, __, ___) => _placeholderImage(),
-//                       )
-//                     : Image.asset(
-//                         'assets/hotelimage.png',
-//                         width: 120,
-//                         height: 130,
-//                         fit: BoxFit.cover,
-//                         errorBuilder: (_, __, ___) => _placeholderImage(),
-//                       ),
-//               ),
-//               Expanded(
-//                 child: Padding(
-//                   padding: const EdgeInsets.all(10),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Expanded(
-//                             child: RichText(
-//                               text: TextSpan(
-//                                 children: [
-//                                   TextSpan(
-//                                     text: '${name.split(' ').first} ',
-//                                     style: const TextStyle(
-//                                       color: AppColors.primary,
-//                                       fontWeight: FontWeight.bold,
-//                                       fontSize: 14,
-//                                     ),
-//                                   ),
-//                                   TextSpan(
-//                                     text: name.split(' ').length > 1
-//                                         ? name.split(' ').skip(1).join(' ')
-//                                         : '',
-//                                     style: const TextStyle(
-//                                       color: AppColors.lightText,
-//                                       fontWeight: FontWeight.bold,
-//                                       fontSize: 14,
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ),
-//                           ),
-//                           Selector<WishlistProvider, bool>(
-//                             selector: (_, p) => p.isWishlisted(hostelId),
-//                             builder: (context, wishlisted, _) {
-//                               return GestureDetector(
-//                                 onTap: hostelId.isEmpty
-//                                     ? null
-//                                     : () {
-//                                         final wishlistProvider = context
-//                                             .read<WishlistProvider>();
-//                                         final isCurrentlyWishlisted =
-//                                             wishlistProvider.isWishlisted(
-//                                               hostelId,
-//                                             );
-//                                         wishlistProvider.toggleWishlist(
-//                                           hostelId,
-//                                         );
-
-//                                         ToastHelper.show(
-//                                           context,
-//                                           message: isCurrentlyWishlisted
-//                                               ? 'Removed from your favourites'
-//                                               : '❤️  Added to favourites — $name',
-//                                           type: isCurrentlyWishlisted
-//                                               ? ToastType.warning
-//                                               : ToastType.success,
-//                                         );
-//                                       },
-//                                 child: AnimatedSwitcher(
-//                                   duration: const Duration(milliseconds: 300),
-//                                   transitionBuilder: (child, animation) =>
-//                                       ScaleTransition(
-//                                         scale: animation,
-//                                         child: child,
-//                                       ),
-//                                   child: Icon(
-//                                     wishlisted
-//                                         ? Icons.favorite
-//                                         : Icons.favorite_border,
-//                                     key: ValueKey(wishlisted),
-//                                     color: wishlisted
-//                                         ? AppColors.primary
-//                                         : AppColors.lightTextSecondary,
-//                                     size: 22,
-//                                   ),
-//                                 ),
-//                               );
-//                             },
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(height: 4),
-//                       Row(
-//                         children: [
-//                           _buildRatingBadge(rating),
-//                           if (categoryName.isNotEmpty) ...[
-//                             const SizedBox(width: 6),
-//                             Container(
-//                               padding: const EdgeInsets.symmetric(
-//                                 horizontal: 6,
-//                                 vertical: 2,
-//                               ),
-//                               decoration: BoxDecoration(
-//                                 color: AppColors.primary.withOpacity(0.1),
-//                                 borderRadius: BorderRadius.circular(4),
-//                                 border: Border.all(
-//                                   color: AppColors.primary.withOpacity(0.2),
-//                                 ),
-//                               ),
-//                               child: Text(
-//                                 categoryName,
-//                                 style: TextStyle(
-//                                   fontSize: 10,
-//                                   fontWeight: FontWeight.w600,
-//                                   color: AppColors.primary,
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ],
-//                       ),
-//                       const SizedBox(height: 6),
-//                       Row(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Icon(
-//                             Icons.location_on,
-//                             color: AppColors.primary,
-//                             size: 12,
-//                           ),
-//                           const SizedBox(width: 2),
-//                           Expanded(
-//                             child: Text(
-//                               address,
-//                               style: TextStyle(
-//                                 fontSize: 10,
-//                                 color: AppColors.lightTextSecondary,
-//                               ),
-//                               maxLines: 2,
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(height: 8),
-//                       SingleChildScrollView(
-//                         scrollDirection: Axis.horizontal,
-//                         child: Row(
-//                           children: sharings.map<Widget>((share) {
-//                             return Padding(
-//                               padding: const EdgeInsets.only(right: 6),
-//                               child: Column(
-//                                 children: [
-//                                   Text(
-//                                     share.shareType,
-//                                     style: TextStyle(
-//                                       fontSize: 8,
-//                                       fontWeight: FontWeight.bold,
-//                                       color: AppColors.lightTextSecondary,
-//                                     ),
-//                                   ),
-//                                   Text(
-//                                     '₹${share.nonAcMonthlyPrice}/-',
-//                                     style: const TextStyle(
-//                                       fontSize: 9,
-//                                       color: AppColors.primary,
-//                                       fontWeight: FontWeight.w600,
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             );
-//                           }).toList(),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-//             child: Row(
-//               children: [
-//                 Expanded(
-//                   child: OutlinedButton.icon(
-//                     onPressed: () => _makePhoneCall("9961593179"),
-//                     icon: const Icon(Icons.call, size: 14, color: Colors.white),
-//                     label: const Text(
-//                       'Call',
-//                       style: TextStyle(fontSize: 12, color: Colors.white),
-//                     ),
-//                     style: OutlinedButton.styleFrom(
-//                       backgroundColor: AppColors.primary,
-//                       foregroundColor: AppColors.primary,
-//                       padding: const EdgeInsets.symmetric(vertical: 6),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(6),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 6),
-//                 Expanded(
-//                   child: OutlinedButton.icon(
-//                     onPressed: () => _openWhatsApp("919961593179"),
-//                     icon: Image.asset(
-//                       'assets/whatsapp.png',
-//                       width: 18,
-//                       height: 18,
-//                       errorBuilder: (_, __, ___) => const Icon(
-//                         Icons.chat,
-//                         size: 14,
-//                         color: AppColors.success,
-//                       ),
-//                     ),
-//                     label: Text(
-//                       'Whatsapp',
-//                       style: TextStyle(
-//                         fontSize: 12,
-//                         color: AppColors.lightText,
-//                       ),
-//                     ),
-//                     style: OutlinedButton.styleFrom(
-//                       foregroundColor: AppColors.primary,
-//                       side: BorderSide(color: AppColors.lightBorder),
-//                       padding: const EdgeInsets.symmetric(vertical: 6),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(6),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 6),
-//                 Expanded(
-//                   child: OutlinedButton.icon(
-//                     onPressed: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => MapScreen(
-//                             hostelName: name,
-//                             hostelAddress: address,
-//                             hostelLatitude: latitude,
-//                             hostelLongitude: longitude,
-//                           ),
-//                         ),
-//                       );
-//                     },
-//                     icon: Icon(
-//                       Icons.location_on,
-//                       size: 14,
-//                       color: AppColors.primary,
-//                     ),
-//                     label: Text(
-//                       'Location',
-//                       style: TextStyle(
-//                         fontSize: 12,
-//                         color: AppColors.lightText,
-//                       ),
-//                     ),
-//                     style: OutlinedButton.styleFrom(
-//                       foregroundColor: AppColors.primary,
-//                       side: const BorderSide(color: AppColors.primary),
-//                       padding: const EdgeInsets.symmetric(vertical: 6),
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(6),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _placeholderImage() {
-//     return Container(
-//       width: 120,
-//       height: 130,
-//       color: AppColors.lightSurface,
-//       child: Icon(Icons.hotel, size: 40, color: AppColors.lightTextSecondary),
-//     );
-//   }
-
-//   Widget _buildRatingBadge(String rating) {
-//     final double ratingValue = double.tryParse(rating) ?? 0;
-//     final Color color = ratingValue >= 4
-//         ? AppColors.success
-//         : ratingValue >= 3
-//         ? Colors.orange
-//         : AppColors.error;
-
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-//       decoration: BoxDecoration(
-//         color: color,
-//         borderRadius: BorderRadius.circular(4),
-//       ),
-//       child: Row(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           Text(
-//             rating,
-//             style: const TextStyle(
-//               color: Colors.white,
-//               fontSize: 11,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//           const SizedBox(width: 2),
-//           const Icon(Icons.star, color: Colors.white, size: 11),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -623,12 +25,10 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-
     try {
       final response = await http.get(
         Uri.parse('http://187.127.146.52:2003/api/admin/offers'),
       );
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         if (jsonData['success'] == true) {
@@ -659,15 +59,78 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F4F4),
+      backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
-        title: const Text(
-          'Offers',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
-        ),
-        centerTitle: true,
+        backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.white,
+        centerTitle: true,
+        title: const Text(
+          'Offers',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+        // leading: GestureDetector(
+        //   onTap: () => Navigator.pop(context),
+        //   child: Center(
+        //     child: Container(
+        //       width: 32,
+        //       height: 32,
+        //       margin: const EdgeInsets.only(left: 12),
+        //       decoration: BoxDecoration(
+        //         color: const Color(0xFFF5F5F0),
+        //         shape: BoxShape.circle,
+        //         border: Border.all(color: const Color(0xFFE0E0E0), width: 0.5),
+        //       ),
+        //       child: const Icon(
+        //         Icons.arrow_back_ios_new_rounded,
+        //         size: 14,
+        //         color: Color(0xFF5F5E5A),
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 14),
+        //     child: Stack(
+        //       clipBehavior: Clip.none,
+        //       children: [
+        //         Container(
+        //           width: 32,
+        //           height: 32,
+        //           decoration: BoxDecoration(
+        //             color: const Color(0xFFF5F5F0),
+        //             shape: BoxShape.circle,
+        //             border: Border.all(
+        //                 color: const Color(0xFFE0E0E0), width: 0.5),
+        //           ),
+        //           child: const Icon(
+        //             Icons.notifications_outlined,
+        //             size: 16,
+        //             color: Color(0xFF5F5E5A),
+        //           ),
+        //         ),
+        //         Positioned(
+        //           top: 5,
+        //           right: 5,
+        //           child: Container(
+        //             width: 7,
+        //             height: 7,
+        //             decoration: BoxDecoration(
+        //               color: const Color(0xFFE84A4A),
+        //               shape: BoxShape.circle,
+        //               border: Border.all(color: Colors.white, width: 1.5),
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0.5),
           child: Container(height: 0.5, color: const Color(0xFFE0E0E0)),
@@ -680,7 +143,10 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Color(0xFF4CAF50),
+          strokeWidth: 2,
+        ),
       );
     }
 
@@ -689,16 +155,48 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(
-              _errorMessage!,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: Color(0xFFFCEBEB),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.wifi_off_rounded,
+                  size: 32, color: Color(0xFFE84A4A)),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _fetchOffers,
-              child: const Text('Retry'),
+            const Text(
+              'Something went wrong',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              _errorMessage!,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF888780)),
+            ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: _fetchOffers,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CAF50),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  'Try again',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -706,37 +204,64 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
     }
 
     if (_offers.isEmpty) {
-      return const Center(
-        child: Text(
-          'No offers available',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: const BoxDecoration(
+                color: Color(0xFFF1F1EC),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.local_offer_outlined,
+                  size: 36, color: Color(0xFFB0B0B0)),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'No offers yet',
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1A1A1A)),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Check back soon for new deals',
+              style: TextStyle(fontSize: 12, color: Color(0xFF888780)),
+            ),
+          ],
         ),
       );
     }
 
     return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
       slivers: [
         const SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16, 12, 16, 6),
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
               'ALL OFFERS',
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 10,
                 color: Color(0xFF888780),
-                letterSpacing: 0.8,
+                letterSpacing: 1.2,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 110),
           sliver: SliverList.separated(
             itemCount: _offers.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) =>
-                _OfferCard(offer: _offers[index]),
+            separatorBuilder: (_, __) => const SizedBox(height: 14),
+            itemBuilder: (context, index) => _OfferCard(
+              offer: _offers[index],
+              index: index,
+              total: _offers.length,
+            ),
           ),
         ),
       ],
@@ -744,124 +269,203 @@ class _AdminOffersScreenState extends State<AdminOffersScreen> {
   }
 }
 
+// ─────────────────────────────────────────────
 class _OfferCard extends StatelessWidget {
   final dynamic offer;
+  final int index;
+  final int total;
 
-  const _OfferCard({required this.offer});
+  const _OfferCard({
+    required this.offer,
+    required this.index,
+    required this.total,
+  });
 
+  static const _tagColors = [
+    Color(0xFFEAF3DE),
+    Color(0xFFE1F5EE),
+    Color(0xFFFAEEDA),
+  ];
+  static const _tagTextColors = [
+    Color(0xFF3B6D11),
+    Color(0xFF0F6E56),
+    Color(0xFF854F0B),
+  ];
+  static const _tags = ['Limited time', 'Members only', 'New arrival'];
 
   @override
   Widget build(BuildContext context) {
     final String title = offer['title'] ?? 'No title';
     final String description = offer['description'] ?? 'No description';
     final String imageUrl = offer['image'] ?? '';
-    print("kkkkkkkkkkkkkkkk$imageUrl");
+
+    final tagIndex = index % _tags.length;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE5E5E5), width: 0.5),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE8E8E4), width: 0.5),
       ),
-      padding: const EdgeInsets.all(14),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                imageUrl,
-                height: 180,
-                fit: BoxFit.cover,
-        
-                errorBuilder: (context, error, stackTrace) {
-                  print('Image loading error: $error');
-                  print('Image URL: $imageUrl');
-                  return Container(
-                    height: 180,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(10),
+          // ── Image ──────────────────────────────────
+          Stack(
+            children: [
+              if (imageUrl.isNotEmpty)
+                Image.network(
+                  imageUrl,
+                  height: 190,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return _ImagePlaceholder(isLoading: true);
+                  },
+                  errorBuilder: (_, __, ___) =>
+                      const _ImagePlaceholder(isLoading: false),
+                )
+              else
+                const _ImagePlaceholder(isLoading: false),
+
+              // index counter badge
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.45),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${index + 1} of $total',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.broken_image,
-                          size: 40,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Failed to load image',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    height: 180,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded / 
-                              loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
-          if (imageUrl.isEmpty)
-            Container(
-              height: 180,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.image_not_supported,
-                size: 40,
-                color: Colors.grey,
-              ),
-            ),
-          const SizedBox(height: 12),
-          // Title
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1A1A1A),
-            ),
-            overflow: TextOverflow.ellipsis,
+            ],
           ),
-          const SizedBox(height: 8),
-          // Description
-          Text(
-            description,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF5F5E5A),
-              height: 1.5,
+
+          // ── Body ──────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Tag pill
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _tagColors[tagIndex],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    _tags[tagIndex],
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: _tagTextColors[tagIndex],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1A1A1A),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF5F5E5A),
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Footer ──────────────────────────────────
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Color(0xFFF0F0EC), width: 0.5),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Row(
+                //   children: const [
+                //     Icon(Icons.remove_red_eye_outlined,
+                //         size: 14, color: Color(0xFF3B6D11)),
+                //     SizedBox(width: 4),
+                //     Text(
+                //       'View details',
+                //       style: TextStyle(
+                //         fontSize: 11,
+                //         fontWeight: FontWeight.w500,
+                //         color: Color(0xFF3B6D11),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // Container(
+                //   width: 28,
+                //   height: 28,
+                //   decoration: const BoxDecoration(
+                //     color: Color(0xFFEAF3DE),
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: const Icon(
+                //     Icons.share_outlined,
+                //     size: 14,
+                //     color: Color(0xFF3B6D11),
+                //   ),
+                // ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+class _ImagePlaceholder extends StatelessWidget {
+  final bool isLoading;
+  const _ImagePlaceholder({required this.isLoading});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 190,
+      width: double.infinity,
+      color: const Color(0xFFEEEEE8),
+      child: Center(
+        child: isLoading
+            ? const CircularProgressIndicator(
+                color: Color(0xFF4CAF50), strokeWidth: 2)
+            : const Icon(Icons.image_not_supported_outlined,
+                size: 36, color: Color(0xFFB0B0B0)),
       ),
     );
   }

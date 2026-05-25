@@ -2191,6 +2191,7 @@
 import 'dart:convert';
 import 'package:brando_app/helper/shared_preference.dart';
 import 'package:brando_app/provider/upgrade/upgrade_provider.dart';
+import 'package:brando_app/widgets/app_back_control.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
@@ -2487,95 +2488,85 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final shouldExit = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Exit'),
-            content: const Text('Are you sure you want to exit?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        );
-        return shouldExit ?? false;
+    return AppBackControl(
+           showConfirmationDialog: true,
+      dialogTitle: 'Exit App?',
+      dialogMessage: 'Are you sure you want to exit the app?',
+      confirmText: 'Exit',
+      cancelText: 'Stay',
+      onBackPressed: () {
+        print('User exiting app');
       },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-
-        appBar: AppBar(
+      child: SafeArea(
+        child: Scaffold(
           backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          // ── Refresh icon on the right ──────────────────────────────────────
-          actions: [
-            _isLoading
-                ? const Padding(
-                    padding: EdgeInsets.only(right: 12),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Color(0xFFD32F2F),
-                        strokeWidth: 2,
+        
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            // ── Refresh icon on the right ──────────────────────────────────────
+            actions: [
+              _isLoading
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 12),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFD32F2F),
+                          strokeWidth: 2,
+                        ),
                       ),
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.refresh, color: Color(0xFFD32F2F)),
+                      tooltip: 'Refresh',
+                      onPressed: _fetchBookings,
+                    ),
+            ],
+            title: _isLoading || _selectedBooking == null
+                ? RichText(
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'HIFI ',
+                          style: TextStyle(
+                            color: Color(0xFFD32F2F),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Hostels',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
                     ),
                   )
-                : IconButton(
-                    icon: const Icon(Icons.refresh, color: Color(0xFFD32F2F)),
-                    tooltip: 'Refresh',
-                    onPressed: _fetchBookings,
+                : Text(
+                    _selectedBooking!.hostel.name,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
-          ],
-          title: _isLoading || _selectedBooking == null
-              ? RichText(
-                  text: const TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'HIFI ',
-                        style: TextStyle(
-                          color: Color(0xFFD32F2F),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Hostels',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
+            centerTitle: true,
+          ),
+        
+          body: _isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFD32F2F)),
                 )
-              : Text(
-                  _selectedBooking!.hostel.name,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-          centerTitle: true,
+              : _error != null
+              ? _buildError()
+              : _buildBody(),
         ),
-
-        body: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Color(0xFFD32F2F)),
-              )
-            : _error != null
-            ? _buildError()
-            : _buildBody(),
       ),
     );
   }

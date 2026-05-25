@@ -1895,6 +1895,7 @@ import 'package:brando_app/provider/category/category_provider.dart';
 import 'package:brando_app/provider/location/location_provider.dart';
 import 'package:brando_app/provider/theme_provider.dart';
 import 'package:brando_app/provider/wishlist/wishlist_provider.dart';
+import 'package:brando_app/views/Ecommerce/product_banner_widget.dart';
 import 'package:brando_app/views/Map/map_screen.dart';
 import 'package:brando_app/views/details/detail_screen.dart';
 import 'package:brando_app/views/home/qrscanner.dart';
@@ -1903,6 +1904,7 @@ import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:brando_app/views/notifications/notification_screen.dart';
 import 'package:brando_app/views/search/search_screen.dart';
 import 'package:brando_app/views/seeall/see_all_screen.dart';
+import 'package:brando_app/widgets/app_back_control.dart';
 import 'package:brando_app/widgets/category_widget.dart';
 import 'package:brando_app/widgets/toast_message.dart';
 import 'package:flutter/material.dart';
@@ -1935,6 +1937,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locationServiceDisabled = false;
 
   bool _isDialogOpen = false;
+  bool _isExiting = false;
+
 
   void _startHintCycling(List<String> names) {
     _hintTimer?.cancel();
@@ -2210,49 +2214,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (_isDialogOpen) return false;
-
-        _isDialogOpen = true;
-
-        final shouldExit = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Exit App'),
-            content: const Text('Are you sure you want to exit?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text(
-                  'Exit',
-                  style: TextStyle(color: AppColors.error),
-                ),
-              ),
-            ],
-          ),
-        );
-
-        _isDialogOpen = false;
-
-        if (shouldExit == true) {
-          if (mounted) {
-            SystemNavigator.pop();
-          }
-          return true;
-        }
-        return false;
+return AppBackControl(
+        showConfirmationDialog: true,
+      dialogTitle: 'Exit App?',
+      dialogMessage: 'Are you sure you want to exit the app?',
+      confirmText: 'Exit',
+      cancelText: 'Stay',
+      onBackPressed: () {
+        print('User exiting app');
       },
       child: Scaffold(
         backgroundColor: isDarkMode
             ? AppColors.darkBackground
             : AppColors.lightBackground,
         body: SafeArea(
-          top: false,
+          top: true,
           child: RefreshIndicator(
             color: AppColors.primary,
             onRefresh: _handleRefresh,
@@ -2270,7 +2246,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildHostelList(),
                   _buildNearbySection(),
                   _buildRecList(),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ProductBannerWidget(),
+                  ),
+                                    const SizedBox(height: 20),
+
                 ],
               ),
             ),
@@ -3189,7 +3171,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final List displayShares = filteredShares.isNotEmpty
         ? filteredShares
         : allShares;
-
+final PageController _pageController = PageController();
+int _currentPage = 0;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -3224,24 +3207,88 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: firstImage.isNotEmpty
-                      ? Image.network(
-                          firstImage,
-                          width: 120,
-                          height: 130,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _placeholderImage(),
-                        )
-                      : Image.asset(
-                          'assets/hotelimage.png',
-                          width: 120,
-                          height: 130,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _placeholderImage(),
-                        ),
-                ),
+// In your State class
+
+
+// In your build widget
+ClipRRect(
+  child: hostel.images.isNotEmpty
+      ? SizedBox(
+          width: 120,
+          height: 130,
+          child: Stack(
+            children: [
+              PageView.builder(
+                controller: _pageController,
+                itemCount: hostel.images.length,
+                onPageChanged: (index) {
+                  setState(() => _currentPage = index);
+                },
+                itemBuilder: (context, index) {
+                  return Image.network(
+                    hostel.images[index],
+                    width: 120,
+                    height: 130,
+                    fit: BoxFit.fill,
+                    errorBuilder: (_, __, ___) => _placeholderImage(),
+                  );
+                },
+              ),
+
+              // Dot indicators at the bottom
+// Dot indicators at the bottom
+Positioned(
+  bottom: 0,
+  left: 0,
+  right: 0,
+  child: Container(
+    padding: const EdgeInsets.only(bottom: 4, top: 12),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+        colors: [
+          Colors.black.withOpacity(0.35),
+          Colors.transparent,
+        ],
+      ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(hostel.images.length, (index) {
+        return Container(
+          width: 6,
+          height: 6,
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _currentPage == index
+                ? Colors.white
+                : Colors.white.withOpacity(0.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 3,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+        );
+      }),
+    ),
+  ),
+),
+            ],
+          ),
+        )
+      : Image.asset(
+          'assets/hotelimage.png',
+          width: 120,
+          height: 130,
+          fit: BoxFit.fill,
+          errorBuilder: (_, __, ___) => _placeholderImage(),
+        ),
+),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -3279,57 +3326,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            Selector<WishlistProvider, bool>(
-                              selector: (_, provider) =>
-                                  provider.isWishlisted(hostelId),
-                              builder: (context, wishlisted, _) {
-                                return GestureDetector(
-                                  onTap: hostelId.isEmpty
-                                      ? null
-                                      : () {
-                                          final wishlistProvider = context
-                                              .read<WishlistProvider>();
-                                          final isCurrentlyWishlisted =
-                                              wishlistProvider.isWishlisted(
-                                                hostelId,
-                                              );
-                                          wishlistProvider.toggleWishlist(
-                                            hostelId,
-                                          );
+                            // Selector<WishlistProvider, bool>(
+                            //   selector: (_, provider) =>
+                            //       provider.isWishlisted(hostelId),
+                            //   builder: (context, wishlisted, _) {
+                            //     return GestureDetector(
+                            //       onTap: hostelId.isEmpty
+                            //           ? null
+                            //           : () {
+                            //               final wishlistProvider = context
+                            //                   .read<WishlistProvider>();
+                            //               final isCurrentlyWishlisted =
+                            //                   wishlistProvider.isWishlisted(
+                            //                     hostelId,
+                            //                   );
+                            //               wishlistProvider.toggleWishlist(
+                            //                 hostelId,
+                            //               );
 
-                                          ToastHelper.show(
-                                            context,
-                                            message: isCurrentlyWishlisted
-                                                ? 'Removed from your wishlist'
-                                                : '❤️  Added to wishlist — $name',
-                                            type: isCurrentlyWishlisted
-                                                ? ToastType.warning
-                                                : ToastType.success,
-                                          );
-                                        },
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 300),
-                                    transitionBuilder: (child, animation) =>
-                                        ScaleTransition(
-                                          scale: animation,
-                                          child: child,
-                                        ),
-                                    child: Icon(
-                                      wishlisted
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      key: ValueKey(wishlisted),
-                                      color: wishlisted
-                                          ? AppColors.error
-                                          : isDarkMode
-                                          ? AppColors.darkTextSecondary
-                                          : Colors.grey.shade400,
-                                      size: 22,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                            //               ToastHelper.show(
+                            //                 context,
+                            //                 message: isCurrentlyWishlisted
+                            //                     ? 'Removed from your wishlist'
+                            //                     : '❤️  Added to wishlist — $name',
+                            //                 type: isCurrentlyWishlisted
+                            //                     ? ToastType.warning
+                            //                     : ToastType.success,
+                            //               );
+                            //             },
+                            //       child: AnimatedSwitcher(
+                            //         duration: const Duration(milliseconds: 300),
+                            //         transitionBuilder: (child, animation) =>
+                            //             ScaleTransition(
+                            //               scale: animation,
+                            //               child: child,
+                            //             ),
+                            //         child: Icon(
+                            //           wishlisted
+                            //               ? Icons.favorite
+                            //               : Icons.favorite_border,
+                            //           key: ValueKey(wishlisted),
+                            //           color: wishlisted
+                            //               ? AppColors.error
+                            //               : isDarkMode
+                            //               ? AppColors.darkTextSecondary
+                            //               : Colors.grey.shade400,
+                            //           size: 22,
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 4),

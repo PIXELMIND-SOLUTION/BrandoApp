@@ -1417,6 +1417,7 @@ import 'dart:io';
 import 'package:brando_app/constant/api_constants.dart';
 import 'package:brando_app/models/submit_hostel_model.dart';
 import 'package:brando_app/provider/booking/submit_form_provider.dart';
+import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1886,7 +1887,7 @@ class _EnterDetailsState extends State<EnterDetails> {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => NavbarScreen(initialIndex: 2),));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

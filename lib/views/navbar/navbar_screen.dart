@@ -1,351 +1,3 @@
-
-// import 'package:brando_app/config/theme_config.dart';
-// import 'package:brando_app/provider/navbar/navbar_provider.dart';
-// import 'package:brando_app/provider/theme_provider.dart';
-// import 'package:brando_app/views/Ecommerce/ecomerce.dart';
-// import 'package:brando_app/views/history/booking_history.dart';
-// import 'package:brando_app/views/home/home_screen.dart';
-// import 'package:brando_app/views/home/menu_screen.dart';
-// import 'package:brando_app/views/home/wishlist_screen.dart';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-
-// class _NavItem {
-//   final IconData icon;
-//   final IconData activeIcon;
-//   final String label;
-
-//   const _NavItem({
-//     required this.icon,
-//     required this.activeIcon,
-//     required this.label,
-//   });
-// }
-
-// // ─────────────────────────────────────────────────────────────
-// // Bottom Navbar
-// // ─────────────────────────────────────────────────────────────
-
-// class CustomBottomNavbar extends StatelessWidget {
-//   final VoidCallback onCenterTap;
-
-//   const CustomBottomNavbar({super.key, required this.onCenterTap});
-
-//   static const _items = [
-//     _NavItem(
-//       icon: Icons.home_outlined,
-//       activeIcon: Icons.home_rounded,
-//       label: 'Home',
-//     ),
-//     _NavItem(
-//       icon: Icons.favorite_border_rounded,
-//       activeIcon: Icons.favorite_rounded,
-//       label: 'Offers',
-//     ),
-//     _NavItem(
-//       icon: Icons.king_bed_outlined,
-//       activeIcon: Icons.king_bed_rounded,
-//       label: 'Booked',
-//     ),
-//     _NavItem(
-//       icon: Icons.menu_rounded,
-//       activeIcon: Icons.menu_rounded,
-//       label: 'Menu',
-//     ),
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final currentIndex = context.watch<BottomNavbarProvider>().currentIndex;
-//     final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: isDarkMode ? AppColors.darkCard : AppColors.lightBackground,
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.08),
-//             blurRadius: 24,
-//             offset: const Offset(0, -4),
-//           ),
-//         ],
-//       ),
-//       child: SafeArea(
-//         top: false,
-//         child: SizedBox(
-//           height: 64,
-//           child: Stack(
-//             clipBehavior: Clip.none, // allows child to overflow above the bar
-//             children: [
-//               // ── Nav items row (full width, leaves gap in center)
-//               Row(
-//                 children: [
-//                   // Left two items
-//                   Expanded(
-//                     child: Row(
-//                       children: List.generate(2, (index) {
-//                         final item = _items[index];
-//                         final isActive = index == currentIndex;
-//                         return Expanded(
-//                           child: _NavBarItem(
-//                             item: item,
-//                             isActive: isActive,
-//                             onTap: () => context
-//                                 .read<BottomNavbarProvider>()
-//                                 .setIndex(index),
-//                           ),
-//                         );
-//                       }),
-//                     ),
-//                   ),
-
-//                   // Empty space where center button sits
-//                   const SizedBox(width: 72),
-
-//                   // Right two items
-//                   Expanded(
-//                     child: Row(
-//                       children: List.generate(2, (index) {
-//                         final actualIndex = index + 2;
-//                         final item = _items[actualIndex];
-//                         final isActive = actualIndex == currentIndex;
-//                         return Expanded(
-//                           child: _NavBarItem(
-//                             item: item,
-//                             isActive: isActive,
-//                             onTap: () => context
-//                                 .read<BottomNavbarProvider>()
-//                                 .setIndex(actualIndex),
-//                           ),
-//                         );
-//                       }),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-
-//               // ── Center button — pops above the bar
-//               Positioned(
-//                 top: -26, // raise above the navbar top edge
-//                 left: 0,
-//                 right: 0,
-//                 child: Center(
-//                   child: GestureDetector(
-//                     onTap: onCenterTap,
-//                     behavior: HitTestBehavior.opaque,
-//                     child: Column(
-//                       mainAxisSize: MainAxisSize.min,
-//                       children: [
-//                         // circular image with white ring + shadow
-//                         Container(
-//                           decoration: const BoxDecoration(
-//                             shape: BoxShape.circle,
-//                           ),
-//                           padding: const EdgeInsets.all(3),
-//                           child: ClipOval(
-//                             child: Image.asset(
-//                               'assets/home.png', // Replace with your logo asset path
-//                               width: 72,
-//                               height: 72,
-//                               fit: BoxFit.cover,
-//                             ),
-//                           ),
-//                         ),
-//                         Text(
-//                           'Shop Now',
-//                           style: TextStyle(
-//                             fontSize: 14,
-//                             fontWeight: FontWeight.bold,
-//                             color: isDarkMode
-//                                 ? AppColors.primary
-//                                 : AppColors.primary,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// // ─────────────────────────────────────────────────────────────
-// // Individual Nav Item
-// // ─────────────────────────────────────────────────────────────
-
-// class _NavBarItem extends StatefulWidget {
-//   final _NavItem item;
-//   final bool isActive;
-//   final VoidCallback onTap;
-
-//   const _NavBarItem({
-//     required this.item,
-//     required this.isActive,
-//     required this.onTap,
-//   });
-
-//   @override
-//   State<_NavBarItem> createState() => _NavBarItemState();
-// }
-
-// class _NavBarItemState extends State<_NavBarItem>
-//     with SingleTickerProviderStateMixin {
-//   late final AnimationController _controller;
-//   late final Animation<double> _scaleAnim;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _controller = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 180),
-//     );
-//     _scaleAnim = Tween<double>(
-//       begin: 1.0,
-//       end: 0.92,
-//     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-//   }
-
-//   @override
-//   void dispose() {
-//     _controller.dispose();
-//     super.dispose();
-//   }
-
-//   void _handleTap() {
-//     _controller.forward().then((_) => _controller.reverse());
-//     widget.onTap();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-//     const activeColor = AppColors.primary;
-//     final inactiveColor = isDarkMode
-//         ? AppColors.darkTextSecondary
-//         : const Color(0xFFB0B0B0);
-
-//     return GestureDetector(
-//       onTap: _handleTap,
-//       behavior: HitTestBehavior.opaque,
-//       child: ScaleTransition(
-//         scale: _scaleAnim,
-//         child: Center(
-//           child: AnimatedContainer(
-//             duration: const Duration(milliseconds: 250),
-//             curve: Curves.easeInOut,
-//             margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 8),
-//             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-//             decoration: BoxDecoration(
-//               color: widget.isActive
-//                   ? activeColor.withOpacity(0.1)
-//                   : Colors.transparent,
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//             child: Row(
-//               mainAxisSize: MainAxisSize.min,
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 Icon(
-//                   widget.isActive ? widget.item.activeIcon : widget.item.icon,
-//                   color: widget.isActive ? activeColor : inactiveColor,
-//                   size: 20,
-//                 ),
-//                 if (widget.isActive)
-//                   Padding(
-//                     padding: const EdgeInsets.only(left: 4),
-//                     child: Text(
-//                       widget.item.label,
-//                       maxLines: 1,
-//                       overflow: TextOverflow.visible,
-//                       style: const TextStyle(
-//                         color: activeColor,
-//                         fontSize: 11,
-//                         fontWeight: FontWeight.w600,
-//                       ),
-//                     ),
-//                   ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// // ─────────────────────────────────────────────────────────────
-// // Navbar Screen
-// // ─────────────────────────────────────────────────────────────
-
-// class NavbarScreen extends StatefulWidget {
-//   final int initialIndex;
-
-//   const NavbarScreen({super.key, this.initialIndex = 0});
-
-//   static const _pages = [
-//     HomeScreen(),
-//     AdminOffersScreen(),
-//     BookingHistory(),
-//     MenuScreen(),
-//   ];
-
-//   @override
-//   State<NavbarScreen> createState() => _NavbarScreenState();
-// }
-
-// class _NavbarScreenState extends State<NavbarScreen> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       context.read<BottomNavbarProvider>().setIndex(widget.initialIndex);
-//     });
-//   }
-
-//   void _onCenterTap() {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(builder: (context) => GroceryScreen()),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-//     final currentIndex = context.watch<BottomNavbarProvider>().currentIndex;
-
-//     return Scaffold(
-//       backgroundColor: isDarkMode
-//           ? AppColors.darkBackground
-//           : const Color(0xFFF8F8F8),
-//       body: IndexedStack(index: currentIndex, children: NavbarScreen._pages),
-//       bottomNavigationBar: CustomBottomNavbar(onCenterTap: _onCenterTap),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/Ecommerce/ecomerce.dart';
 import 'package:brando_app/views/history/booking_history.dart';
@@ -404,20 +56,19 @@ class CustomBottomNavbar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 72,
+          height: 80,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
               // ── Curved notch background ──────────────
               CustomPaint(
-                size: Size(MediaQuery.of(context).size.width, 72),
+                size: Size(MediaQuery.of(context).size.width, 80),
                 painter: _NotchBarPainter(),
               ),
 
               // ── Nav items row ─────────────────────────
               Row(
                 children: [
-                  // Left two items
                   Expanded(
                     child: Row(
                       children: List.generate(2, (index) {
@@ -437,9 +88,8 @@ class CustomBottomNavbar extends StatelessWidget {
                   ),
 
                   // Empty space where center button sits
-                  const SizedBox(width: 92),
+                  const SizedBox(width: 96),
 
-                  // Right two items
                   Expanded(
                     child: Row(
                       children: List.generate(2, (index) {
@@ -461,37 +111,25 @@ class CustomBottomNavbar extends StatelessWidget {
                 ],
               ),
 
-              // ── Center image button — pops above the bar ──
-              Positioned(
-                top: -26,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: onCenterTap,
-                    behavior: HitTestBehavior.opaque,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          padding: const EdgeInsets.all(3),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/home copy.png',
-                              width: 92,
-                              height: 92,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              // ── Center image button — MOVED HIGHER ──
+     // ── Center image button with larger tap area ──
+Positioned(
+  top: -42,
+  left: 0,
+  right: 0,
+  child: Center(
+    child: GestureDetector(
+      onTap: onCenterTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 120,  // Larger tappable area
+        height: 120, // Larger tappable area
+        alignment: Alignment.center,
+        child: _AnimatedCenterButton(),
+      ),
+    ),
+  ),
+),
             ],
           ),
         ),
@@ -501,39 +139,156 @@ class CustomBottomNavbar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// NOTCH PAINTER — draws the curved dip
-// around the center asset image
+// ANIMATED CENTER BUTTON with pulse ring
+// ─────────────────────────────────────────────
+class _AnimatedCenterButton extends StatefulWidget {
+  @override
+  State<_AnimatedCenterButton> createState() => _AnimatedCenterButtonState();
+}
+
+class _AnimatedCenterButtonState extends State<_AnimatedCenterButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ringController;
+  late final Animation<double> _ringScale;
+  late final Animation<double> _ringOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _ringController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+
+    _ringScale = Tween<double>(begin: 0.75, end: 1.15).animate(
+      CurvedAnimation(parent: _ringController, curve: Curves.easeOut),
+    );
+
+    _ringOpacity = Tween<double>(begin: 0.5, end: 0.0).animate(
+      CurvedAnimation(parent: _ringController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ringController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 96,
+      height: 96,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer pulse ring
+          AnimatedBuilder(
+            animation: _ringController,
+            builder: (_, __) => Transform.scale(
+              scale: _ringScale.value,
+              child: Container(
+                width: 92,
+                height: 92,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF4CAF50)
+                        .withOpacity(_ringOpacity.value),
+                    width: 2.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Green ring border
+          Container(
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(
+                color: const Color(0xFF66BB6A),
+                width: 3,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF4CAF50).withOpacity(0.30),
+                  blurRadius: 16,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.10),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/home copy.png',
+                width: 88,
+                height: 88,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// NOTCH PAINTER — fancy deep wave with
+// smooth bezier curves and dual-layer shadow
 // ─────────────────────────────────────────────
 class _NotchBarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    // Shadow
-    final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.08)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-    canvas.drawPath(_buildPath(size), shadowPaint);
+    // Outer soft shadow
+    final outerShadow = Paint()
+      ..color = Colors.black.withOpacity(0.06)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
+    canvas.drawPath(_buildPath(size), outerShadow);
 
-    // White fill
+    // Inner tighter shadow
+    final innerShadow = Paint()
+      ..color = Colors.black.withOpacity(0.04)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+    canvas.drawPath(_buildPath(size), innerShadow);
+
+    // Main fill
     final fillPaint = Paint()
       ..color = const Color(0xFFF1FFF1)
       ..style = PaintingStyle.fill;
     canvas.drawPath(_buildPath(size), fillPaint);
+
+    // Subtle top border line
+    final borderPaint = Paint()
+      ..color = const Color(0xFF66BB6A).withOpacity(0.25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawPath(_buildTopBorderPath(size), borderPaint);
   }
 
   Path _buildPath(Size size) {
     final double cx = size.width / 2;
 
-    // Adjust these to match your image size (92x92 asset)
-    const double notchHalfWidth = 50.0; // half of the notch opening
-    const double notchDepth = 26.0; // how deep the curve dips
-    const double curveSpread = 24.0; // smoothness of the transition
+    const double notchHalfWidth = 52.0;
+    const double notchDepth = 70.0;
+    const double curveSpread = 5.0;
 
     return Path()
       ..moveTo(0, 0)
       ..lineTo(cx - notchHalfWidth - curveSpread, 0)
       // Left curve going DOWN into notch
       ..cubicTo(
-        cx - notchHalfWidth - curveSpread / 2,
+        cx - notchHalfWidth - curveSpread * 0.4,
         0,
         cx - notchHalfWidth,
         notchDepth,
@@ -544,7 +299,7 @@ class _NotchBarPainter extends CustomPainter {
       ..cubicTo(
         cx + notchHalfWidth,
         notchDepth,
-        cx + notchHalfWidth + curveSpread / 2,
+        cx + notchHalfWidth + curveSpread * 0.4,
         0,
         cx + notchHalfWidth + curveSpread,
         0,
@@ -555,12 +310,42 @@ class _NotchBarPainter extends CustomPainter {
       ..close();
   }
 
+  // Just the top edge (for the colored border line)
+  Path _buildTopBorderPath(Size size) {
+    final double cx = size.width / 2;
+
+    const double notchHalfWidth = 52.0;
+    const double notchDepth = 70.0;
+    const double curveSpread = 5.0;
+
+    return Path()
+      ..moveTo(0, 0)
+      ..lineTo(cx - notchHalfWidth - curveSpread, 0)
+      ..cubicTo(
+        cx - notchHalfWidth - curveSpread * 0.4,
+        0,
+        cx - notchHalfWidth,
+        notchDepth,
+        cx,
+        notchDepth,
+      )
+      ..cubicTo(
+        cx + notchHalfWidth,
+        notchDepth,
+        cx + notchHalfWidth + curveSpread * 0.4,
+        0,
+        cx + notchHalfWidth + curveSpread,
+        0,
+      )
+      ..lineTo(size.width, 0);
+  }
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ─────────────────────────────────────────────
-// NAV BAR ITEM  — unchanged from your original
+// NAV BAR ITEM
 // ─────────────────────────────────────────────
 class _NavBarItem extends StatefulWidget {
   final _NavItem item;
@@ -591,7 +376,7 @@ class _NavBarItemState extends State<_NavBarItem>
     );
     _scaleAnim = Tween<double>(
       begin: 1.0,
-      end: 0.92,
+      end: 0.88,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
 
@@ -617,26 +402,35 @@ class _NavBarItemState extends State<_NavBarItem>
       child: ScaleTransition(
         scale: _scaleAnim,
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Active indicator dot
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: widget.isActive ? 5 : 0,
+                height: widget.isActive ? 5 : 0,
+                margin: EdgeInsets.only(bottom: widget.isActive ? 3 : 0),
+                decoration: const BoxDecoration(
+                  color: activeColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
               Icon(
                 widget.isActive ? widget.item.activeIcon : widget.item.icon,
                 color: widget.isActive ? activeColor : inactiveColor,
                 size: 24,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 3),
               Text(
                 widget.item.label,
                 style: TextStyle(
                   color: widget.isActive ? activeColor : inactiveColor,
                   fontSize: 11,
-                  fontWeight: widget.isActive
-                      ? FontWeight.w600
-                      : FontWeight.w400,
+                  fontWeight:
+                      widget.isActive ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ],
@@ -648,7 +442,7 @@ class _NavBarItemState extends State<_NavBarItem>
 }
 
 // ─────────────────────────────────────────────
-// NAVBAR SCREEN — unchanged from your original
+// NAVBAR SCREEN
 // ─────────────────────────────────────────────
 class NavbarScreen extends StatefulWidget {
   final int initialIndex;
@@ -682,14 +476,11 @@ class _NavbarScreenState extends State<NavbarScreen> {
     final currentIndex = context.watch<BottomNavbarProvider>().currentIndex;
 
     final pages = [
-    HomeScreen(),
-    AdminOffersScreen(),
-    BookingHistory(),
-    MenuScreen(),
-      
+      HomeScreen(),
+      AdminOffersScreen(),
+      BookingHistory(),
+      MenuScreen(),
     ];
-
-    
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),

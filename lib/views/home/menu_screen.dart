@@ -283,6 +283,7 @@ import 'package:brando_app/views/history/booking_history.dart';
 import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:brando_app/views/profile/edit_profile.dart';
 import 'package:brando_app/views/splash/splash_screen.dart';
+import 'package:brando_app/widgets/app_back_control.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -437,26 +438,14 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final shouldExit = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Exit'),
-            content: const Text('Are you sure you want to exit?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        );
-        return shouldExit ?? false;
+    return AppBackControl(
+        showConfirmationDialog: true,
+      dialogTitle: 'Exit App?',
+      dialogMessage: 'Are you sure you want to exit the app?',
+      confirmText: 'Exit',
+      cancelText: 'Stay',
+      onBackPressed: () {
+        print('User exiting app');
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -464,7 +453,7 @@ class MenuScreen extends StatelessWidget {
           backgroundColor: Colors.white,
           elevation: 0,
           title: const Text(
-            'Discover',
+            'Menu',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -540,18 +529,7 @@ class MenuScreen extends StatelessWidget {
                 title: 'Contact Us',
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DeleteAccount()),
-                );
-              },
-              child: _buildMenuItem(
-                icon: Icons.delete,
-                title: 'Delete Account',
-              ),
-            ),
+  
             GestureDetector(
               onTap: () => _launchURL(
                 context,
@@ -568,8 +546,22 @@ class MenuScreen extends StatelessWidget {
                 'https://brando-user-policy.onrender.com/privacy-and-policy',
               ),
               child: _buildMenuItem(
-                icon: Icons.phone_outlined,
+                icon: Icons.privacy_tip,
                 title: 'Privacy Policy',
+              ),
+            ),
+                      GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DeleteAccount()),
+                );
+              },
+              child: _buildMenuItem(
+                icon: Icons.delete,
+                title: 'Delete Account',
+                                isLogout: true,
+
               ),
             ),
             GestureDetector(
