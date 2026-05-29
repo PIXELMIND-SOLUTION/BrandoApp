@@ -102,12 +102,7 @@ class OrderProvider extends ChangeNotifier {
   // Place order with address (multiple products)
   Future<Map<String, dynamic>> placeOrderWithAddress({
     required List<Map<String, dynamic>> items,
-    required String fullName,
-    required String phone,
-    required String flatNo,
-    required String area,
-    required String city,
-    required String pincode,
+    required String addressId,
   }) async {
     _setLoading(true);
     _clearError();
@@ -115,12 +110,7 @@ class OrderProvider extends ChangeNotifier {
     try {
       final result = await _orderService.placeOrderWithAddress(
         items: items,
-        fullName: fullName,
-        phone: phone,
-        area: area,
-        city: city,
-        pincode: pincode,
-        flatNo: flatNo,
+        addressId: addressId,
       );
       
       _setLoading(false);

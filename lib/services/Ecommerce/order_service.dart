@@ -64,14 +64,10 @@ class OrderService {
   // Place order with address (multiple products)
   Future<Map<String, dynamic>> placeOrderWithAddress({
     required List<Map<String, dynamic>> items, // Array of {productId, quantity}
-    required String fullName,
-    required String phone,
-    required String flatNo,
-    required String area,
-    required String city,
-    required String pincode,
+    required String addressId,
   }) async {
     try {
+      print('llllllllllllllllllllllllllllllllll');
       final userId = await AppPreferences.getUserId();
       final url = Uri.parse('$baseUrl/order');
       
@@ -79,12 +75,7 @@ class OrderService {
         'items': items,
         'userId': userId,
         'deliveryType': 'address',
-        'fullName': fullName,
-        'phone': phone,
-        'flatNo': flatNo,
-        'area': area,
-        'city': city,
-        'pincode': pincode,
+        'addressId': addressId,
       };
 
       print('Request body: ${json.encode(body)}'); // For debugging

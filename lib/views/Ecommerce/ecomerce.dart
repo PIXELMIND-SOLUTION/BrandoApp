@@ -501,39 +501,170 @@ Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: kBg,
     appBar: _buildAppBar(),
-    body: provider.isLoading && provider.categories.isEmpty
-        ? const Center(child: CircularProgressIndicator())
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 15,),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: const ProductBannerWidget(),
+    body: provider.isLoading &&
+        provider.categories.isEmpty
+    ? const Center(
+        child:
+            CircularProgressIndicator(),
+      )
+    : CustomScrollView(
+        slivers: [
+
+          // Top spacing
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 15,
+            ),
+          ),
+
+          // Banner
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.all(
+                8.0,
               ),
-              _buildCategories(provider),
-              _buildSearch(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
-                child: Text(
-                  selectedCategoryId != null && provider.categories.isNotEmpty
-                      ? provider.categories.firstWhere(
-                          (c) => c.id == selectedCategoryId,
-                          orElse: () => provider.categories.first,
-                        ).name
-                      : 'Products',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF888780),
-                    letterSpacing: 0.8,
+              child:
+                  const ProductBannerWidget(),
+            ),
+          ),
+
+          // Categories
+          SliverToBoxAdapter(
+            child:
+                _buildCategories(
+              provider,
+            ),
+          ),
+
+          // Search
+          SliverToBoxAdapter(
+            child:
+                _buildSearch(),
+          ),
+
+          // Title
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets
+                      .fromLTRB(
+                16,
+                14,
+                16,
+                6,
+              ),
+              child: Text(
+                selectedCategoryId !=
+                            null &&
+                        provider
+                            .categories
+                            .isNotEmpty
+                    ? provider
+                        .categories
+                        .firstWhere(
+                          (c) =>
+                              c.id ==
+                              selectedCategoryId,
+                          orElse:
+                              () =>
+                                  provider
+                                      .categories
+                                      .first,
+                        )
+                        .name
+                    : 'Products',
+                style:
+                    const TextStyle(
+                  fontSize: 13,
+                  fontWeight:
+                      FontWeight
+                          .w600,
+                  color: Color(
+                    0xFF888780,
                   ),
+                  letterSpacing:
+                      0.8,
                 ),
               ),
-              Expanded(child: _buildProductList(provider)),
-            ],
+            ),
           ),
+
+          // Product List
+          _buildProductListSliver(
+            provider,
+          ),
+        ],
+      ),
     bottomNavigationBar: _buildBottomPanel(),
+  );
+}
+
+Widget _buildProductListSliver(
+    OrderProvider provider) {
+  final list =
+      getFilteredProducts(
+          provider);
+
+  if (provider.isLoading) {
+    return const SliverFillRemaining(
+      child: Center(
+        child:
+            CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  if (list.isEmpty) {
+    return const SliverFillRemaining(
+      child: Center(
+        child: Column(
+          mainAxisSize:
+              MainAxisSize.min,
+          children: [
+            Icon(
+              Icons
+                  .search_off_rounded,
+              size: 48,
+              color: Color(
+                0xFFD3D1C7,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'No products found',
+              style: TextStyle(
+                color: Color(
+                  0xFFB4B2A9,
+                ),
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  return SliverPadding(
+    padding:
+        const EdgeInsets.fromLTRB(
+      16,
+      0,
+      16,
+      12,
+    ),
+    sliver: SliverList(
+      delegate:
+          SliverChildBuilderDelegate(
+        (_, i) =>
+            _buildProductCard(
+          list[i],
+        ),
+        childCount:
+            list.length,
+      ),
+    ),
   );
 }
 
@@ -1140,6 +1271,7 @@ Widget _qtyButton({
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Basket header
+              if(hasItems)
               Row(
                 children: [
                   const Text(
@@ -1173,19 +1305,13 @@ Widget _qtyButton({
                   ),
                 ],
               ),
+                            if(hasItems)
+
               const SizedBox(height: 8),
 
               // Cart chips or empty hint
-              if (!hasItems)
-                const Text(
-                  'Add items to see them here',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFFB4B2A9),
-                    fontStyle: FontStyle.italic,
-                  ),
-                )
-              else
+                            if(hasItems)
+
                 SizedBox(
                   height: 36,
                   child: ListView.builder(
@@ -1241,14 +1367,20 @@ Widget _qtyButton({
                     },
                   ),
                 ),
+              if(hasItems)
 
               const SizedBox(height: 12),
+                            if(hasItems)
+
               const Divider(
                 height: 0.5,
                 thickness: 0.5,
                 color: Color(0xFFEEEEEE),
               ),
+                            if(hasItems)
+
               const SizedBox(height: 12),
+              if(hasItems)
 
               // Total + View Button + Pay Button
               Row(

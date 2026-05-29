@@ -1,5 +1,6 @@
 import 'package:brando_app/config/theme_config.dart';
 import 'package:brando_app/helper/shared_preference.dart';
+import 'package:brando_app/provider/Ecommerce/address_provider.dart';
 import 'package:brando_app/provider/Ecommerce/order_provider.dart';
 import 'package:brando_app/provider/auth/auth_provider.dart';
 import 'package:brando_app/provider/auth/profile_provider.dart';
@@ -39,6 +40,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UpgradeBookingProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
                 ChangeNotifierProvider(create: (_) => OrderProvider()),
+                                ChangeNotifierProvider(create: (_) => AddressProvider()),
+
 
       ],
       child: Consumer<ThemeProvider>(
