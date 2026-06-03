@@ -416,7 +416,7 @@ class _DetailScreenState extends State<DetailScreen>
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => const NavbarScreen(initialIndex: 2),
+                  builder: (context) => const BookingHistory(),
                 ),
               );
             },

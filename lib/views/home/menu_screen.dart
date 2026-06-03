@@ -493,6 +493,15 @@ class MenuScreen extends StatelessWidget {
               },
               child: _buildMenuItem(icon: Icons.history, title: 'My Orders'),
             ),
+                        GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>        BookingHistory()),
+                );
+              },
+              child: _buildMenuItem(icon: Icons.house, title: 'My Bookings'),
+            ),
             // GestureDetector(
             //   onTap: () {
             //     Navigator.push(

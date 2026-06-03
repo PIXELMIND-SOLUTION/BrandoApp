@@ -4,6 +4,7 @@
 // import 'package:brando_app/constant/api_constants.dart';
 // import 'package:brando_app/models/submit_hostel_model.dart';
 // import 'package:brando_app/provider/booking/submit_form_provider.dart';
+// import 'package:brando_app/views/history/booking_history.dart';
 // import 'package:brando_app/views/navbar/navbar_screen.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
@@ -34,8 +35,8 @@
 //   final _roomNoController = TextEditingController();
 
 //   // Room selection variables
-//   String? _selectedRoomType; // 'AC' or 'Non-AC'
-//   String? _selectedShareType; // '1 Share', '2 Share', etc.
+//   String? _selectedRoomType;
+//   String? _selectedShareType;
 //   String? _selectedRoomNumber;
 
 //   List<SharingOption> _sharingOptions = [];
@@ -57,19 +58,105 @@
 //   // Maximum images allowed per document
 //   static const int _maxImagesPerDocument = 2;
 
+//   // Form validity tracking
+//   bool _isFormValid = false;
+  
+//   // Track if fields have been touched for error display
+//   bool _mobileTouched = false;
+//   bool _emergencyTouched = false;
+
 //   @override
 //   void initState() {
 //     super.initState();
 //     _fetchRoomOptions();
+//     _addListeners();
+//   }
+
+//   void _addListeners() {
+//     _nameController.addListener(_validateForm);
+//     _mobileController.addListener(() {
+//       _mobileTouched = true;
+//       _validateForm();
+//     });
+//     _emobileController.addListener(() {
+//       _emergencyTouched = true;
+//       _validateForm();
+//     });
+//     _roomNoController.addListener(_validateForm);
 //   }
 
 //   @override
 //   void dispose() {
+//     _nameController.removeListener(_validateForm);
+//     _mobileController.removeListener(_validateForm);
+//     _emobileController.removeListener(_validateForm);
+//     _roomNoController.removeListener(_validateForm);
 //     _nameController.dispose();
 //     _mobileController.dispose();
 //     _emobileController.dispose();
 //     _roomNoController.dispose();
 //     super.dispose();
+//   }
+
+//   void _validateForm() {
+//     bool isValid = true;
+
+//     // Check name
+//     if (_nameController.text.trim().isEmpty) {
+//       isValid = false;
+//     }
+
+//     // Check mobile
+//     if (_mobileController.text.trim().isEmpty ||
+//         _mobileController.text.trim().length != 10) {
+//       isValid = false;
+//     }
+
+//     // Check emergency mobile (not same as mobile)
+//     final emergencyNumber = _emobileController.text.trim();
+//     final mobileNumber = _mobileController.text.trim();
+    
+//     if (emergencyNumber.isEmpty ||
+//         emergencyNumber.length != 10 ||
+//         (emergencyNumber == mobileNumber && mobileNumber.isNotEmpty)) {
+//       isValid = false;
+//     }
+
+//     // Check room details
+//     if (_isManualEntry) {
+//       if (_roomNoController.text.trim().isEmpty) {
+//         isValid = false;
+//       }
+//     } else {
+//       if (_selectedRoomType == null ||
+//           _selectedShareType == null ||
+//           _selectedRoomNumber == null) {
+//         isValid = false;
+//       }
+//     }
+
+//     // Check Aadhar card (mandatory)
+//     if (_aadharImagePaths.isEmpty) {
+//       isValid = false;
+//     }
+
+//     // Check profile photo (mandatory)
+//     if (_profileImagePath == null) {
+//       isValid = false;
+//     }
+
+//     if (_isFormValid != isValid) {
+//       setState(() {
+//         _isFormValid = isValid;
+//       });
+//     }
+//   }
+
+//   // Helper method to check if mobile and emergency numbers are same
+//   bool _areNumbersSame() {
+//     return _mobileController.text.trim().isNotEmpty &&
+//         _emobileController.text.trim().isNotEmpty &&
+//         _mobileController.text.trim() == _emobileController.text.trim();
 //   }
 
 //   Future<void> _fetchRoomOptions() async {
@@ -84,9 +171,6 @@
 //       );
 //       final response = await http.get(url);
 
-//       print('Room options response status: ${response.statusCode}');
-//       print('Room options response body: ${response.body}');
-
 //       if (response.statusCode == 200) {
 //         final data = jsonDecode(response.body);
 //         if (data['success'] == true) {
@@ -97,7 +181,6 @@
 //                 .map((sharing) => SharingOption.fromJson(sharing))
 //                 .toList();
 
-//             // Extract unique room types
 //             _roomTypes = _sharingOptions
 //                 .map((opt) => opt.type)
 //                 .toSet()
@@ -108,6 +191,7 @@
 //             if (_sharingOptions.isEmpty) {
 //               _isManualEntry = true;
 //             }
+//             _validateForm();
 //           });
 //         } else {
 //           setState(() {
@@ -115,6 +199,7 @@
 //                 data['message'] ?? 'Failed to load room options';
 //             _isLoadingRoomNumbers = false;
 //             _isManualEntry = true;
+//             _validateForm();
 //           });
 //         }
 //       } else {
@@ -123,6 +208,7 @@
 //               'Failed to load room options. Please enter manually.';
 //           _isLoadingRoomNumbers = false;
 //           _isManualEntry = true;
+//           _validateForm();
 //         });
 //       }
 //     } catch (e) {
@@ -131,11 +217,11 @@
 //         _roomNumbersError = 'Network error. Please enter room number manually.';
 //         _isLoadingRoomNumbers = false;
 //         _isManualEntry = true;
+//         _validateForm();
 //       });
 //     }
 //   }
 
-//   // Update share types when room type changes
 //   void _onRoomTypeChanged(String? roomType) {
 //     setState(() {
 //       _selectedRoomType = roomType;
@@ -143,7 +229,6 @@
 //       _selectedRoomNumber = null;
 
 //       if (roomType != null) {
-//         // Get unique share types for selected room type
 //         _shareTypes = _sharingOptions
 //             .where((opt) => opt.type == roomType)
 //             .map((opt) => opt.shareType)
@@ -152,17 +237,16 @@
 //       } else {
 //         _shareTypes = [];
 //       }
+//       _validateForm();
 //     });
 //   }
 
-//   // Update room numbers when share type changes
 //   void _onShareTypeChanged(String? shareType) {
 //     setState(() {
 //       _selectedShareType = shareType;
 //       _selectedRoomNumber = null;
 
 //       if (shareType != null && _selectedRoomType != null) {
-//         // Get room numbers for selected room type and share type
 //         final option = _sharingOptions.firstWhere(
 //           (opt) => opt.type == _selectedRoomType && opt.shareType == shareType,
 //           orElse: () => SharingOption(
@@ -177,10 +261,10 @@
 //       } else {
 //         _roomNumbers = [];
 //       }
+//       _validateForm();
 //     });
 //   }
 
-//   // Method for taking selfie with front camera only
 //   Future<void> _takeSelfie(String type) async {
 //     try {
 //       final XFile? picked = await _picker.pickImage(
@@ -195,14 +279,13 @@
 //         if (type == 'profile') {
 //           _profileImagePath = picked.path;
 //         }
+//         _validateForm();
 //       });
 //     } catch (e) {
-//       print('Error taking selfie: $e');
 //       _showSnack('Failed to take selfie. Please try again.');
 //     }
 //   }
 
-//   // Method to pick document images with multi-image support
 //   Future<void> _pickDocumentImage(String documentType, int sideIndex) async {
 //     final picked = await _picker.pickImage(
 //       source: ImageSource.gallery,
@@ -229,10 +312,10 @@
 //           );
 //         }
 //       }
+//       _validateForm();
 //     });
 //   }
 
-//   // Method to take document photos with camera
 //   Future<void> _takeDocumentPhoto(String documentType, int sideIndex) async {
 //     try {
 //       final XFile? picked = await _picker.pickImage(
@@ -260,14 +343,13 @@
 //             );
 //           }
 //         }
+//         _validateForm();
 //       });
 //     } catch (e) {
-//       print('Error taking photo: $e');
 //       _showSnack('Failed to take photo. Please try again.');
 //     }
 //   }
 
-//   // Show image source dialog for document uploads
 //   void _showImageSourceDialog(String documentType, int sideIndex) {
 //     showModalBottomSheet(
 //       context: context,
@@ -311,7 +393,6 @@
 //     );
 //   }
 
-//   // Remove a specific image from document
 //   void _removeDocumentImage(String documentType, int index) {
 //     setState(() {
 //       if (documentType == 'aadhar') {
@@ -319,16 +400,26 @@
 //       } else if (documentType == 'pan') {
 //         _panImagePaths.removeAt(index);
 //       }
+//       _validateForm();
 //     });
 //   }
 
-//   // Profile photo - camera only
 //   Future<void> _pickProfileImage() async {
 //     _takeSelfie('profile');
 //   }
 
 //   Future<void> _onProceed() async {
 //     if (!_formKey.currentState!.validate()) return;
+
+//     if (!_isFormValid) {
+//       _showSnack('Please fill all required fields');
+//       return;
+//     }
+
+//     if (_areNumbersSame()) {
+//       _showSnack('Mobile number and Emergency number cannot be the same');
+//       return;
+//     }
 
 //     if (_isManualEntry) {
 //       if (_roomNoController.text.trim().isEmpty) {
@@ -350,29 +441,8 @@
 //       }
 //     }
 
-//     if (_mobileController.text.trim().isEmpty) {
-//       _showSnack('Please enter mobile number.');
-//       return;
-//     }
-
-//     if (_emobileController.text.trim().isEmpty) {
-//       _showSnack('Please enter emergency mobile number.');
-//       return;
-//     }
-
-//     if (_nameController.text.trim().isEmpty) {
-//       _showSnack('Please enter name.');
-//       return;
-//     }
-
-//     // Validation for multiple images
 //     if (_aadharImagePaths.isEmpty) {
 //       _showSnack('Please upload at least one Aadhar Card image.');
-//       return;
-//     }
-
-//     if (_panImagePaths.isEmpty) {
-//       _showSnack('Please upload at least one PAN Card image.');
 //       return;
 //     }
 
@@ -388,7 +458,6 @@
 //     final roomType = _isManualEntry ? '' : (_selectedRoomType ?? '');
 //     final shareType = _isManualEntry ? '' : (_selectedShareType ?? '');
 
-//     // Create request with multiple images and booking details
 //     final request = HostelBookingRequestModel(
 //       name: _nameController.text.trim(),
 //       mobileNumber: _mobileController.text.trim(),
@@ -396,8 +465,8 @@
 //       roomNo: roomNumber,
 //       roomType: roomType,
 //       shareType: shareType,
-//       bookingType: '', // Empty as not needed
-//       totalAmount: 0, // Not needed
+//       bookingType: '',
+//       totalAmount: 0,
 //       aadharCardImage: _aadharImagePaths,
 //       panCardImage: _panImagePaths,
 //       profileImage: _profileImagePath!,
@@ -405,10 +474,59 @@
 //     );
 
 //     final provider = context.read<HostelBookingProvider>();
+    
+//     // Show loading dialog
+//     showDialog(
+//       context: context,
+//       barrierDismissible: false,
+//       builder: (context) => const Center(
+//         child: Card(
+//           elevation: 8,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.all(Radius.circular(16)),
+//           ),
+//           child: Padding(
+//             padding: EdgeInsets.all(24),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 CircularProgressIndicator(
+//                   color: Colors.red,
+//                   strokeWidth: 3,
+//                 ),
+//                 SizedBox(height: 16),
+//                 Text(
+//                   'Submitting your booking...',
+//                   style: TextStyle(
+//                     fontSize: 14,
+//                     color: Colors.black87,
+//                     fontWeight: FontWeight.w500,
+//                   ),
+//                 ),
+//                 SizedBox(height: 8),
+//                 Text(
+//                   'Please wait',
+//                   style: TextStyle(
+//                     fontSize: 12,
+//                     color: Colors.grey,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+
 //     final success = await provider.submitBooking(
 //       bookingId: widget.bookingId,
 //       request: request,
 //     );
+
+//     // Close loading dialog
+//     if (mounted) {
+//       Navigator.pop(context);
+//     }
 
 //     if (!mounted) return;
 
@@ -474,7 +592,12 @@
 //               child: ElevatedButton(
 //                 onPressed: () {
 //                   Navigator.of(context).pop();
-//                   Navigator.push(context, MaterialPageRoute(builder: (context) => NavbarScreen(initialIndex: 2),));
+//                   Navigator.pushReplacement(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (context) => BookingHistory(),
+//                     ),
+//                   );
 //                 },
 //                 style: ElevatedButton.styleFrom(
 //                   backgroundColor: Colors.red,
@@ -539,17 +662,29 @@
 //         child: ListView(
 //           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
 //           children: [
-//             _buildSectionLabel('Profile Photo (Selfie)'),
+//             _buildSectionLabel('Profile Photo (Selfie) *'),
 //             const SizedBox(height: 10),
 //             _buildProfilePicker(),
+//             if (_profileImagePath == null)
+//               Padding(
+//                 padding: const EdgeInsets.only(top: 8),
+//                 child: Text(
+//                   'Profile photo is required',
+//                   style: TextStyle(
+//                     fontSize: 12,
+//                     color: Colors.red[400],
+//                   ),
+//                 ),
+//               ),
 //             const SizedBox(height: 24),
-//             _buildSectionLabel('Personal Information'),
+//             _buildSectionLabel('Personal Information *'),
 //             const SizedBox(height: 12),
 //             _buildTextField(
 //               controller: _nameController,
 //               label: 'Full Name',
 //               hint: 'Enter your full name',
 //               icon: Icons.person_outline,
+//               isRequired: true,
 //               validator: (v) =>
 //                   v == null || v.trim().isEmpty ? 'Name is required' : null,
 //             ),
@@ -560,37 +695,41 @@
 //               hint: '10-digit mobile number',
 //               icon: Icons.phone_outlined,
 //               keyboardType: TextInputType.phone,
+//               isRequired: true,
 //               inputFormatters: [
 //                 FilteringTextInputFormatter.digitsOnly,
 //                 LengthLimitingTextInputFormatter(10),
 //               ],
 //               validator: (v) {
 //                 if (v == null || v.trim().isEmpty) return 'Mobile is required';
-//                 if (v.trim().length != 10)
-//                   return 'Enter a valid 10-digit number';
+//                 if (v.trim().length != 10) return 'Enter a valid 10-digit number';
 //                 return null;
 //               },
 //             ),
 //             const SizedBox(height: 14),
-//             _buildTextField(
+//             _buildEmergencyTextField(
 //               controller: _emobileController,
 //               label: 'Emergency Number',
 //               hint: '10-digit mobile number',
 //               icon: Icons.phone_outlined,
 //               keyboardType: TextInputType.phone,
+//               isRequired: true,
 //               inputFormatters: [
 //                 FilteringTextInputFormatter.digitsOnly,
 //                 LengthLimitingTextInputFormatter(10),
 //               ],
 //               validator: (v) {
-//                 if (v == null || v.trim().isEmpty) return 'Mobile is required';
-//                 if (v.trim().length != 10)
+//                 if (v == null || v.trim().isEmpty) {
+//                   return 'Emergency number is required';
+//                 }
+//                 if (v.trim().length != 10) {
 //                   return 'Enter a valid 10-digit number';
+//                 }
 //                 return null;
 //               },
 //             ),
 //             const SizedBox(height: 24),
-//             _buildSectionLabel('Room Details'),
+//             _buildSectionLabel('Room Details *'),
 //             const SizedBox(height: 12),
 //             _buildRoomDetailsSection(),
 //             const SizedBox(height: 24),
@@ -598,10 +737,11 @@
 //             const SizedBox(height: 12),
 //             _buildMultiImageUploadTile(
 //               label: 'Aadhar Card',
-//               subtitle: 'Upload front and back sides (Max 2 images)',
+//               subtitle: 'Upload front and back sides (Max 2 images) *',
 //               icon: Icons.badge_outlined,
 //               imagePaths: _aadharImagePaths,
 //               maxImages: _maxImagesPerDocument,
+//               isRequired: true,
 //               onAddImage: (sideIndex) =>
 //                   _showImageSourceDialog('aadhar', sideIndex),
 //               onRemoveImage: (index) => _removeDocumentImage('aadhar', index),
@@ -609,47 +749,37 @@
 //             const SizedBox(height: 12),
 //             _buildMultiImageUploadTile(
 //               label: 'Photo ID Card',
-//               subtitle: 'Upload front and back sides (Max 2 images)',
+//               subtitle: 'Upload front and back sides (Max 2 images) (Optional)',
 //               icon: Icons.credit_card_outlined,
 //               imagePaths: _panImagePaths,
 //               maxImages: _maxImagesPerDocument,
+//               isRequired: false,
 //               onAddImage: (sideIndex) =>
 //                   _showImageSourceDialog('pan', sideIndex),
 //               onRemoveImage: (index) => _removeDocumentImage('pan', index),
 //             ),
 //             const SizedBox(height: 32),
-//             Consumer<HostelBookingProvider>(
-//               builder: (_, provider, __) => SizedBox(
-//                 width: double.infinity,
-//                 height: 52,
-//                 child: ElevatedButton(
-//                   onPressed: provider.isLoading ? null : _onProceed,
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: Colors.red,
-//                     disabledBackgroundColor: Colors.red.withOpacity(0.6),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(12),
-//                     ),
-//                     elevation: 2,
+//             SizedBox(
+//               width: double.infinity,
+//               height: 52,
+//               child: ElevatedButton(
+//                 onPressed: _isFormValid ? _onProceed : null,
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: Colors.red,
+//                   disabledBackgroundColor: Colors.red.withOpacity(0.5),
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(12),
 //                   ),
-//                   child: provider.isLoading
-//                       ? const SizedBox(
-//                           width: 22,
-//                           height: 22,
-//                           child: CircularProgressIndicator(
-//                             color: Colors.white,
-//                             strokeWidth: 2.5,
-//                           ),
-//                         )
-//                       : const Text(
-//                           'Proceed',
-//                           style: TextStyle(
-//                             color: Colors.white,
-//                             fontSize: 16,
-//                             fontWeight: FontWeight.w600,
-//                             letterSpacing: 0.5,
-//                           ),
-//                         ),
+//                   elevation: 2,
+//                 ),
+//                 child: const Text(
+//                   'Proceed',
+//                   style: TextStyle(
+//                     color: Colors.white,
+//                     fontSize: 16,
+//                     fontWeight: FontWeight.w600,
+//                     letterSpacing: 0.5,
+//                   ),
 //                 ),
 //               ),
 //             ),
@@ -657,6 +787,79 @@
 //           ],
 //         ),
 //       ),
+//     );
+//   }
+
+//   Widget _buildEmergencyTextField({
+//     required TextEditingController controller,
+//     required String label,
+//     required String hint,
+//     required IconData icon,
+//     TextInputType keyboardType = TextInputType.text,
+//     List<TextInputFormatter>? inputFormatters,
+//     bool isRequired = false,
+//     String? Function(String?)? validator,
+//   }) {
+//     return StatefulBuilder(
+//       builder: (context, setState) {
+//         return TextFormField(
+//           controller: controller,
+//           keyboardType: keyboardType,
+//           inputFormatters: inputFormatters,
+//           validator: (value) {
+//             final basicError = validator?.call(value);
+//             if (basicError != null) return basicError;
+            
+//             if (_areNumbersSame()) {
+//               return 'Emergency number cannot be same as mobile number';
+//             }
+//             return null;
+//           },
+//           onChanged: (value) {
+//             setState(() {});
+//             _validateForm();
+//           },
+//           style: const TextStyle(fontSize: 14, color: Colors.black87),
+//           decoration: InputDecoration(
+//             labelText: label,
+//             hintText: hint,
+//             hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+//             prefixIcon: Icon(icon, color: Colors.red, size: 20),
+//             labelStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+//             contentPadding: const EdgeInsets.symmetric(
+//               vertical: 14,
+//               horizontal: 12,
+//             ),
+//             filled: true,
+//             fillColor: const Color(0xFFFAFAFA),
+//             border: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(10),
+//               borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+//             ),
+//             enabledBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(10),
+//               borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+//             ),
+//             focusedBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(10),
+//               borderSide: const BorderSide(color: Colors.red, width: 1.5),
+//             ),
+//             errorBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(10),
+//               borderSide: const BorderSide(color: Colors.orange),
+//             ),
+//             focusedErrorBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(10),
+//               borderSide: const BorderSide(color: Colors.red),
+//             ),
+//             errorText: _areNumbersSame() && 
+//                        _mobileController.text.trim().isNotEmpty && 
+//                        controller.text.trim().isNotEmpty
+//                 ? 'Emergency number cannot be same as mobile number'
+//                 : null,
+//           ),
+//         );
+//       },
 //     );
 //   }
 
@@ -687,19 +890,18 @@
 //       return Column(
 //         crossAxisAlignment: CrossAxisAlignment.start,
 //         children: [
-//           // Room Type Dropdown (AC/Non-AC)
 //           _buildDropdown(
 //             label: 'Room Type',
 //             hint: 'Select AC or Non-AC',
 //             icon: Icons.ac_unit_outlined,
 //             value: _selectedRoomType,
 //             items: _roomTypes,
+//             isRequired: true,
 //             onChanged: _onRoomTypeChanged,
 //             validator: (v) => v == null ? 'Please select room type' : null,
 //           ),
 //           const SizedBox(height: 14),
 
-//           // Share Type Dropdown (1 Share, 2 Share, etc.)
 //           if (_selectedRoomType != null)
 //             _buildDropdown(
 //               label: 'Share Type',
@@ -707,13 +909,13 @@
 //               icon: Icons.people_outline,
 //               value: _selectedShareType,
 //               items: _shareTypes,
+//               isRequired: true,
 //               onChanged: _onShareTypeChanged,
 //               validator: (v) => v == null ? 'Please select share type' : null,
 //             ),
 
 //           if (_selectedShareType != null) const SizedBox(height: 14),
 
-//           // Room Number Dropdown
 //           if (_selectedShareType != null && _roomNumbers.isNotEmpty)
 //             _buildDropdown(
 //               label: 'Room Number',
@@ -721,14 +923,17 @@
 //               icon: Icons.door_back_door_outlined,
 //               value: _selectedRoomNumber,
 //               items: _roomNumbers,
-//               onChanged: (val) => setState(() => _selectedRoomNumber = val),
+//               isRequired: true,
+//               onChanged: (val) => setState(() {
+//                 _selectedRoomNumber = val;
+//                 _validateForm();
+//               }),
 //               validator: (v) => v == null ? 'Please select room number' : null,
 //             ),
 //         ],
 //       );
 //     }
 
-//     // Manual entry mode
 //     return Column(
 //       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
@@ -737,6 +942,7 @@
 //           label: 'Room Number',
 //           hint: 'e.g., 101, G1, 202',
 //           icon: Icons.door_back_door_outlined,
+//           isRequired: true,
 //           validator: (v) =>
 //               v == null || v.trim().isEmpty ? 'Room number is required' : null,
 //         ),
@@ -753,6 +959,7 @@
 //                   setState(() {
 //                     _isManualEntry = false;
 //                     _roomNoController.clear();
+//                     _validateForm();
 //                   });
 //                 },
 //                 style: TextButton.styleFrom(
@@ -786,6 +993,7 @@
 //     required IconData icon,
 //     required List<String> imagePaths,
 //     required int maxImages,
+//     required bool isRequired,
 //     required void Function(int sideIndex) onAddImage,
 //     required void Function(int index) onRemoveImage,
 //   }) {
@@ -797,9 +1005,11 @@
 //             : const Color(0xFFFAFAFA),
 //         borderRadius: BorderRadius.circular(10),
 //         border: Border.all(
-//           color: imagePaths.isNotEmpty
+//           color: isRequired && imagePaths.isEmpty
 //               ? Colors.red.withOpacity(0.5)
-//               : const Color(0xFFE0E0E0),
+//               : (imagePaths.isNotEmpty
+//                   ? Colors.red.withOpacity(0.5)
+//                   : const Color(0xFFE0E0E0)),
 //         ),
 //       ),
 //       child: Column(
@@ -813,13 +1023,22 @@
 //                 child: Column(
 //                   crossAxisAlignment: CrossAxisAlignment.start,
 //                   children: [
-//                     Text(
-//                       label,
-//                       style: const TextStyle(
-//                         fontWeight: FontWeight.w600,
-//                         fontSize: 14,
-//                         color: Colors.black87,
-//                       ),
+//                     Row(
+//                       children: [
+//                         Text(
+//                           label,
+//                           style: const TextStyle(
+//                             fontWeight: FontWeight.w600,
+//                             fontSize: 14,
+//                             color: Colors.black87,
+//                           ),
+//                         ),
+//                         if (isRequired)
+//                           const Text(
+//                             ' *',
+//                             style: TextStyle(color: Colors.red),
+//                           ),
+//                       ],
 //                     ),
 //                     Text(
 //                       subtitle,
@@ -914,25 +1133,23 @@
 //           if (imagePaths.isEmpty)
 //             GestureDetector(
 //               onTap: () => onAddImage(0),
-//               child: Center(
-//                 child: Container(
-//                   height: 80,
-//                   decoration: BoxDecoration(
-//                     color: const Color(0xFFFFEBEE),
-//                     borderRadius: BorderRadius.circular(8),
-//                     border: Border.all(color: Colors.red.withOpacity(0.3)),
-//                   ),
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Icon(Icons.cloud_upload, color: Colors.red, size: 28),
-//                       const SizedBox(height: 4),
-//                       Text(
-//                         'Tap to upload ${label.toLowerCase()}',
-//                         style: const TextStyle(color: Colors.red, fontSize: 12),
-//                       ),
-//                     ],
-//                   ),
+//               child: Container(
+//                 height: 80,
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xFFFFEBEE),
+//                   borderRadius: BorderRadius.circular(8),
+//                   border: Border.all(color: Colors.red.withOpacity(0.3)),
+//                 ),
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Icon(Icons.cloud_upload, color: Colors.red, size: 28),
+//                     const SizedBox(height: 4),
+//                     Text(
+//                       'Tap to upload ${label.toLowerCase()}',
+//                       style: const TextStyle(color: Colors.red, fontSize: 12),
+//                     ),
+//                   ],
 //                 ),
 //               ),
 //             ),
@@ -946,6 +1163,17 @@
 //                   color: imagePaths.length == maxImages
 //                       ? Colors.green
 //                       : Colors.orange,
+//                 ),
+//               ),
+//             ),
+//           if (isRequired && imagePaths.isEmpty)
+//             Padding(
+//               padding: const EdgeInsets.only(top: 4),
+//               child: Text(
+//                 '${label} is required',
+//                 style: TextStyle(
+//                   fontSize: 11,
+//                   color: Colors.red[400],
 //                 ),
 //               ),
 //             ),
@@ -979,7 +1207,9 @@
 //                 shape: BoxShape.circle,
 //                 color: const Color(0xFFF5F5F5),
 //                 border: Border.all(
-//                   color: Colors.red.withOpacity(0.4),
+//                   color: _profileImagePath == null
+//                       ? Colors.red.withOpacity(0.6)
+//                       : Colors.red.withOpacity(0.4),
 //                   width: 2,
 //                 ),
 //               ),
@@ -1022,6 +1252,7 @@
 //     required IconData icon,
 //     TextInputType keyboardType = TextInputType.text,
 //     List<TextInputFormatter>? inputFormatters,
+//     bool isRequired = false,
 //     String? Function(String?)? validator,
 //   }) {
 //     return TextFormField(
@@ -1073,6 +1304,7 @@
 //     required String? value,
 //     required List<String> items,
 //     required void Function(String?) onChanged,
+//     bool isRequired = false,
 //     String? Function(String?)? validator,
 //   }) {
 //     return DropdownButtonFormField<String>(
@@ -1118,7 +1350,6 @@
 //   }
 // }
 
-// // Model class for sharing options
 // class SharingOption {
 //   final String type;
 //   final String shareType;
@@ -1165,6 +1396,7 @@ import 'dart:io';
 import 'package:brando_app/constant/api_constants.dart';
 import 'package:brando_app/models/submit_hostel_model.dart';
 import 'package:brando_app/provider/booking/submit_form_provider.dart';
+import 'package:brando_app/views/history/booking_history.dart';
 import 'package:brando_app/views/navbar/navbar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1195,14 +1427,15 @@ class _EnterDetailsState extends State<EnterDetails> {
   final _roomNoController = TextEditingController();
 
   // Room selection variables
-  String? _selectedRoomType;
-  String? _selectedShareType;
   String? _selectedRoomNumber;
-
-  List<SharingOption> _sharingOptions = [];
-  List<String> _roomTypes = [];
-  List<String> _shareTypes = [];
-  List<String> _roomNumbers = [];
+  
+  // Store all room options with their details
+  List<RoomOption> _allRoomOptions = [];
+  List<String> _roomNumbersList = [];
+  
+  // Store selected room's details for backend
+  String _selectedRoomType = '';
+  String _selectedShareType = '';
 
   bool _isLoadingRoomNumbers = true;
   bool _isManualEntry = false;
@@ -1288,9 +1521,7 @@ class _EnterDetailsState extends State<EnterDetails> {
         isValid = false;
       }
     } else {
-      if (_selectedRoomType == null ||
-          _selectedShareType == null ||
-          _selectedRoomNumber == null) {
+      if (_selectedRoomNumber == null) {
         isValid = false;
       }
     }
@@ -1336,19 +1567,32 @@ class _EnterDetailsState extends State<EnterDetails> {
         if (data['success'] == true) {
           final List<dynamic> sharings = data['sharings'] ?? [];
 
+          // Parse all room options
+          List<RoomOption> allOptions = [];
+          for (var sharing in sharings) {
+            final type = sharing['type'] ?? '';
+            final shareType = sharing['shareType'] ?? '';
+            final monthlyPrice = sharing['monthlyPrice'] ?? 0;
+            final dailyPrice = sharing['dailyPrice'] ?? 0;
+            final roomNumbers = List<String>.from(sharing['roomNumbers'] ?? []);
+            
+            for (String roomNumber in roomNumbers) {
+              allOptions.add(RoomOption(
+                roomNumber: roomNumber,
+                type: type,
+                shareType: shareType,
+                monthlyPrice: monthlyPrice,
+                dailyPrice: dailyPrice,
+              ));
+            }
+          }
+
           setState(() {
-            _sharingOptions = sharings
-                .map((sharing) => SharingOption.fromJson(sharing))
-                .toList();
-
-            _roomTypes = _sharingOptions
-                .map((opt) => opt.type)
-                .toSet()
-                .toList();
-
+            _allRoomOptions = allOptions;
+            _roomNumbersList = allOptions.map((opt) => opt.roomNumber).toList();
             _isLoadingRoomNumbers = false;
 
-            if (_sharingOptions.isEmpty) {
+            if (_allRoomOptions.isEmpty) {
               _isManualEntry = true;
             }
             _validateForm();
@@ -1382,45 +1626,31 @@ class _EnterDetailsState extends State<EnterDetails> {
     }
   }
 
-  void _onRoomTypeChanged(String? roomType) {
+  void _onRoomNumberChanged(String? roomNumber) {
     setState(() {
-      _selectedRoomType = roomType;
-      _selectedShareType = null;
-      _selectedRoomNumber = null;
-
-      if (roomType != null) {
-        _shareTypes = _sharingOptions
-            .where((opt) => opt.type == roomType)
-            .map((opt) => opt.shareType)
-            .toSet()
-            .toList();
-      } else {
-        _shareTypes = [];
-      }
-      _validateForm();
-    });
-  }
-
-  void _onShareTypeChanged(String? shareType) {
-    setState(() {
-      _selectedShareType = shareType;
-      _selectedRoomNumber = null;
-
-      if (shareType != null && _selectedRoomType != null) {
-        final option = _sharingOptions.firstWhere(
-          (opt) => opt.type == _selectedRoomType && opt.shareType == shareType,
-          orElse: () => SharingOption(
+      _selectedRoomNumber = roomNumber;
+      
+      if (roomNumber != null) {
+        // Find the selected room option and get its details
+        final selectedOption = _allRoomOptions.firstWhere(
+          (opt) => opt.roomNumber == roomNumber,
+          orElse: () => RoomOption(
+            roomNumber: '',
             type: '',
             shareType: '',
             monthlyPrice: 0,
             dailyPrice: 0,
-            roomNumbers: [],
           ),
         );
-        _roomNumbers = option.roomNumbers;
+        
+        // Store these for backend submission
+        _selectedRoomType = selectedOption.type;
+        _selectedShareType = selectedOption.shareType;
       } else {
-        _roomNumbers = [];
+        _selectedRoomType = '';
+        _selectedShareType = '';
       }
+      
       _validateForm();
     });
   }
@@ -1587,14 +1817,6 @@ class _EnterDetailsState extends State<EnterDetails> {
         return;
       }
     } else {
-      if (_selectedRoomType == null) {
-        _showSnack('Please select room type (AC/Non-AC).');
-        return;
-      }
-      if (_selectedShareType == null) {
-        _showSnack('Please select share type.');
-        return;
-      }
       if (_selectedRoomNumber == null) {
         _showSnack('Please select a room number.');
         return;
@@ -1615,8 +1837,9 @@ class _EnterDetailsState extends State<EnterDetails> {
         ? _roomNoController.text.trim()
         : _selectedRoomNumber!;
 
-    final roomType = _isManualEntry ? '' : (_selectedRoomType ?? '');
-    final shareType = _isManualEntry ? '' : (_selectedShareType ?? '');
+    // Use the stored type and share type from selected room or manual entry
+    final roomType = _isManualEntry ? '' : _selectedRoomType;
+    final shareType = _isManualEntry ? '' : _selectedShareType;
 
     final request = HostelBookingRequestModel(
       name: _nameController.text.trim(),
@@ -1755,7 +1978,7 @@ class _EnterDetailsState extends State<EnterDetails> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const NavbarScreen(initialIndex: 2),
+                      builder: (context) => BookingHistory(),
                     ),
                   );
                 },
@@ -2046,50 +2269,61 @@ class _EnterDetailsState extends State<EnterDetails> {
       );
     }
 
-    if (_sharingOptions.isNotEmpty && !_isManualEntry) {
+    if (_allRoomOptions.isNotEmpty && !_isManualEntry) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDropdown(
-            label: 'Room Type',
-            hint: 'Select AC or Non-AC',
-            icon: Icons.ac_unit_outlined,
-            value: _selectedRoomType,
-            items: _roomTypes,
+            label: 'Select Room Number',
+            hint: 'Choose your room number',
+            icon: Icons.door_back_door_outlined,
+            value: _selectedRoomNumber,
+            items: _roomNumbersList,
             isRequired: true,
-            onChanged: _onRoomTypeChanged,
-            validator: (v) => v == null ? 'Please select room type' : null,
+            onChanged: _onRoomNumberChanged,
+            validator: (v) => v == null ? 'Please select a room number' : null,
           ),
-          const SizedBox(height: 14),
-
-          if (_selectedRoomType != null)
-            _buildDropdown(
-              label: 'Share Type',
-              hint: 'Select sharing type',
-              icon: Icons.people_outline,
-              value: _selectedShareType,
-              items: _shareTypes,
-              isRequired: true,
-              onChanged: _onShareTypeChanged,
-              validator: (v) => v == null ? 'Please select share type' : null,
-            ),
-
-          if (_selectedShareType != null) const SizedBox(height: 14),
-
-          if (_selectedShareType != null && _roomNumbers.isNotEmpty)
-            _buildDropdown(
-              label: 'Room Number',
-              hint: 'Select room number',
-              icon: Icons.door_back_door_outlined,
-              value: _selectedRoomNumber,
-              items: _roomNumbers,
-              isRequired: true,
-              onChanged: (val) => setState(() {
-                _selectedRoomNumber = val;
-                _validateForm();
-              }),
-              validator: (v) => v == null ? 'Please select room number' : null,
-            ),
+          
+          // Optional: Show selected room details (informational)
+          // if (_selectedRoomNumber != null && _selectedRoomType.isNotEmpty)
+          //   Container(
+          //     margin: const EdgeInsets.only(top: 12),
+          //     padding: const EdgeInsets.all(12),
+          //     decoration: BoxDecoration(
+          //       color: const Color(0xFFFFF3F3),
+          //       borderRadius: BorderRadius.circular(10),
+          //       border: Border.all(color: Colors.red.withOpacity(0.3)),
+          //     ),
+          //     child: Row(
+          //       children: [
+          //         const Icon(Icons.info_outline, color: Colors.red, size: 18),
+          //         const SizedBox(width: 8),
+          //         Expanded(
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               Text(
+          //                 'Room Details',
+          //                 style: TextStyle(
+          //                   fontSize: 12,
+          //                   fontWeight: FontWeight.w600,
+          //                   color: Colors.red[800],
+          //                 ),
+          //               ),
+          //               const SizedBox(height: 4),
+          //               Text(
+          //                 'Type: $_selectedRoomType • Share: $_selectedShareType',
+          //                 style: const TextStyle(
+          //                   fontSize: 12,
+          //                   color: Colors.black87,
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
         ],
       );
     }
@@ -2106,7 +2340,7 @@ class _EnterDetailsState extends State<EnterDetails> {
           validator: (v) =>
               v == null || v.trim().isEmpty ? 'Room number is required' : null,
         ),
-        if (_sharingOptions.isNotEmpty) ...[
+        if (_allRoomOptions.isNotEmpty) ...[
           const SizedBox(height: 8),
           Row(
             children: [
@@ -2118,6 +2352,9 @@ class _EnterDetailsState extends State<EnterDetails> {
                 onPressed: () {
                   setState(() {
                     _isManualEntry = false;
+                    _selectedRoomNumber = null;
+                    _selectedRoomType = '';
+                    _selectedShareType = '';
                     _roomNoController.clear();
                     _validateForm();
                   });
@@ -2534,4 +2771,21 @@ class SharingOption {
       roomNumbers: List<String>.from(json['roomNumbers'] ?? []),
     );
   }
+}
+
+// New class to store room options with their details
+class RoomOption {
+  final String roomNumber;
+  final String type;
+  final String shareType;
+  final int monthlyPrice;
+  final int dailyPrice;
+
+  RoomOption({
+    required this.roomNumber,
+    required this.type,
+    required this.shareType,
+    required this.monthlyPrice,
+    required this.dailyPrice,
+  });
 }

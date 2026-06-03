@@ -1,5 +1,6 @@
 import 'package:brando_app/provider/navbar/navbar_provider.dart';
 import 'package:brando_app/views/Ecommerce/ecomerce.dart';
+import 'package:brando_app/views/analysis/analysis.dart';
 import 'package:brando_app/views/history/booking_history.dart';
 import 'package:brando_app/views/home/home_screen.dart';
 import 'package:brando_app/views/home/menu_screen.dart';
@@ -38,7 +39,7 @@ class CustomBottomNavbar extends StatelessWidget {
     _NavItem(
       icon: Icons.king_bed_outlined,
       activeIcon: Icons.analytics,
-      label: 'Bookings',
+      label: 'Account',
     ),
     _NavItem(
       icon: Icons.menu_rounded,
@@ -478,7 +479,8 @@ class _NavbarScreenState extends State<NavbarScreen> {
     final pages = [
       HomeScreen(),
       AdminOffersScreen(),
-      BookingHistory(),
+      // BookingHistory(),
+      Analysis(),
       MenuScreen(),
     ];
 

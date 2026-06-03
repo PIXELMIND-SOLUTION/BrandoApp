@@ -282,7 +282,14 @@ class _BookingHistoryState extends State<BookingHistory>
           backgroundColor: AppColors.lightBackground,
           automaticallyImplyLeading: false,
           elevation: 0,
+  leading: IconButton(
+    icon: const Icon(Icons.arrow_back, color: Colors.black),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+  ),
           title: RichText(
+
             text: TextSpan(
               children: [
                 TextSpan(
